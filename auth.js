@@ -1,29 +1,82 @@
-// Firebase Authentication System
+// Firebase Authentication System - Fixed Version
 
-// Check authentication state
-auth.onAuthStateChanged(async (user) => {
-    if (user) {
-        console.log('User logged in:', user.email);
-        await loadUserData(user.uid);
-    } else {
-        console.log('No user logged in');
-        checkProtectedPages();
-    }
+// Wait for DOM and Firebase to be ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Small delay to ensure Firebase is fully loaded
+    setTimeout(() => {
+        initializeAuth();
+    }, 500);
 });
+
+// Initialize authentication system
+function initializeAuth() {
+    // Check if Firebase is available
+    if (typeof firebase === 'undefined') {
+        console.error('Firebase is not loaded. Please check your Firebase script tags.');
+        return;
+    }
+
+    if (!firebase.apps || firebase.apps.length === 0) {
+        console.error('Firebase app is not initialized. Please check firebase-config.js');
+        return;
+    }
+
+    console.log('Firebase initialized successfully');
+
+    // Monitor authentication state changes
+    firebase.auth().onAuthStateChanged(async (user) => {
+        if (user) {
+            console.log('User logged in:', user.email);
+            await loadUserData(user.uid);
+            
+            // Redirect authenticated users away from auth pages
+            const currentPage = window.location.pathname.split('/').pop();
+            if (currentPage === 'login.html' || currentPage === 'register.html') {
+                window.location.href = 'dashboard.html';
+            }
+        } else {
+            console.log('No user logged in');
+            checkProtectedPages();
+        }
+    });
+
+    // Attach event listeners to forms
+    attachFormListeners();
+}
+
+// Attach form event listeners
+function attachFormListeners() {
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegister);
+        console.log('Register form listener attached');
+    }
+
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+        console.log('Login form listener attached');
+    }
+}
 
 // Load user data from Firestore
 async function loadUserData(uid) {
     try {
-        const userDoc = await db.collection('users').doc(uid).get();
+        const userDoc = await firebase.firestore().collection('users').doc(uid).get();
         if (userDoc.exists) {
             window.currentUser = {
                 uid: uid,
                 ...userDoc.data()
             };
-            console.log('User data loaded:', window.currentUser);
+            console.log('User data loaded successfully');
+            return window.currentUser;
+        } else {
+            console.warn('User document not found in Firestore');
+            return null;
         }
     } catch (error) {
         console.error('Error loading user data:', error);
+        return null;
     }
 }
 
@@ -32,14 +85,21 @@ function getUserData() {
     return window.currentUser || null;
 }
 
-// Check if user is on protected page
+// Check if current page requires authentication
 function checkProtectedPages() {
-    const protectedPages = ['dashboard.html', 'deposit.html', 'withdraw.html', 'transactions.html', 'settings.html'];
+    const protectedPages = [
+        'dashboard.html', 
+        'deposit.html', 
+        'withdraw.html', 
+        'transactions.html', 
+        'settings.html'
+    ];
+    
     const currentPath = window.location.pathname;
     const currentPage = currentPath.substring(currentPath.lastIndexOf('/') + 1);
     
     if (protectedPages.includes(currentPage)) {
-        const user = auth.currentUser;
+        const user = firebase.auth().currentUser;
         if (!user) {
             alert('Please login to access this page.');
             window.location.href = 'login.html';
@@ -47,10 +107,11 @@ function checkProtectedPages() {
     }
 }
 
-// Handle Registration
+// Handle user registration
 async function handleRegister(event) {
     event.preventDefault();
     
+    // Get form values
     const firstName = document.getElementById('firstName').value.trim();
     const lastName = document.getElementById('lastName').value.trim();
     const email = document.getElementById('regEmail').value.trim();
@@ -60,17 +121,19 @@ async function handleRegister(event) {
     const country = document.getElementById('country').value;
     const agreeTerms = document.getElementById('agreeTerms').checked;
     
-    // Validation
+    // Validate password match
     if (password !== confirmPassword) {
         alert('Passwords do not match!');
         return;
     }
     
+    // Validate password length
     if (password.length < 8) {
         alert('Password must be at least 8 characters long!');
         return;
     }
     
+    // Validate terms agreement
     if (!agreeTerms) {
         alert('You must agree to the Terms of Service and Privacy Policy!');
         return;
@@ -85,19 +148,28 @@ async function handleRegister(event) {
         return;
     }
     
-    // Show loading
+    // Show loading state
     const submitBtn = event.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
     submitBtn.textContent = 'Creating Account...';
     submitBtn.disabled = true;
     
     try {
+        console.log('Creating user account...');
+        
         // Create user with Firebase Authentication
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
         
+        console.log('User created:', user.uid);
+        
         // Send email verification
-        await user.sendEmailVerification();
+        try {
+            await user.sendEmailVerification();
+            console.log('Verification email sent');
+        } catch (emailError) {
+            console.warn('Could not send verification email:', emailError);
+        }
         
         // Create user document in Firestore
         const userData = {
@@ -115,14 +187,16 @@ async function handleRegister(event) {
             status: 'active'
         };
         
-        await db.collection('users').doc(user.uid).set(userData);
+        await firebase.firestore().collection('users').doc(user.uid).set(userData);
+        console.log('User data saved to Firestore');
         
-        // Set current user
+        // Set current user in memory
         window.currentUser = {
             uid: user.uid,
             ...userData
         };
         
+        // Success message
         alert(`Welcome to CryptoVest, ${firstName}!\n\nYour account has been created successfully.\n\nA verification email has been sent to ${email}.\nPlease verify your email address.`);
         
         // Redirect to dashboard
@@ -133,12 +207,13 @@ async function handleRegister(event) {
         
         let errorMessage = 'Registration failed. Please try again.';
         
+        // Handle specific error codes
         switch(error.code) {
             case 'auth/email-already-in-use':
                 errorMessage = 'This email is already registered. Please login instead.';
                 break;
             case 'auth/invalid-email':
-                errorMessage = 'Invalid email address.';
+                errorMessage = 'Invalid email address format.';
                 break;
             case 'auth/weak-password':
                 errorMessage = 'Password is too weak. Please use a stronger password.';
@@ -146,62 +221,80 @@ async function handleRegister(event) {
             case 'auth/network-request-failed':
                 errorMessage = 'Network error. Please check your internet connection.';
                 break;
+            case 'auth/operation-not-allowed':
+                errorMessage = 'Email/password authentication is not enabled. Please contact support.';
+                break;
+            default:
+                errorMessage = `Registration failed: ${error.message}`;
         }
         
         alert(errorMessage);
         
-        // Reset button
+        // Reset button state
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
     }
 }
 
-// Handle Login
+// Handle user login
 async function handleLogin(event) {
     event.preventDefault();
     
+    // Get form values
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     
+    // Basic validation
     if (!email || !password) {
         alert('Please enter both email and password!');
         return;
     }
     
-    // Show loading
+    // Show loading state
     const submitBtn = event.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
     submitBtn.textContent = 'Logging in...';
     submitBtn.disabled = true;
     
     try {
+        console.log('Attempting to login...');
+        
         // Sign in with Firebase
-        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
         const user = userCredential.user;
         
+        console.log('Login successful:', user.uid);
+        
         // Load user data from Firestore
-        const userDoc = await db.collection('users').doc(user.uid).get();
+        const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
         
         if (userDoc.exists) {
             const userData = userDoc.data();
             
-            // Check if account is active
+            // Check account status
             if (userData.status === 'suspended') {
-                await auth.signOut();
+                await firebase.auth().signOut();
                 alert('Your account has been suspended. Please contact support.');
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
                 return;
             }
             
+            // Set current user
             window.currentUser = {
                 uid: user.uid,
                 ...userData
             };
             
+            console.log('User data loaded');
+            
+            // Welcome message
             alert(`Welcome back, ${userData.firstName}!`);
+            
+            // Redirect to dashboard
             window.location.href = 'dashboard.html';
         } else {
+            console.error('User document not found');
             alert('User data not found. Please contact support.');
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
@@ -212,6 +305,7 @@ async function handleLogin(event) {
         
         let errorMessage = 'Login failed. Please try again.';
         
+        // Handle specific error codes
         switch(error.code) {
             case 'auth/user-not-found':
                 errorMessage = 'No account found with this email. Please register first.';
@@ -220,7 +314,7 @@ async function handleLogin(event) {
                 errorMessage = 'Incorrect password. Please try again.';
                 break;
             case 'auth/invalid-email':
-                errorMessage = 'Invalid email address.';
+                errorMessage = 'Invalid email address format.';
                 break;
             case 'auth/user-disabled':
                 errorMessage = 'This account has been disabled. Please contact support.';
@@ -231,22 +325,28 @@ async function handleLogin(event) {
             case 'auth/too-many-requests':
                 errorMessage = 'Too many failed login attempts. Please try again later.';
                 break;
+            case 'auth/invalid-credential':
+                errorMessage = 'Invalid email or password. Please check your credentials.';
+                break;
+            default:
+                errorMessage = `Login failed: ${error.message}`;
         }
         
         alert(errorMessage);
         
-        // Reset button
+        // Reset button state
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
     }
 }
 
-// Handle Logout
+// Handle user logout
 async function handleLogout() {
     if (confirm('Are you sure you want to logout?')) {
         try {
-            await auth.signOut();
+            await firebase.auth().signOut();
             window.currentUser = null;
+            console.log('User logged out successfully');
             alert('You have been logged out successfully!');
             window.location.href = 'login.html';
         } catch (error) {
@@ -256,24 +356,28 @@ async function handleLogout() {
     }
 }
 
-// Social Login (Google)
+// Handle social login (Google, Facebook, etc.)
 async function socialLogin(provider) {
     if (provider === 'google') {
         try {
+            console.log('Initiating Google sign-in...');
+            
             const googleProvider = new firebase.auth.GoogleAuthProvider();
-            const result = await auth.signInWithPopup(googleProvider);
+            const result = await firebase.auth().signInWithPopup(googleProvider);
             const user = result.user;
             
+            console.log('Google sign-in successful:', user.uid);
+            
             // Check if user document exists
-            const userDoc = await db.collection('users').doc(user.uid).get();
+            const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
             
             if (!userDoc.exists) {
-                // Create new user document for Google sign-in
-                const names = user.displayName.split(' ');
+                // Create new user document for first-time Google users
+                const names = user.displayName ? user.displayName.split(' ') : ['User', ''];
                 const userData = {
                     firstName: names[0] || 'User',
                     lastName: names.slice(1).join(' ') || '',
-                    fullName: user.displayName,
+                    fullName: user.displayName || 'User',
                     email: user.email,
                     phone: user.phoneNumber || '',
                     country: '',
@@ -285,10 +389,12 @@ async function socialLogin(provider) {
                     status: 'active'
                 };
                 
-                await db.collection('users').doc(user.uid).set(userData);
+                await firebase.firestore().collection('users').doc(user.uid).set(userData);
                 window.currentUser = { uid: user.uid, ...userData };
+                console.log('New user document created');
             } else {
                 window.currentUser = { uid: user.uid, ...userDoc.data() };
+                console.log('Existing user document loaded');
             }
             
             alert(`Welcome, ${window.currentUser.firstName}!`);
@@ -296,47 +402,57 @@ async function socialLogin(provider) {
             
         } catch (error) {
             console.error('Google sign-in error:', error);
-            alert('Google sign-in failed. Please try again.');
+            
+            if (error.code === 'auth/popup-closed-by-user') {
+                alert('Sign-in cancelled.');
+            } else if (error.code === 'auth/popup-blocked') {
+                alert('Pop-up blocked. Please allow pop-ups for this site.');
+            } else {
+                alert('Google sign-in failed. Please try again.');
+            }
         }
+    } else if (provider === 'facebook') {
+        alert('Facebook login will be integrated soon. Please use email/password or Google for now.');
     } else {
-        alert(`${provider} login will be integrated soon. Please use email/password or Google for now.`);
+        alert(`${provider} login is not yet available.`);
     }
 }
 
-// Password Reset
+// Handle password reset
 async function resetPassword() {
     const email = prompt('Enter your email address:');
     
-    if (!email) return;
+    if (!email) {
+        return;
+    }
+    
+    if (!email.includes('@')) {
+        alert('Please enter a valid email address.');
+        return;
+    }
     
     try {
-        await auth.sendPasswordResetEmail(email);
-        alert('Password reset email sent! Check your inbox.');
+        await firebase.auth().sendPasswordResetEmail(email);
+        alert('Password reset email sent! Please check your inbox.');
     } catch (error) {
         console.error('Password reset error:', error);
-        alert('Error sending password reset email. Please check the email address.');
+        
+        if (error.code === 'auth/user-not-found') {
+            alert('No account found with this email address.');
+        } else if (error.code === 'auth/invalid-email') {
+            alert('Invalid email address format.');
+        } else {
+            alert('Error sending password reset email. Please try again.');
+        }
     }
 }
 
-// Check auth on page load
-document.addEventListener('DOMContentLoaded', function() {
-    const currentPath = window.location.pathname;
-    const currentPage = currentPath.substring(currentPath.lastIndexOf('/') + 1);
-    
-    // Redirect to dashboard if already logged in and on auth pages
-    if ((currentPage === 'login.html' || currentPage === 'register.html') && auth.currentUser) {
-        window.location.href = 'dashboard.html';
-    }
-});
+// Export functions for global use
+window.handleRegister = handleRegister;
+window.handleLogin = handleLogin;
+window.handleLogout = handleLogout;
+window.socialLogin = socialLogin;
+window.resetPassword = resetPassword;
+window.getUserData = getUserData;
 
-// Export functions
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        handleRegister,
-        handleLogin,
-        handleLogout,
-        socialLogin,
-        resetPassword,
-        getUserData
-    };
-}
+console.log('Auth.js loaded successfully');
