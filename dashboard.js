@@ -428,4 +428,41 @@ window.handleDashboardLogout = handleDashboardLogout;
 
 console.log('Dashboard.js loaded successfully');
 
+// ===============================
+// AUTO CREDIT INVESTMENT (PURE JS)
+// ===============================
+async function autoCreditInvestment(uid, investmentId, inv, totalProfit) {
+    try {
+        const userRef = firebase.firestore().collection('users').doc(uid);
+        const investmentRef = userRef.collection('investments').doc(investmentId);
+
+        const payout = inv.amount + totalProfit;
+
+        // Credit balance + profit
+        await userRef.update({
+            balance: firebase.firestore.FieldValue.increment(payout),
+            totalProfit: firebase.firestore.FieldValue.increment(totalProfit)
+        });
+
+        // Mark investment completed
+        await investmentRef.update({
+            status: "completed",
+            credited: true,
+            completedAt: Date.now()
+        });
+
+        // Add transaction record
+        await userRef.collection('transactions').add({
+            type: "investment_maturity",
+            amount: payout,
+            description: "Investment matured & credited",
+            date: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        console.log(`Investment ${investmentId} credited successfully`);
+    } catch (error) {
+        console.error("Auto credit failed:", error);
+    }
+}
+
 
