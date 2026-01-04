@@ -14,36 +14,59 @@ async function fetchCryptoPrices() {
         
         const data = await response.json();
         
-        // Update Bitcoin price
-        const btcElement = document.getElementById('btcPrice');
-        if (btcElement) {
-            btcElement.textContent = `$${data.bitcoin.usd.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        }
+        // Format prices
+        const btcPrice = `$${data.bitcoin.usd.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        const ethPrice = `$${data.ethereum.usd.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        const usdtPrice = `$${data.tether.usd.toFixed(4)}`;
         
-        // Update Ethereum price
-        const ethElement = document.getElementById('ethPrice');
-        if (ethElement) {
-            ethElement.textContent = `$${data.ethereum.usd.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        }
+        // Update all BTC price elements (for seamless scrolling)
+        const btcElements = ['btcPrice', 'btcPrice2', 'btcPrice3', 'btcPrice4'];
+        btcElements.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = btcPrice;
+        });
         
-        // Update USDT price
-        const usdtElement = document.getElementById('usdtPrice');
-        if (usdtElement) {
-            usdtElement.textContent = `$${data.tether.usd.toFixed(4)}`;
-        }
+        // Update all ETH price elements
+        const ethElements = ['ethPrice', 'ethPrice2', 'ethPrice3', 'ethPrice4'];
+        ethElements.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = ethPrice;
+        });
+        
+        // Update all USDT price elements
+        const usdtElements = ['usdtPrice', 'usdtPrice2', 'usdtPrice3', 'usdtPrice4'];
+        usdtElements.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = usdtPrice;
+        });
         
         return data;
     } catch (error) {
         console.error('Error fetching crypto prices:', error);
         
         // Show fallback demo prices
-        const btcElement = document.getElementById('btcPrice');
-        const ethElement = document.getElementById('ethPrice');
-        const usdtElement = document.getElementById('usdtPrice');
+        const fallbackBtc = '$98,547.23';
+        const fallbackEth = '$3,456.78';
+        const fallbackUsdt = '$1.0000';
         
-        if (btcElement) btcElement.textContent = '$98,547.23';
-        if (ethElement) ethElement.textContent = '$3,456.78';
-        if (usdtElement) usdtElement.textContent = '$1.0000';
+        const btcElements = ['btcPrice', 'btcPrice2', 'btcPrice3', 'btcPrice4'];
+        const ethElements = ['ethPrice', 'ethPrice2', 'ethPrice3', 'ethPrice4'];
+        const usdtElements = ['usdtPrice', 'usdtPrice2', 'usdtPrice3', 'usdtPrice4'];
+        
+        btcElements.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = fallbackBtc;
+        });
+        
+        ethElements.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = fallbackEth;
+        });
+        
+        usdtElements.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = fallbackUsdt;
+        });
     }
 }
 
