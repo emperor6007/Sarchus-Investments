@@ -394,6 +394,12 @@ async function handleInvest(event) {
         return;
     }
     
+    console.log('Investment attempt:', {
+        amount: amount,
+        userBalance: user.balance,
+        plan: plan
+    });
+    
     if (amount > user.balance) {
         alert(`Insufficient balance!\n\nAvailable: ${formatCurrency(user.balance)}\nRequired: ${formatCurrency(amount)}\n\nPlease deposit funds first.`);
         return;
@@ -415,18 +421,21 @@ async function handleInvest(event) {
     const fee = amount * (config.feePercent / 100);
     const investAmount = amount - fee;
     
+    // Show loading
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Processing...';
+    submitBtn.disabled = true;
+    
     try {
         const newBalance = user.balance - amount;
         const now = Date.now();
         const endTime = now + (config.durationDays * 24 * 60 * 60 * 1000);
         
-        // Update user balance
-        await firebase.firestore().collection('users').doc(user.uid).update({
-            balance: newBalance
-        });
+        console.log('Creating investment...');
         
-        // Create investment record
-        const investment = {
+        // Create investment record first
+        const investmentData = {
             planName: config.name,
             amount: investAmount,
             originalAmount: amount,
@@ -440,8 +449,22 @@ async function handleInvest(event) {
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
         
-        await firebase.firestore().collection('users').doc(user.uid)
-            .collection('investments').add(investment);
+        console.log('Investment data:', investmentData);
+        
+        const investmentRef = await firebase.firestore()
+            .collection('users')
+            .doc(user.uid)
+            .collection('investments')
+            .add(investmentData);
+        
+        console.log('Investment created with ID:', investmentRef.id);
+        
+        // Update user balance
+        await firebase.firestore().collection('users').doc(user.uid).update({
+            balance: newBalance
+        });
+        
+        console.log('Balance updated');
         
         // Add transaction record
         await firebase.firestore().collection('users').doc(user.uid)
@@ -454,6 +477,8 @@ async function handleInvest(event) {
                 status: 'completed',
                 date: firebase.firestore.FieldValue.serverTimestamp()
             });
+        
+        console.log('Transaction recorded');
         
         // Update local user object
         user.balance = newBalance;
@@ -468,7 +493,27 @@ async function handleInvest(event) {
         
     } catch (error) {
         console.error('Investment error:', error);
-        alert('Investment failed. Please try again.');
+        console.error('Error details:', {
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
+        
+        let errorMessage = 'Investment failed. ';
+        
+        if (error.code === 'permission-denied') {
+            errorMessage += 'Permission denied. Please contact support.';
+        } else if (error.code === 'not-found') {
+            errorMessage += 'User not found. Please login again.';
+        } else {
+            errorMessage += error.message || 'Please try again.';
+        }
+        
+        alert(errorMessage);
+        
+        // Reset button
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
     }
 }
 
