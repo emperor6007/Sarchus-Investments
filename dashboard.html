@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Sarchus Investments</title>
-    <link rel="icon" type="png" href="SarchusInvestments.png">
+    <link rel="icon" type="image/png" href="SarchusInvestments.png">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="dashboard.css">
 </head>
@@ -30,21 +30,75 @@
         </div>
     </nav>
 
-    <div class="btc-price" id="cryptoPrices">     
-        <div class="crypto-price-item">
-            <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-            <span class="crypto-name">BTC:</span>
-            <span id="btcPrice">Loading...</span>
-        </div>
-        <div class="crypto-price-item">
-            <img src="eth.png" alt="Ethereum" class="crypto-icon">
-            <span class="crypto-name">ETH:</span>
-            <span id="ethPrice">Loading...</span>
-        </div>
-        <div class="crypto-price-item">
-            <img src="usdt.png" alt="USDT" class="crypto-icon">
-            <span class="crypto-name">USDT:</span>
-            <span id="usdtPrice">Loading...</span>
+    <div class="btc-price" id="cryptoPrices">
+        <div class="btc-price-wrapper">
+            <!-- First set -->
+            <div class="btc-price-content">
+                <div class="crypto-price-item">
+                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
+                    <span class="crypto-name">BTC:</span>
+                    <span class="price-value" id="btcPrice">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
+                    <span class="crypto-name">ETH:</span>
+                    <span class="price-value" id="ethPrice">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="usdt.png" alt="USDT" class="crypto-icon">
+                    <span class="crypto-name">USDT:</span>
+                    <span class="price-value" id="usdtPrice">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
+                    <span class="crypto-name">BTC:</span>
+                    <span class="price-value" id="btcPrice2">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
+                    <span class="crypto-name">ETH:</span>
+                    <span class="price-value" id="ethPrice2">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="usdt.png" alt="USDT" class="crypto-icon">
+                    <span class="crypto-name">USDT:</span>
+                    <span class="price-value" id="usdtPrice2">Loading...</span>
+                </div>
+            </div>
+            
+            <!-- Duplicate set for seamless loop -->
+            <div class="btc-price-content">
+                <div class="crypto-price-item">
+                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
+                    <span class="crypto-name">BTC:</span>
+                    <span class="price-value" id="btcPrice3">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
+                    <span class="crypto-name">ETH:</span>
+                    <span class="price-value" id="ethPrice3">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="usdt.png" alt="USDT" class="crypto-icon">
+                    <span class="crypto-name">USDT:</span>
+                    <span class="price-value" id="usdtPrice3">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
+                    <span class="crypto-name">BTC:</span>
+                    <span class="price-value" id="btcPrice4">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
+                    <span class="crypto-name">ETH:</span>
+                    <span class="price-value" id="ethPrice4">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="usdt.png" alt="USDT" class="crypto-icon">
+                    <span class="crypto-name">USDT:</span>
+                    <span class="price-value" id="usdtPrice4">Loading...</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -104,14 +158,6 @@
                 </div>
             </div>
 
-            <div class="dashboard-card">
-    <div class="card-header">
-        <h3>Active Investments</h3>
-    </div>
-    <div id="investmentList">
-        <p>No active investments</p>
-    </div>
-</div>
             <!-- Quick Actions -->
             <div class="quick-actions">
                 <h2>Quick Actions</h2>
@@ -128,6 +174,17 @@
                         <span class="btn-icon">📊</span>
                         <span class="btn-text">Invest Now</span>
                     </button>
+                </div>
+            </div>
+
+            <!-- Active Investments -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3>Active Investments</h3>
+                    <span class="card-icon">💎</span>
+                </div>
+                <div id="investmentList">
+                    <p style="text-align: center; color: #999; padding: 2rem;">Loading investments...</p>
                 </div>
             </div>
 
@@ -181,9 +238,9 @@
                 <div class="form-group">
                     <label>Investment Plan</label>
                     <select id="investPlan" required>
-                        <option value="starter">Silver (0.5% fee 15%ROI)</option>
-                        <option value="professional">Gold (0.3% fee 20%ROI)</option>
-                        <option value="enterprise">Diamond (0.1% fee 25%ROI)</option>
+                        <option value="starter">Silver Plan (15% ROI - 7 Days)</option>
+                        <option value="professional">Gold Plan (20% ROI - 14 Days)</option>
+                        <option value="enterprise">Diamond Plan (25% ROI - 30 Days)</option>
                     </select>
                 </div>
                 <button type="submit" class="cta-button">Confirm Investment</button>
@@ -202,7 +259,3 @@
     <script src="dashboard.js"></script>
 </body>
 </html>
-
-
-
-
