@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Tracker - CryptoVest</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo-link">
+                <img src="sarchusInvestments.png" alt="Sarchus Investments" class="logo-img">
+                <span class="logo-text">Sarchus Investments</span>
+            </a>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="btc-price" id="cryptoPrices">     
+        <div class="crypto-price-item">
+            <img src="btc.png" alt="Bitcoin" class="crypto-icon">
+            <span class="crypto-name">BTC:</span>
+            <span id="btcPrice">Loading...</span>
+        </div>
+        <div class="crypto-price-item">
+            <img src="eth.png" alt="Ethereum" class="crypto-icon">
+            <span class="crypto-name">ETH:</span>
+            <span id="ethPrice">Loading...</span>
+        </div>
+        <div class="crypto-price-item">
+            <img src="usdt.png" alt="USDT" class="crypto-icon">
+            <span class="crypto-name">USDT:</span>
+            <span id="usdtPrice">Loading...</span>
+        </div>
+
+    <section class="page-header">
+        <h1>Portfolio Dashboard</h1>
+        <p>Track and manage your Bitcoin investments in real-time</p>
+    </section>
+
+    <section class="section">
+        <div class="portfolio-summary">
+            <div class="summary-card">
+                <h3>Total Portfolio Value</h3>
+                <p class="portfolio-value" id="totalValue">$0.00</p>
+                <span class="change positive" id="totalChange">+0.00%</span>
+            </div>
+            <div class="summary-card">
+                <h3>Bitcoin Holdings</h3>
+                <p class="portfolio-value" id="btcHoldings">0.00000000 BTC</p>
+                <span class="change" id="btcValue">$0.00</span>
+            </div>
+            <div class="summary-card">
+                <h3>24h Change</h3>
+                <p class="portfolio-value" id="dayChange">$0.00</p>
+                <span class="change" id="dayChangePercent">0.00%</span>
+            </div>
+            <div class="summary-card">
+                <h3>All-Time Return</h3>
+                <p class="portfolio-value" id="allTimeReturn">$0.00</p>
+                <span class="change positive" id="returnPercent">+0.00%</span>
+            </div>
+        </div>
+
+        <div class="portfolio-calculator">
+            <h2>Investment Calculator</h2>
+            <div class="calculator-inputs">
+                <div class="input-group">
+                    <label for="investAmount">Investment Amount (USD)</label>
+                    <input type="number" id="investAmount" placeholder="10000" min="1000">
+                </div>
+                <div class="input-group">
+                    <label for="investPeriod">Investment Period (Months)</label>
+                    <input type="number" id="investPeriod" placeholder="12" min="1" max="120">
+                </div>
+                <div class="input-group">
+                    <label for="returnRate">Expected Annual Return (%)</label>
+                    <input type="number" id="returnRate" placeholder="15" min="1" max="100" step="0.1">
+                </div>
+                <button class="cta-button" onclick="calculateInvestment()">Calculate Returns</button>
+            </div>
+            <div class="calculator-result" id="calculatorResult" style="display: none;">
+                <h3>Projected Results</h3>
+                <div class="result-grid">
+                    <div class="result-item">
+                        <span class="result-label">Initial Investment:</span>
+                        <span class="result-value" id="resultInitial">$0.00</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Estimated Value:</span>
+                        <span class="result-value" id="resultFinal">$0.00</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Total Return:</span>
+                        <span class="result-value positive" id="resultProfit">$0.00</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Return Percentage:</span>
+                        <span class="result-value positive" id="resultPercent">0.00%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="market-info">
+            <h2>Market Overview</h2>
+            <div class="market-stats">
+                <div class="market-stat">
+                    <h4>Current Bitcoin Price</h4>
+                    <p id="currentPrice">Loading...</p>
+                </div>
+                <div class="market-stat">
+                    <h4>Market Cap</h4>
+                    <p>$850.5B</p>
+                </div>
+                <div class="market-stat">
+                    <h4>24h Volume</h4>
+                    <p>$45.2B</p>
+                </div>
+                <div class="market-stat">
+                    <h4>Circulating Supply</h4>
+                    <p>19.8M BTC</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-notice">
+            <h3>📊 Demo Mode</h3>
+            <p>This is a demonstration portfolio dashboard. To access your real portfolio and start investing, please <a href="contact.html">create an account</a>.</p>
+            <button class="cta-button" onclick="window.location.href='contact.html'">Get Started</button>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 CryptoVest. All rights reserved.</p>
+        <p>Cryptocurrency investments carry risk. Only invest what you can afford to lose.</p>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/portfolio.js"></script>
+</body>
+</html>

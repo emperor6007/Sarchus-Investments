@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deposit Funds - CryptoVest</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo-link">
+                <img src="sarchusInvestments.png" alt="Sarchus Investments" class="logo-img">
+                <span class="logo-text">Sarchus Investments</span>
+            </a>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="btc-price" id="cryptoPrices">     
+        <div class="crypto-price-item">
+            <img src="btc.png" alt="Bitcoin" class="crypto-icon">
+            <span class="crypto-name">BTC:</span>
+            <span id="btcPrice">Loading...</span>
+        </div>
+        <div class="crypto-price-item">
+            <img src="eth.png" alt="Ethereum" class="crypto-icon">
+            <span class="crypto-name">ETH:</span>
+            <span id="ethPrice">Loading...</span>
+        </div>
+        <div class="crypto-price-item">
+            <img src="usdt.png" alt="USDT" class="crypto-icon">
+            <span class="crypto-name">USDT:</span>
+            <span id="usdtPrice">Loading...</span>
+        </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <aside class="dashboard-sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html">📊 Dashboard</a></li>
+                <li><a href="deposit.html" class="active">💳 Deposit</a></li>
+                <li><a href="withdraw.html">💰 Withdraw</a></li>
+                <li><a href="transactions.html">📝 Transactions</a></li>
+                <li><a href="settings.html">⚙️ Settings</a></li>
+            </ul>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="page-header-small">
+                <h1>Deposit Cryptocurrency</h1>
+                <p>Send cryptocurrency to your wallet address below</p>
+            </div>
+
+            <div class="deposit-container">
+                <!-- Cryptocurrency Deposit Form -->
+                <div class="dashboard-card">
+                    <h2>Select Cryptocurrency</h2>
+                    <div class="crypto-selector">
+                        <div class="crypto-option" onclick="selectCrypto('BTC')">
+                            <input type="radio" name="crypto" id="cryptoBTC" value="BTC" checked>
+                            <label for="cryptoBTC">
+                                <img src="btc.png" alt="Bitcoin" class="crypto-option-icon">
+                                <div class="crypto-info">
+                                    <h3>Bitcoin (BTC)</h3>
+                                    <p>Bitcoin Network</p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="crypto-option" onclick="selectCrypto('ETH')">
+                            <input type="radio" name="crypto" id="cryptoETH" value="ETH">
+                            <label for="cryptoETH">
+                                <img src="eth.png" alt="Ethereum" class="crypto-option-icon">
+                                <div class="crypto-info">
+                                    <h3>Ethereum (ETH)</h3>
+                                    <p>ERC-20 Network</p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="crypto-option" onclick="selectCrypto('USDT')">
+                            <input type="radio" name="crypto" id="cryptoUSDT" value="USDT">
+                            <label for="cryptoUSDT">
+                                <img src="usdt.png" alt="USDT" class="crypto-option-icon">
+                                <div class="crypto-info">
+                                    <h3>Tether (USDT)</h3>
+                                    <p>TRC-20 Network</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deposit Address Display -->
+                <div class="dashboard-card crypto-deposit-card">
+                    <h2>Deposit Address</h2>
+                    <p class="deposit-instruction">Send <strong id="selectedCrypto">Bitcoin (BTC)</strong> to the address below. Your deposit will be credited after network confirmations.</p>
+
+                    <div class="crypto-address-box">
+                        <div class="address-display" id="cryptoAddress">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</div>
+                        <button type="button" class="copy-btn" onclick="copyAddress()">
+                            <span id="copyIcon">📋</span> Copy Address
+                        </button>
+                    </div>
+
+                    <div class="qr-code-section">
+                        <h3>Scan QR Code</h3>
+                        <div class="qr-code">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" alt="QR Code" id="qrCode">
+                        </div>
+                    </div>
+
+                    <div class="deposit-info">
+                        <h3>Important Information:</h3>
+                        <ul>
+                            <li>✓ Minimum deposit: <strong id="minDeposit">0.0001 BTC (~$10)</strong></li>
+                            <li>✓ Network confirmations required: <strong id="confirmations">3 confirmations</strong></li>
+                            <li>✓ Estimated time: <strong id="estimatedTime">30-60 minutes</strong></li>
+                            <li>⚠️ <strong>Only send <span id="warningCrypto">Bitcoin</span></strong> to this address</li>
+                            <li>⚠️ Sending other cryptocurrencies may result in <strong>permanent loss</strong></li>
+                            <li>⚠️ Your deposit will be reviewed and credited manually by our team</li>
+                        </ul>
+                    </div>
+
+                    <!-- Proof of Payment Upload -->
+                    <div class="upload-section">
+                        <h3>Submit Deposit Notification (Optional)</h3>
+                        <p>Upload a screenshot of your transaction to speed up verification</p>
+                        <form id="depositNotificationForm" onsubmit="handleDepositNotification(event)">
+                            <div class="form-group">
+                                <label for="txHash">Transaction Hash (Optional)</label>
+                                <input type="text" id="txHash" placeholder="Enter transaction hash if available">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="depositAmount">Amount Sent (USD)</label>
+                                <input type="number" id="depositAmount" min="10" required placeholder="Enter amount for tracking">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="depositNote">Additional Notes (Optional)</label>
+                                <textarea id="depositNote" rows="3" placeholder="Any additional information..."></textarea>
+                            </div>
+
+                            <button type="submit" class="cta-button full-width">Notify Admin of Deposit</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Recent Deposits Status -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Pending Deposits</h3>
+                        <span class="status-badge">Awaiting Confirmation</span>
+                    </div>
+                    <div class="transactions-list" id="pendingDeposits">
+                        <div class="empty-state">
+                            <p>No pending deposits</p>
+                            <small>Your deposits will appear here once submitted</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help Section -->
+                <div class="dashboard-card help-card">
+                    <h3>Need Help?</h3>
+                    <p>If you've made a deposit and it hasn't been credited within 24 hours, please contact support:</p>
+                    <div class="help-buttons">
+                        <button class="help-btn" onclick="window.location.href='contact.html'">
+                            📧 Contact Support
+                        </button>
+                        <button class="help-btn" onclick="alert('Live chat opening soon!')">
+                            💬 Live Chat
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="assets/js/firebase-config.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <script src="assets/js/deposit.js"></script>
+</body>
+</html>

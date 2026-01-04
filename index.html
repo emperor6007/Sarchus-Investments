@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarchus Investments - Professional Bitcoin Investment Platform</title>
+    <link rel="icon" type="image/png" href="sarchusInvestments.png">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo-link">
+                <img src="sarchusInvestments.png" alt="Sarchus Investments" class="logo-img">
+                <span class="logo-text">Sarchus Investments</span>
+            </a>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html" class="nav-login">Login</a></li>
+                <li><a href="register.html" class="nav-register">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="btc-price" id="cryptoPrices">     
+        <div class="crypto-price-item">
+            <img src="btc.png" alt="Bitcoin" class="crypto-icon">
+            <span class="crypto-name">BTC:</span>
+            <span id="btcPrice">Loading...</span>
+        </div>
+        <div class="crypto-price-item">
+            <img src="eth.png" alt="Ethereum" class="crypto-icon">
+            <span class="crypto-name">ETH:</span>
+            <span id="ethPrice">Loading...</span>
+        </div>
+        <div class="crypto-price-item">
+            <img src="usdt.png" alt="USDT" class="crypto-icon">
+            <span class="crypto-name">USDT:</span>
+            <span id="usdtPrice">Loading...</span>
+        </div>
+    </div>
+
+    <section class="hero" id="home">
+        <h1>Invest in Bitcoin with Confidence</h1>
+        <p>Professional cryptocurrency investment platform trusted by thousands of investors worldwide</p>
+        <button class="cta-button" onclick="window.location.href='register.html'">Start Investing Today</button>
+    </section>
+
+    <div class="stats">
+        <div class="stat-card">
+            <h3>$2.5B+</h3>
+            <p>Assets Under Management</p>
+        </div>
+        <div class="stat-card">
+            <h3>50K+</h3>
+            <p>Active Investors</p>
+        </div>
+        <div class="stat-card">
+            <h3>99.9%</h3>
+            <p>Uptime Guarantee</p>
+        </div>
+        <div class="stat-card">
+            <h3>24/7</h3>
+            <p>Customer Support</p>
+        </div>
+    </div>
+
+    <section class="section" id="features">
+        <h2>Why Choose CryptoVest</h2>
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Bank-Level Security</h3>
+                <p>Your investments are protected with military-grade encryption and cold storage solutions.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Real-Time Analytics</h3>
+                <p>Track your portfolio performance with advanced analytics and real-time market data.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💼</div>
+                <h3>Expert Management</h3>
+                <p>Our team of crypto experts actively manages and optimizes your investment strategy.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌐</div>
+                <h3>Global Access</h3>
+                <p>Invest from anywhere in the world with our mobile and web platforms.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Instant Transactions</h3>
+                <p>Buy and sell Bitcoin instantly with our high-speed trading infrastructure.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎓</div>
+                <h3>Educational Resources</h3>
+                <p>Learn from our comprehensive guides and stay updated with market insights.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section pricing" id="pricing">
+        <h2>Investment Plans</h2>
+        <div class="pricing-cards">
+            <div class="pricing-card">
+                <h3>Silver Plan</h3>
+                <div class="price">15<span>% ROI</span></div>
+                <ul class="pricing-features">
+                    <li>Minimum: $100</li>
+                    <li>Maximum: $999</li>
+                    <li>Duration: 14 Days</li>
+                    <li>ROI: 15%</li>
+                    <li>Basic Analytics</li>
+                    <li>Email Support</li>
+                    <li>Mobile App Access</li>
+                </ul>
+                <button class="cta-button" onclick="window.location.href='register.html'">Get Started</button>
+            </div>
+            <div class="pricing-card featured">
+                <h3>Gold Plan</h3>
+                <div class="price">20<span>% ROI</span></div>
+                <ul class="pricing-features">
+                    <li>Minimum: $1,000</li>
+                    <li>Maximum: $4,999</li>
+                    <li>Duration: 21 Days</li>
+                    <li>ROI: 20%</li>
+                    <li>Advanced Analytics</li>
+                    <li>Priority Support</li>
+                    <li>Enhanced Security</li>
+                    <li>Account Manager</li>
+                    <li>Tax Reporting Tools</li>
+                </ul>
+                <button class="cta-button" onclick="window.location.href='register.html'">Most Popular</button>
+            </div>
+            <div class="pricing-card">
+                <h3>Diamond Plan</h3>
+                <div class="price">25<span>% ROI</span></div>
+                <ul class="pricing-features">
+                    <li>Minimum: $5,000</li>
+                    <li>Maximum: $24,999</li>
+                    <li>Duration: 30 Days</li>
+                    <li>ROI: 25%</li>
+                    <li>Premium Analytics</li>
+                    <li>24/7 VIP Support</li>
+                    <li>Maximum Security</li>
+                    <li>Personal Investment Team</li>
+                    <li>Custom Strategies</li>
+                    <li>API Access</li>
+                </ul>
+                <button class="cta-button" onclick="window.location.href='register.html'">Premium Plan</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Sarchus Investments. All rights reserved.</p>
+        <p>Cryptocurrency investments carry risk. Only invest what you can afford to lose.</p>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdraw Funds - CryptoVest</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+   <nav>
+        <div class="container">
+            <a href="index.html" class="logo-link">
+                <img src="sarchusInvestments.png" alt="Sarchus Investments" class="logo-img">
+                <span class="logo-text">Sarchus Investments</span>
+            </a>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="btc-price" id="cryptoPrices">     
+        <div class="crypto-price-item">
+            <img src="btc.png" alt="Bitcoin" class="crypto-icon">
+            <span class="crypto-name">BTC:</span>
+            <span id="btcPrice">Loading...</span>
+        </div>
+        <div class="crypto-price-item">
+            <img src="eth.png" alt="Ethereum" class="crypto-icon">
+            <span class="crypto-name">ETH:</span>
+            <span id="ethPrice">Loading...</span>
+        </div>
+        <div class="crypto-price-item">
+            <img src="usdt.png" alt="USDT" class="crypto-icon">
+            <span class="crypto-name">USDT:</span>
+            <span id="usdtPrice">Loading...</span>
+        </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <aside class="dashboard-sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html">📊 Dashboard</a></li>
+                <li><a href="deposit.html">💳 Deposit</a></li>
+                <li><a href="withdraw.html" class="active">💰 Withdraw</a></li>
+                <li><a href="transactions.html">📝 Transactions</a></li>
+                <li><a href="settings.html">⚙️ Settings</a></li>
+            </ul>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="page-header-small">
+                <h1>Withdraw Cryptocurrency</h1>
+                <p>Request withdrawal to your crypto wallet</p>
+            </div>
+
+            <div class="withdraw-container">
+                <!-- Available Balance Card -->
+                <div class="dashboard-card balance-overview">
+                    <h3>Available Balance</h3>
+                    <div class="available-amount" id="availableBalance">$0.00</div>
+                    <p class="balance-note">Maximum amount available for withdrawal</p>
+                </div>
+
+                <!-- Withdrawal Request Form -->
+                <div class="dashboard-card">
+                    <h2>Withdrawal Request</h2>
+                    <p class="info-text">All withdrawal requests are processed manually by our team within 24 hours.</p>
+
+                    <form id="withdrawalForm" onsubmit="handleWithdrawalRequest(event)">
+                        <div class="form-group">
+                            <label>Select Cryptocurrency</label>
+                            <select id="withdrawCrypto" onchange="updateWithdrawInfo()" required>
+                                <option value="BTC">Bitcoin (BTC)</option>
+                                <option value="ETH">Ethereum (ETH)</option>
+                                <option value="USDT">Tether (USDT - TRC20)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Withdrawal Amount (USD)</label>
+                            <input type="number" id="withdrawAmount" min="20" step="0.01" required placeholder="Minimum $20">
+                            <small>Maximum: <span id="maxAmount">$0.00</span></small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Your Wallet Address</label>
+                            <input type="text" id="walletAddress" required placeholder="Enter your wallet address">
+                            <small class="warning">⚠️ Double-check your address. Crypto transactions cannot be reversed!</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Network</label>
+                            <select id="network" required>
+                                <option value="bitcoin">Bitcoin Mainnet</option>
+                            </select>
+                        </div>
+
+                        <div class="withdraw-summary">
+                            <h3>Withdrawal Summary</h3>
+                            <div class="summary-row">
+                                <span>Requested Amount:</span>
+                                <span id="summaryAmount">$0.00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Network Fee (estimated):</span>
+                                <span id="summaryFee">$5.00</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>You'll Receive (approx):</span>
+                                <span id="summaryTotal">$0.00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>In Crypto (approx):</span>
+                                <span id="summaryCrypto">0.00000000 BTC</span>
+                            </div>
+                        </div>
+
+                        <div class="alert warning">
+                            <strong>Important:</strong>
+                            <ul>
+                                <li>Minimum withdrawal: $20</li>
+                                <li>Processing time: Up to 24 hours</li>
+                                <li>Network fees will be deducted from your withdrawal</li>
+                                <li>Verify your wallet address carefully</li>
+                                <li>Transactions are irreversible</li>
+                            </ul>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <label>
+                                <input type="checkbox" id="confirmAddress" required>
+                                <span>I confirm that my wallet address is correct and I understand that crypto transactions cannot be reversed</span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="cta-button full-width">Submit Withdrawal Request</button>
+                    </form>
+                </div>
+
+                <!-- Withdrawal Requests Status -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Withdrawal Requests</h3>
+                    </div>
+                    <div class="transactions-list" id="withdrawalRequests">
+                        <div class="empty-state">
+                            <p>No withdrawal requests</p>
+                            <small>Your withdrawal requests will appear here</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help Section -->
+                <div class="dashboard-card help-card">
+                    <h3>Withdrawal Policy</h3>
+                    <div class="policy-content">
+                        <p><strong>Processing Time:</strong> All withdrawals are processed manually within 24 hours during business days.</p>
+                        <p><strong>Verification:</strong> We may require additional verification for large withdrawals or first-time withdrawals.</p>
+                        <p><strong>Fees:</strong> Network fees vary based on blockchain congestion and are deducted from your withdrawal amount.</p>
+                        <p><strong>Support:</strong> If you have any questions, please contact our support team.</p>
+                    </div>
+                    <button class="help-btn" onclick="window.location.href='contact.html'">
+                        📧 Contact Support
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="assets/js/firebase-config.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <script src="assets/js/withdraw.js"></script>
+</body>
+</html>

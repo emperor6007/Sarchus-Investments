@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - CryptoVest</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo-link">
+                <img src="sarchusInvestments.png" alt="Sarchus Investments" class="logo-img">
+                <span class="logo-text">Sarchus Investments</span>
+            </a>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="btc-price" id="cryptoPrices">     
+        <div class="crypto-price-item">
+            <img src="btc.png" alt="Bitcoin" class="crypto-icon">
+            <span class="crypto-name">BTC:</span>
+            <span id="btcPrice">Loading...</span>
+        </div>
+        <div class="crypto-price-item">
+            <img src="eth.png" alt="Ethereum" class="crypto-icon">
+            <span class="crypto-name">ETH:</span>
+            <span id="ethPrice">Loading...</span>
+        </div>
+        <div class="crypto-price-item">
+            <img src="usdt.png" alt="USDT" class="crypto-icon">
+            <span class="crypto-name">USDT:</span>
+            <span id="usdtPrice">Loading...</span>
+        </div>
+    </div>
+
+</nav>
+    <section class="page-header">
+        <h1>Get In Touch</h1>
+        <p>Start your Bitcoin investment journey with CryptoVest today</p>
+    </section>
+
+    <section class="section">
+        <div class="contact-container">
+            <div class="contact-info">
+                <h2>Contact Information</h2>
+                <div class="info-item">
+                    <div class="info-icon">📍</div>
+                    <div>
+                        <h3>Office Address</h3>
+                        <p>123 Financial District<br>New York, NY 10004<br>United States</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">📞</div>
+                    <div>
+                        <h3>Phone</h3>
+                        <p>+1 (555) 123-4567<br>Mon-Fri: 9AM - 6PM EST</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">✉️</div>
+                    <div>
+                        <h3>Email</h3>
+                        <p>support@cryptovest.com<br>info@cryptovest.com</p>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">💬</div>
+                    <div>
+                        <h3>Live Chat</h3>
+                        <p>Available 24/7 for all clients<br>Response time: Under 2 minutes</p>
+                    </div>
+                </div>
+
+                <div class="social-links">
+                    <h3>Follow Us</h3>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon">Twitter</a>
+                        <a href="#" class="social-icon">LinkedIn</a>
+                        <a href="#" class="social-icon">Telegram</a>
+                        <a href="#" class="social-icon">Discord</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form-container">
+                <h2>Start Your Investment Journey</h2>
+                <form class="contact-form" id="contactForm" onsubmit="handleSubmit(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" id="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="investmentType">Investment Interest *</label>
+                        <select id="investmentType" required>
+                            <option value="">Select an option</option>
+                            <option value="starter">Starter Plan ($1,000+)</option>
+                            <option value="professional">Professional Plan ($10,000+)</option>
+                            <option value="enterprise">Enterprise Plan ($100,000+)</option>
+                            <option value="consultation">Investment Consultation</option>
+                            <option value="other">Other Services</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="investment">Expected Investment Amount (USD) *</label>
+                        <input type="number" id="investment" min="1000" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="experience">Investment Experience *</label>
+                        <select id="experience" required>
+                            <option value="">Select your experience level</option>
+                            <option value="beginner">Beginner (New to crypto)</option>
+                            <option value="intermediate">Intermediate (Some experience)</option>
+                            <option value="advanced">Advanced (Experienced investor)</option>
+                            <option value="professional">Professional Trader</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Additional Information</label>
+                        <textarea id="message" rows="5" placeholder="Tell us about your investment goals, questions, or any specific requirements..."></textarea>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <label>
+                            <input type="checkbox" id="terms" required>
+                            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <label>
+                            <input type="checkbox" id="newsletter">
+                            Subscribe to market insights and investment updates
+                        </label>
+                    </div>
+
+                    <button type="submit" class="cta-button" style="width: 100%;">Submit Application</button>
+                </form>
+
+                <div class="success-message" id="successMessage" style="display: none;">
+                    <h3>✅ Application Submitted Successfully!</h3>
+                    <p>Thank you for your interest in CryptoVest. Our team will review your application and contact you within 24 hours.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" style="background: var(--light);">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-container">
+            <div class="faq-item">
+                <h3>What is the minimum investment amount?</h3>
+                <p>Our Starter plan requires a minimum investment of $1,000. For more advanced plans with additional features, please review our pricing page.</p>
+            </div>
+            <div class="faq-item">
+                <h3>How quickly can I start investing?</h3>
+                <p>After submitting your application and completing verification, you can typically start investing within 24-48 hours.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Are my investments insured?</h3>
+                <p>Yes, all custodial accounts are insured up to $500,000 through our partnership with leading insurance providers.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Can I withdraw my funds at any time?</h3>
+                <p>Yes, you have full control over your funds and can request withdrawals at any time. Processing typically takes 1-3 business days.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 CryptoVest. All rights reserved.</p>
+        <p>Cryptocurrency investments carry risk. Only invest what you can afford to lose.</p>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

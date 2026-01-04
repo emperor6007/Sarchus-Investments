@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - CryptoVest</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo-link">
+                <img src="sarchusInvestments.png" alt="Sarchus Investments" class="logo-img">
+                <span class="logo-text">Sarchus Investments</span>
+            </a>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="btc-price" id="cryptoPrices">     
+        <div class="crypto-price-item">
+            <img src="btc.png" alt="Bitcoin" class="crypto-icon">
+            <span class="crypto-name">BTC:</span>
+            <span id="btcPrice">Loading...</span>
+        </div>
+        <div class="crypto-price-item">
+            <img src="eth.png" alt="Ethereum" class="crypto-icon">
+            <span class="crypto-name">ETH:</span>
+            <span id="ethPrice">Loading...</span>
+        </div>
+        <div class="crypto-price-item">
+            <img src="usdt.png" alt="USDT" class="crypto-icon">
+            <span class="crypto-name">USDT:</span>
+            <span id="usdtPrice">Loading...</span>
+        </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <aside class="dashboard-sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html" class="active">📊 Dashboard</a></li>
+                <li><a href="deposit.html">💳 Deposit</a></li>
+                <li><a href="withdraw.html">💰 Withdraw</a></li>
+                <li><a href="transactions.html">📝 Transactions</a></li>
+                <li><a href="settings.html">⚙️ Settings</a></li>
+            </ul>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="dashboard-header">
+                <h1>Investment Dashboard</h1>
+                <div class="btc-price-mini" id="btcPriceMini">Loading...</div>
+            </div>
+
+            <!-- Account Overview -->
+            <div class="dashboard-grid">
+                <div class="dashboard-card balance-card">
+                    <div class="card-header">
+                        <h3>Total Balance</h3>
+                        <span class="card-icon">💰</span>
+                    </div>
+                    <div class="balance-amount" id="totalBalance">$0.00</div>
+                    <div class="balance-change positive" id="balanceChange">+0.00% (24h)</div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Bitcoin Holdings</h3>
+                        <span class="card-icon">₿</span>
+                    </div>
+                    <div class="balance-amount" id="btcHoldings">0.00000000 BTC</div>
+                    <div class="balance-info" id="btcValue">≈ $0.00</div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Total Profit</h3>
+                        <span class="card-icon">📈</span>
+                    </div>
+                    <div class="balance-amount positive" id="totalProfit">+$0.00</div>
+                    <div class="balance-info" id="profitPercent">+0.00%</div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Available Balance</h3>
+                        <span class="card-icon">💵</span>
+                    </div>
+                    <div class="balance-amount" id="availableBalance">$0.00</div>
+                    <div class="balance-info">Ready to invest</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h2>Quick Actions</h2>
+                <div class="action-buttons">
+                    <button class="action-btn deposit-btn" onclick="window.location.href='deposit.html'">
+                        <span class="btn-icon">💳</span>
+                        <span class="btn-text">Deposit Funds</span>
+                    </button>
+                    <button class="action-btn withdraw-btn" onclick="window.location.href='withdraw.html'">
+                        <span class="btn-icon">💰</span>
+                        <span class="btn-text">Withdraw</span>
+                    </button>
+                    <button class="action-btn invest-btn" onclick="openInvestModal()">
+                        <span class="btn-icon">📊</span>
+                        <span class="btn-text">Invest Now</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="dashboard-card transactions-card">
+                <div class="card-header">
+                    <h3>Recent Transactions</h3>
+                    <a href="transactions.html" class="view-all">View All</a>
+                </div>
+                <div class="transactions-list" id="recentTransactions">
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <span class="transaction-type deposit">Deposit</span>
+                            <span class="transaction-date">2 hours ago</span>
+                        </div>
+                        <div class="transaction-amount positive">+$5,000.00</div>
+                    </div>
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <span class="transaction-type investment">Investment</span>
+                            <span class="transaction-date">1 day ago</span>
+                        </div>
+                        <div class="transaction-amount">-$3,000.00</div>
+                    </div>
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <span class="transaction-type profit">Profit</span>
+                            <span class="transaction-date">2 days ago</span>
+                        </div>
+                        <div class="transaction-amount positive">+$450.00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Investment Performance Chart -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3>Portfolio Performance</h3>
+                    <select class="timeframe-select" id="timeframeSelect">
+                        <option value="7d">7 Days</option>
+                        <option value="30d" selected>30 Days</option>
+                        <option value="90d">90 Days</option>
+                        <option value="1y">1 Year</option>
+                    </select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Investment Modal -->
+    <div id="investModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeInvestModal()">&times;</span>
+            <h2>Invest in Bitcoin</h2>
+            <form id="investForm" onsubmit="handleInvest(event)">
+                <div class="form-group">
+                    <label>Investment Amount (USD)</label>
+                    <input type="number" id="investAmount" min="100" required placeholder="Enter amount">
+                </div>
+                <div class="form-group">
+                    <label>Investment Plan</label>
+                    <select id="investPlan" required>
+                        <option value="starter">Starter (0.5% fee)</option>
+                        <option value="professional">Professional (0.3% fee)</option>
+                        <option value="enterprise">Enterprise (0.1% fee)</option>
+                    </select>
+                </div>
+                <button type="submit" class="cta-button">Confirm Investment</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+</body>
+</html>

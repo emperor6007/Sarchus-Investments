@@ -1,0 +1,71 @@
+[debug] [2026-01-03T06:09:09.961Z] ----------------------------------------------------------------------
+[debug] [2026-01-03T06:09:09.967Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\JUSTICE\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init hosting
+[debug] [2026-01-03T06:09:09.968Z] CLI Version:   15.1.0
+[debug] [2026-01-03T06:09:09.968Z] Platform:      win32
+[debug] [2026-01-03T06:09:09.969Z] Node Version:  v25.2.1
+[debug] [2026-01-03T06:09:09.969Z] Time:          Sat Jan 03 2026 07:09:09 GMT+0100 (West Africa Standard Time)
+[debug] [2026-01-03T06:09:09.969Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-01-03T06:09:09.975Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\JUSTICE\Desktop\Equity Finance
+
+[debug] [2026-01-03T06:09:14.425Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-01-03T06:09:14.426Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] 
+[debug] [2026-01-03T06:09:22.263Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-01-03T06:09:22.265Z] > authorizing via signed-in user (lordjuso@gmail.com)
+[debug] [2026-01-03T06:09:22.267Z] Checked if tokens are valid: false, expires at: 1766217657349
+[debug] [2026-01-03T06:09:22.268Z] Checked if tokens are valid: false, expires at: 1766217657349
+[debug] [2026-01-03T06:09:22.269Z] > refreshing access token with scopes: []
+[debug] [2026-01-03T06:09:22.278Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-01-03T06:09:22.278Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-01-03T06:09:22.722Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-01-03T06:09:22.722Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-01-03T06:09:22.740Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/equity-finance [none]
+[debug] [2026-01-03T06:09:23.394Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/equity-finance 200
+[debug] [2026-01-03T06:09:23.395Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/equity-finance {"projectId":"equity-finance","projectNumber":"299540341342","displayName":"Equity Finance","name":"projects/equity-finance","resources":{"hostingSite":"equity-finance"},"state":"ACTIVE","etag":"1_8a25abc9-3a28-4f0e-a8aa-50ece2ae86fe"}
+[info] i  Using project equity-finance (Equity Finance) . 
+[info] 
+=== Hosting Setup
+[debug] [2026-01-03T06:09:23.420Z] Checked if tokens are valid: true, expires at: 1767424161723
+[debug] [2026-01-03T06:09:23.420Z] Checked if tokens are valid: true, expires at: 1767424161723
+[debug] [2026-01-03T06:09:23.421Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/equity-finance [none]
+[debug] [2026-01-03T06:09:23.787Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/equity-finance 200
+[debug] [2026-01-03T06:09:23.788Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/equity-finance {"projectId":"equity-finance","projectNumber":"299540341342","displayName":"Equity Finance","name":"projects/equity-finance","resources":{"hostingSite":"equity-finance"},"state":"ACTIVE","etag":"1_8a25abc9-3a28-4f0e-a8aa-50ece2ae86fe"}
+[info] 
+[info] Your public directory is the folder (relative to your project directory) that
+[info] will contain Hosting assets to be uploaded with firebase deploy. If you
+[info] have a build process for your assets, use your build's output directory.
+[info] 
+[info] 
+[info] i  Didn't detect a .git folder. Assuming C:\Users\JUSTICE\Desktop\Equity Finance is the project root. 
+[info] i  Authorizing with GitHub to upload your service account to a GitHub repository's secrets store. 
+[info] 
+[info] Visit this URL on this device to log in:
+[info] https://github.com/login/oauth/authorize?client_id=89cf50f02ac6aaed3484&state=1013410232&redirect_uri=http%3A%2F%2Flocalhost%3A9005&scope=read%3Auser%20repo%20public_repo
+[info] 
+[info] Waiting for authentication...
+[debug] [2026-01-03T06:10:47.107Z] >>> [apiv2][query] POST https://github.com/login/oauth/access_token [none]
+[debug] [2026-01-03T06:10:47.109Z] >>> [apiv2][body] POST https://github.com/login/oauth/access_token [stream]
+[debug] [2026-01-03T06:10:49.466Z] <<< [apiv2][status] POST https://github.com/login/oauth/access_token 200
+[debug] [2026-01-03T06:10:49.466Z] <<< [apiv2][body] POST https://github.com/login/oauth/access_token {"access_token":"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","token_type":"bearer","scope":"read:user,repo"}
+[debug] [2026-01-03T06:10:49.555Z] >>> [apiv2][query] GET https://api.github.com/user [none]
+[debug] [2026-01-03T06:10:50.456Z] <<< [apiv2][status] GET https://api.github.com/user 200
+[debug] [2026-01-03T06:10:50.456Z] <<< [apiv2][body] GET https://api.github.com/user {"login":"emperor6007","id":68384816,"node_id":"MDQ6VXNlcjY4Mzg0ODE2","avatar_url":"https://avatars.githubusercontent.com/u/68384816?v=4","gravatar_id":"","url":"https://api.github.com/users/emperor6007","html_url":"https://github.com/emperor6007","followers_url":"https://api.github.com/users/emperor6007/followers","following_url":"https://api.github.com/users/emperor6007/following{/other_user}","gists_url":"https://api.github.com/users/emperor6007/gists{/gist_id}","starred_url":"https://api.github.com/users/emperor6007/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/emperor6007/subscriptions","organizations_url":"https://api.github.com/users/emperor6007/orgs","repos_url":"https://api.github.com/users/emperor6007/repos","events_url":"https://api.github.com/users/emperor6007/events{/privacy}","received_events_url":"https://api.github.com/users/emperor6007/received_events","type":"User","user_view_type":"private","site_admin":false,"name":null,"company":null,"blog":"","location":null,"email":null,"hireable":null,"bio":null,"twitter_username":null,"notification_email":null,"public_repos":4,"public_gists":0,"followers":0,"following":0,"created_at":"2020-07-16T13:30:44Z","updated_at":"2025-12-29T13:05:02Z","private_gists":0,"total_private_repos":0,"owned_private_repos":0,"disk_usage":1916,"collaborators":0,"two_factor_authentication":false,"plan":{"name":"free","space":976562499,"collaborators":0,"private_repos":10000}}
+[info] 
+[info] +  Success! Logged into GitHub as emperor6007 
+[info] 
