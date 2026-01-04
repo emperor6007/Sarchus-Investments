@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Sarchus Investments</title>
-    <link rel="icon" type="png" href="SarchusInvestments.png">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="dashboard.css">
 </head>
@@ -21,11 +20,11 @@
                 <span></span>
             </button>
             <ul class="nav-menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="services.html">Services</a></li>
-                <li><a href="portfolio.html">Portfolio</a></li>
-                <li><a href="contact.html">Contact</a></li>
+                <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                <li><a href="deposit.html">Deposit</a></li>
+                <li><a href="withdraw.html">Withdraw</a></li>
+                <li><a href="transactions.html">Transactions</a></li>
+                <li><a href="#" onclick="handleDashboardLogout(); return false;">Logout</a></li>
             </ul>
         </div>
     </nav>
@@ -46,8 +45,7 @@
             <span class="crypto-name">USDT:</span>
             <span id="usdtPrice">Loading...</span>
         </div>
-        </div>
-    </nav>
+    </div>
 
     <div class="dashboard-container">
         <aside class="dashboard-sidebar">
@@ -56,13 +54,13 @@
                 <li><a href="deposit.html">💳 Deposit</a></li>
                 <li><a href="withdraw.html">💰 Withdraw</a></li>
                 <li><a href="transactions.html">📝 Transactions</a></li>
-                <li><a href="settings.html">⚙️ Settings</a></li>
+                <li><a href="#" onclick="handleDashboardLogout(); return false;">🚪 Logout</a></li>
             </ul>
         </aside>
 
         <main class="dashboard-main">
             <div class="dashboard-header">
-                <h1>Investment Dashboard</h1>
+                <h1>Welcome, <span id="userName">User</span>!</h1>
                 <div class="btc-price-mini" id="btcPriceMini">Loading...</div>
             </div>
 
@@ -133,24 +131,10 @@
                 <div class="transactions-list" id="recentTransactions">
                     <div class="transaction-item">
                         <div class="transaction-info">
-                            <span class="transaction-type deposit">Deposit</span>
-                            <span class="transaction-date">2 hours ago</span>
+                            <span class="transaction-type">No transactions yet</span>
+                            <span class="transaction-date">Start investing today!</span>
                         </div>
-                        <div class="transaction-amount positive">+$5,000.00</div>
-                    </div>
-                    <div class="transaction-item">
-                        <div class="transaction-info">
-                            <span class="transaction-type investment">Investment</span>
-                            <span class="transaction-date">1 day ago</span>
-                        </div>
-                        <div class="transaction-amount">-$3,000.00</div>
-                    </div>
-                    <div class="transaction-item">
-                        <div class="transaction-info">
-                            <span class="transaction-type profit">Profit</span>
-                            <span class="transaction-date">2 days ago</span>
-                        </div>
-                        <div class="transaction-amount positive">+$450.00</div>
+                        <div class="transaction-amount">$0.00</div>
                     </div>
                 </div>
             </div>
@@ -167,7 +151,9 @@
                     </select>
                 </div>
                 <div class="chart-container">
-                    <canvas id="performanceChart"></canvas>
+                    <p style="text-align: center; padding: 50px; color: #999;">
+                        Chart will appear once you start investing
+                    </p>
                 </div>
             </div>
         </main>
@@ -181,7 +167,7 @@
             <form id="investForm" onsubmit="handleInvest(event)">
                 <div class="form-group">
                     <label>Investment Amount (USD)</label>
-                    <input type="number" id="investAmount" min="100" required placeholder="Enter amount">
+                    <input type="number" id="investAmount" min="100" step="0.01" required placeholder="Enter amount (min $100)">
                 </div>
                 <div class="form-group">
                     <label>Investment Plan</label>
@@ -196,10 +182,14 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Your Scripts -->
+    <script src="firebase-config.js"></script>
     <script src="main.js"></script>
     <script src="dashboard.js"></script>
 </body>
-
 </html>
-
-
