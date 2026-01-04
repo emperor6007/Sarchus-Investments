@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sarchus Investments</title>
-    <link rel="icon" type="png" href="SarchusInvestments.png">
+    <title>Login - CryptoVest</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="auth.css">
 </head>
 <body>
-     <nav>
+    <nav>
         <div class="container">
             <a href="index.html" class="logo-link">
                 <img src="SarchusInvestments.png" alt="Sarchus Investments" class="logo-img">
@@ -47,16 +46,15 @@
             <span id="usdtPrice">Loading...</span>
         </div>
     </div>
-    </nav>
 
     <div class="auth-container">
         <div class="auth-box">
             <div class="auth-header">
                 <h1>Welcome Back</h1>
-                <p>Login to access your investment dashboard</p>
+                <p>Login to access your investment portfolio</p>
             </div>
 
-            <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
+            <form class="auth-form" id="loginForm">
                 <div class="form-group">
                     <label for="email">Email Address</label>
                     <input type="email" id="email" required placeholder="Enter your email">
@@ -72,7 +70,7 @@
                         <input type="checkbox" id="rememberMe">
                         <span>Remember me</span>
                     </label>
-                    <a href="#" class="forgot-password">Forgot Password?</a>
+                    <a href="#" class="forgot-password" onclick="resetPassword(); return false;">Forgot Password?</a>
                 </div>
 
                 <button type="submit" class="auth-button">Login</button>
@@ -82,36 +80,42 @@
                 </div>
 
                 <button type="button" class="social-button google" onclick="socialLogin('google')">
-                    <span>🔍</span> Continue with Google
+                    <span>🔴</span> Continue with Google
                 </button>
 
                 <button type="button" class="social-button facebook" onclick="socialLogin('facebook')">
-                    <span>📘</span> Continue with Facebook
+                    <span>🔵</span> Continue with Facebook
                 </button>
             </form>
 
             <div class="auth-footer">
-                <p>Don't have an account? <a href="register.html">Register here</a></p>
+                <p>Don't have an account? <a href="register.html">Create one now</a></p>
             </div>
         </div>
 
         <div class="auth-side">
             <div class="auth-side-content">
-                <h2>Start Your Investment Journey</h2>
+                <h2>Trusted by Thousands</h2>
                 <ul class="benefits-list">
-                    <li>✓ Secure Bitcoin investments</li>
-                    <li>✓ Real-time portfolio tracking</li>
-                    <li>✓ Instant deposits & withdrawals</li>
-                    <li>✓ 24/7 customer support</li>
-                    <li>✓ Advanced analytics tools</li>
+                    <li>✓ Secure & Encrypted</li>
+                    <li>✓ Real-time Portfolio Tracking</li>
+                    <li>✓ Professional Investment Tools</li>
+                    <li>✓ 24/7 Customer Support</li>
+                    <li>✓ Multiple Cryptocurrency Support</li>
+                    <li>✓ Instant Withdrawals</li>
                 </ul>
             </div>
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Your Scripts -->
+    <script src="firebase-config.js"></script>
     <script src="main.js"></script>
     <script src="auth.js"></script>
 </body>
-
 </html>
-
