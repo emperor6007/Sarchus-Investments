@@ -172,25 +172,61 @@ nav a.active {
     }
 }
 
-/* Bitcoin Price Ticker */
+/* Bitcoin Price Ticker - Sliding Animation */
 .btc-price {
     background: var(--accent);
     color: white;
-    padding: 1rem;
+    padding: 1rem 0;
     text-align: center;
     font-size: 1.1rem;
     margin-top: 60px;
+    overflow: hidden;
+    position: relative;
+}
+
+.btc-price-wrapper {
+    display: flex;
+    animation: slide 20s linear infinite;
+    width: fit-content;
+}
+
+.btc-price-content {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 2rem;
-    flex-wrap: wrap;
+    gap: 3rem;
+    padding: 0 2rem;
+    white-space: nowrap;
+}
+
+/* Duplicate for seamless loop */
+.btc-price-content:nth-child(2) {
+    padding-left: 3rem;
+}
+
+@keyframes slide {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* Pause animation on hover */
+.btc-price:hover .btc-price-wrapper {
+    animation-play-state: paused;
 }
 
 .crypto-price-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    padding: 0 1.5rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.crypto-price-item:last-child {
+    border-right: none;
 }
 
 .crypto-icon {
@@ -203,6 +239,11 @@ nav a.active {
 .crypto-name {
     font-weight: bold;
     color: var(--primary);
+}
+
+.price-value {
+    font-weight: 600;
+    color: #ffffff;
 }
 
 @keyframes pulse {
@@ -431,6 +472,20 @@ footer p {
     .logo-text {
         font-size: 1.2rem;
     }
+
+    .btc-price {
+        font-size: 0.95rem;
+    }
+
+    .crypto-price-item {
+        gap: 0.3rem;
+        padding: 0 1rem;
+    }
+
+    .crypto-icon {
+        width: 24px;
+        height: 24px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -447,8 +502,12 @@ footer p {
     }
 
     .btc-price {
-        font-size: 0.9rem;
-        gap: 1rem;
+        font-size: 0.85rem;
+    }
+
+    .crypto-price-item {
+        gap: 0.2rem;
+        padding: 0 0.8rem;
     }
 
     .crypto-icon {
