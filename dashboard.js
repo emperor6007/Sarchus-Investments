@@ -132,6 +132,57 @@ async function updateDashboardData(user) {
         } catch (fetchError) {
             console.log('Using fallback BTC price');
         }
+        async function simulateInvestments(user) {
+    const list = document.getElementById('investmentList');
+    list.innerHTML = '';
+
+    const invSnap = await firebase.firestore()
+        .collection('users')
+        .doc(user.uid)
+        .collection('investments')
+        .get();
+
+    let liveProfit = 0;
+
+    for (const doc of invSnap.docs) {
+        const inv = doc.data();
+        const now = Date.now();
+
+        const totalProfit = inv.amount * (inv.roiPercent / 100);
+        const durationMs = inv.durationDays * 86400000;
+        const elapsed = Math.min(now - inv.startTime, durationMs);
+
+        const earned = (elapsed / durationMs) * totalProfit;
+
+        if (inv.status === "active") {
+            liveProfit += earned;
+        }
+
+        // 🔥 AUTO CREDIT WHEN MATURED
+        if (now >= inv.endTime && inv.status === "active" && !inv.credited) {
+            await autoCreditInvestment(user.uid, doc.id, inv, totalProfit);
+        }
+
+        const progress = Math.min((elapsed / durationMs) * 100, 100).toFixed(1);
+
+        list.innerHTML += `
+            <div class="transaction-item">
+                <div>
+                    <strong>${inv.planName} Plan</strong><br>
+                    Invested: ${formatCurrency(inv.amount)}<br>
+                    Progress: ${progress}%
+                </div>
+                <div class="transaction-amount positive">
+                    +${formatCurrency(earned)}
+                </div>
+            </div>
+        `;
+    }
+
+    document.getElementById('totalProfit').innerText =
+        '+' + formatCurrency(liveProfit);
+}
+
         
         // Calculate values
         const btcValue = (user.btcHoldings || 0) * btcPrice;
@@ -376,4 +427,5 @@ window.handleInvest = handleInvest;
 window.handleDashboardLogout = handleDashboardLogout;
 
 console.log('Dashboard.js loaded successfully');
+
 
