@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deposit Funds - CryptoVest</title>
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
     <nav>
@@ -111,7 +111,7 @@
                     <p class="deposit-instruction">Send <strong id="selectedCrypto">Bitcoin (BTC)</strong> to the address below. Your deposit will be credited after network confirmations.</p>
 
                     <div class="crypto-address-box">
-                        <div class="address-display" id="cryptoAddress">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</div>
+                        <div class="address-display" id="cryptoAddress">bc1q0wa4efcyfcpwsl8jfqww5emhdzgv4d64lgceem</div>
                         <button type="button" class="copy-btn" onclick="copyAddress()">
                             <span id="copyIcon">📋</span> Copy Address
                         </button>
@@ -120,7 +120,7 @@
                     <div class="qr-code-section">
                         <h3>Scan QR Code</h3>
                         <div class="qr-code">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" alt="QR Code" id="qrCode">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=bc1q0wa4efcyfcpwsl8jfqww5emhdzgv4d64lgceem" alt="QR Code" id="qrCode">
                         </div>
                     </div>
 
@@ -195,9 +195,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="assets/js/firebase-config.js"></script>
-    <script src="assets/js/main.js"></script>
-    <script src="assets/js/dashboard.js"></script>
-    <script src="assets/js/deposit.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="main.js"></script>
+    <script src="dashboard.js"></script>
+    <script src="deposit.js"></script>
 </body>
+
 </html>
