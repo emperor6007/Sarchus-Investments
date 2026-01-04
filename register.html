@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Sarchus Investments</title>
-    <link rel="icon" type="png" href="SarchusInvestments.png">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="auth.css">
 </head>
@@ -46,8 +45,7 @@
             <span class="crypto-name">USDT:</span>
             <span id="usdtPrice">Loading...</span>
         </div>
-        </div>
-    </nav>
+    </div>
 
     <div class="auth-container">
         <div class="auth-box register-box">
@@ -56,7 +54,7 @@
                 <p>Join thousands of investors on CryptoVest</p>
             </div>
 
-            <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)">
+            <form class="auth-form" id="registerForm">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="firstName">First Name</label>
@@ -125,11 +123,11 @@
                 </div>
 
                 <button type="button" class="social-button google" onclick="socialLogin('google')">
-                    <span>🔍</span> Sign up with Google
+                    <span>🔴</span> Sign up with Google
                 </button>
 
                 <button type="button" class="social-button facebook" onclick="socialLogin('facebook')">
-                    <span>📘</span> Sign up with Facebook
+                    <span>🔵</span> Sign up with Facebook
                 </button>
             </form>
 
@@ -153,9 +151,14 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- Your Scripts -->
+    <script src="firebase-config.js"></script>
     <script src="main.js"></script>
     <script src="auth.js"></script>
 </body>
-
 </html>
-
