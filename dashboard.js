@@ -1,11 +1,10 @@
-// Dashboard JavaScript - Fixed Version
+// Dashboard JavaScript - Complete Investment System
 
-// Wait for Firebase authentication
 let dashboardInitialized = false;
+let profitUpdateInterval = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     if (window.location.pathname.includes('dashboard.html')) {
-        // Wait for Firebase to be ready
         const checkAuth = setInterval(() => {
             if (typeof firebase !== 'undefined' && firebase.auth) {
                 clearInterval(checkAuth);
@@ -21,12 +20,10 @@ function initializeDashboard() {
     
     console.log('Initializing dashboard...');
     
-    // Listen for auth state changes
     firebase.auth().onAuthStateChanged(async (user) => {
         if (user) {
             console.log('User authenticated:', user.uid);
             
-            // Load user data from Firestore
             try {
                 const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
                 
@@ -39,9 +36,11 @@ function initializeDashboard() {
                     
                     console.log('User data loaded:', window.currentUser);
                     
-                    // Update dashboard UI
                     updateDashboardUI(window.currentUser);
                     dashboardInitialized = true;
+                    
+                    // Start real-time profit updates
+                    startProfitSimulation(user.uid);
                 } else {
                     console.error('User document not found');
                     alert('User data not found. Please contact support.');
@@ -67,16 +66,12 @@ function initializeDashboard() {
 function updateDashboardUI(user) {
     console.log('Updating dashboard UI...');
     
-    // Update user name in navigation
     const userNameElements = document.querySelectorAll('#userName');
     userNameElements.forEach(el => {
         el.textContent = user.firstName || 'User';
     });
     
-    // Update dashboard data
     updateDashboardData(user);
-    
-    // Fetch and update Bitcoin price
     fetchBitcoinPrice();
     setInterval(fetchBitcoinPrice, 60000);
 }
@@ -84,24 +79,17 @@ function updateDashboardUI(user) {
 // Fetch Bitcoin Price
 async function fetchBitcoinPrice() {
     try {
-        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            }
-        });
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
         
         if (response.ok) {
             const data = await response.json();
             const btcPrice = data.bitcoin.usd;
             
-            // Update mini price display
             const btcPriceMini = document.getElementById('btcPriceMini');
             if (btcPriceMini) {
                 btcPriceMini.textContent = 'BTC: ' + formatCurrency(btcPrice);
             }
             
-            // Recalculate BTC value if user data exists
             if (window.currentUser) {
                 updateDashboardData(window.currentUser);
             }
@@ -114,17 +102,10 @@ async function fetchBitcoinPrice() {
 // Update Dashboard Data
 async function updateDashboardData(user) {
     try {
-        let btcPrice = 98547.23; // Default fallback price
+        let btcPrice = 98547.23;
         
-        // Try to fetch current Bitcoin price
         try {
-            const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd', {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-            
+            const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
             if (response.ok) {
                 const data = await response.json();
                 btcPrice = data.bitcoin.usd;
@@ -132,121 +113,245 @@ async function updateDashboardData(user) {
         } catch (fetchError) {
             console.log('Using fallback BTC price');
         }
-        async function simulateInvestments(user) {
-    const list = document.getElementById('investmentList');
-    list.innerHTML = '';
-
-    const invSnap = await firebase.firestore()
-        .collection('users')
-        .doc(user.uid)
-        .collection('investments')
-        .get();
-
-    let liveProfit = 0;
-
-    for (const doc of invSnap.docs) {
-        const inv = doc.data();
-        const now = Date.now();
-
-        const totalProfit = inv.amount * (inv.roiPercent / 100);
-        const durationMs = inv.durationDays * 86400000;
-        const elapsed = Math.min(now - inv.startTime, durationMs);
-
-        const earned = (elapsed / durationMs) * totalProfit;
-
-        if (inv.status === "active") {
-            liveProfit += earned;
-        }
-
-        // 🔥 AUTO CREDIT WHEN MATURED
-        if (now >= inv.endTime && inv.status === "active" && !inv.credited) {
-            await autoCreditInvestment(user.uid, doc.id, inv, totalProfit);
-        }
-
-        const progress = Math.min((elapsed / durationMs) * 100, 100).toFixed(1);
-
-        list.innerHTML += `
-            <div class="transaction-item">
-                <div>
-                    <strong>${inv.planName} Plan</strong><br>
-                    Invested: ${formatCurrency(inv.amount)}<br>
-                    Progress: ${progress}%
-                </div>
-                <div class="transaction-amount positive">
-                    +${formatCurrency(earned)}
-                </div>
-            </div>
-        `;
-    }
-
-    document.getElementById('totalProfit').innerText =
-        '+' + formatCurrency(liveProfit);
-}
-
         
-        // Calculate values
         const btcValue = (user.btcHoldings || 0) * btcPrice;
         const totalBalance = (user.balance || 0) + btcValue;
-        const totalProfit = user.totalProfit || 0;
-        const initialInvestment = totalBalance - totalProfit;
-        const profitPercent = initialInvestment > 0 ? (totalProfit / initialInvestment) * 100 : 0;
-        const dayChangePercent = 2.3; // Demo value
         
-        // Update total balance
+        // Update balance displays
         const totalBalanceEl = document.getElementById('totalBalance');
         if (totalBalanceEl) {
             totalBalanceEl.textContent = formatCurrency(totalBalance);
         }
         
-        // Update balance change
-        const balanceChangeEl = document.getElementById('balanceChange');
-        if (balanceChangeEl) {
-            balanceChangeEl.textContent = `+${dayChangePercent.toFixed(2)}% (24h)`;
-            balanceChangeEl.className = dayChangePercent >= 0 ? 'balance-change positive' : 'balance-change negative';
-        }
-        
-        // Update BTC holdings
         const btcHoldingsEl = document.getElementById('btcHoldings');
         if (btcHoldingsEl) {
             btcHoldingsEl.textContent = (user.btcHoldings || 0).toFixed(8) + ' BTC';
         }
         
-        // Update BTC value
         const btcValueEl = document.getElementById('btcValue');
         if (btcValueEl) {
             btcValueEl.textContent = '≈ ' + formatCurrency(btcValue);
         }
         
-        // Update total profit
-        const totalProfitEl = document.getElementById('totalProfit');
-        if (totalProfitEl) {
-            const profitClass = totalProfit >= 0 ? 'positive' : 'negative';
-            totalProfitEl.className = 'balance-amount ' + profitClass;
-            totalProfitEl.textContent = (totalProfit >= 0 ? '+' : '') + formatCurrency(totalProfit);
-        }
-        
-        // Update profit percentage
-        const profitPercentEl = document.getElementById('profitPercent');
-        if (profitPercentEl) {
-            profitPercentEl.textContent = (profitPercent >= 0 ? '+' : '') + profitPercent.toFixed(2) + '%';
-        }
-        
-        // Update available balance
         const availableBalanceEl = document.getElementById('availableBalance');
         if (availableBalanceEl) {
             availableBalanceEl.textContent = formatCurrency(user.balance || 0);
         }
         
-        // Update Bitcoin price in mini display
         const btcPriceMini = document.getElementById('btcPriceMini');
         if (btcPriceMini) {
             btcPriceMini.textContent = 'BTC: ' + formatCurrency(btcPrice);
         }
         
+        // Load and display investments
+        await loadActiveInvestments(user.uid);
+        
         console.log('Dashboard data updated successfully');
         
     } catch (error) {
         console.error('Error updating dashboard:', error);
+    }
+}
+
+// Start Profit Simulation (Updates every 10 seconds)
+function startProfitSimulation(uid) {
+    // Clear any existing interval
+    if (profitUpdateInterval) {
+        clearInterval(profitUpdateInterval);
+    }
+    
+    // Update immediately
+    calculateLiveProfits(uid);
+    
+    // Then update every 10 seconds
+    profitUpdateInterval = setInterval(() => {
+        calculateLiveProfits(uid);
+    }, 10000);
+}
+
+// Calculate Live Profits from Active Investments
+async function calculateLiveProfits(uid) {
+    try {
+        const investmentsSnapshot = await firebase.firestore()
+            .collection('users')
+            .doc(uid)
+            .collection('investments')
+            .where('status', '==', 'active')
+            .get();
+        
+        let totalLiveProfit = 0;
+        const now = Date.now();
+        
+        for (const doc of investmentsSnapshot.docs) {
+            const investment = doc.data();
+            
+            // Calculate elapsed time
+            const startTime = investment.startTime;
+            const endTime = investment.endTime;
+            const durationMs = endTime - startTime;
+            const elapsedMs = Math.min(now - startTime, durationMs);
+            
+            // Calculate current profit based on time elapsed
+            const totalProfitPotential = investment.amount * (investment.roiPercent / 100);
+            const currentProfit = (elapsedMs / durationMs) * totalProfitPotential;
+            
+            totalLiveProfit += currentProfit;
+            
+            // Auto-complete investment if time is up
+            if (now >= endTime && !investment.credited) {
+                await completeInvestment(uid, doc.id, investment, totalProfitPotential);
+            }
+        }
+        
+        // Update total profit display
+        const totalProfitEl = document.getElementById('totalProfit');
+        if (totalProfitEl) {
+            totalProfitEl.className = 'balance-amount positive';
+            totalProfitEl.textContent = '+' + formatCurrency(totalLiveProfit);
+        }
+        
+        const profitPercentEl = document.getElementById('profitPercent');
+        if (profitPercentEl) {
+            const profitPercent = window.currentUser.balance > 0 
+                ? (totalLiveProfit / window.currentUser.balance) * 100 
+                : 0;
+            profitPercentEl.textContent = '+' + profitPercent.toFixed(2) + '%';
+        }
+        
+    } catch (error) {
+        console.error('Error calculating live profits:', error);
+    }
+}
+
+// Load and Display Active Investments
+async function loadActiveInvestments(uid) {
+    try {
+        const investmentList = document.getElementById('investmentList');
+        if (!investmentList) return;
+        
+        const investmentsSnapshot = await firebase.firestore()
+            .collection('users')
+            .doc(uid)
+            .collection('investments')
+            .orderBy('startTime', 'desc')
+            .get();
+        
+        if (investmentsSnapshot.empty) {
+            investmentList.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem;">No active investments yet. Start investing today!</p>';
+            return;
+        }
+        
+        investmentList.innerHTML = '';
+        const now = Date.now();
+        
+        investmentsSnapshot.forEach(doc => {
+            const investment = doc.data();
+            const startTime = investment.startTime;
+            const endTime = investment.endTime;
+            const durationMs = endTime - startTime;
+            const elapsedMs = Math.min(now - startTime, durationMs);
+            
+            const progress = (elapsedMs / durationMs) * 100;
+            const totalProfitPotential = investment.amount * (investment.roiPercent / 100);
+            const currentProfit = (elapsedMs / durationMs) * totalProfitPotential;
+            
+            const daysRemaining = Math.ceil((endTime - now) / (1000 * 60 * 60 * 24));
+            const statusText = investment.status === 'completed' 
+                ? 'Completed' 
+                : daysRemaining > 0 
+                    ? `${daysRemaining} days remaining`
+                    : 'Maturing...';
+            
+            const statusClass = investment.status === 'completed' ? 'completed' : 'active';
+            
+            investmentList.innerHTML += `
+                <div class="investment-card ${statusClass}">
+                    <div class="investment-header">
+                        <div>
+                            <h4>${investment.planName} Plan</h4>
+                            <span class="investment-status">${statusText}</span>
+                        </div>
+                        <div class="investment-amount">
+                            ${formatCurrency(investment.amount)}
+                        </div>
+                    </div>
+                    <div class="investment-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progress}%"></div>
+                        </div>
+                        <div class="progress-text">${progress.toFixed(1)}%</div>
+                    </div>
+                    <div class="investment-details">
+                        <div class="detail-item">
+                            <span>ROI:</span>
+                            <strong>${investment.roiPercent}%</strong>
+                        </div>
+                        <div class="detail-item">
+                            <span>Duration:</span>
+                            <strong>${investment.durationDays} days</strong>
+                        </div>
+                        <div class="detail-item">
+                            <span>Current Profit:</span>
+                            <strong class="profit-green">+${formatCurrency(currentProfit)}</strong>
+                        </div>
+                        <div class="detail-item">
+                            <span>Expected Profit:</span>
+                            <strong class="profit-green">+${formatCurrency(totalProfitPotential)}</strong>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+    } catch (error) {
+        console.error('Error loading investments:', error);
+    }
+}
+
+// Complete Investment (Auto-credit when matured)
+async function completeInvestment(uid, investmentId, investment, totalProfit) {
+    try {
+        console.log(`Completing investment ${investmentId}...`);
+        
+        const userRef = firebase.firestore().collection('users').doc(uid);
+        const investmentRef = userRef.collection('investments').doc(investmentId);
+        
+        const totalPayout = investment.amount + totalProfit;
+        
+        // Credit balance and update total profit
+        await userRef.update({
+            balance: firebase.firestore.FieldValue.increment(totalPayout),
+            totalProfit: firebase.firestore.FieldValue.increment(totalProfit)
+        });
+        
+        // Mark investment as completed
+        await investmentRef.update({
+            status: 'completed',
+            credited: true,
+            completedAt: Date.now()
+        });
+        
+        // Add transaction record
+        await userRef.collection('transactions').add({
+            type: 'investment_maturity',
+            amount: totalPayout,
+            profit: totalProfit,
+            description: `${investment.planName} investment matured`,
+            status: 'completed',
+            date: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        console.log(`Investment ${investmentId} completed successfully`);
+        
+        // Refresh user data
+        const userDoc = await userRef.get();
+        if (userDoc.exists) {
+            window.currentUser = { uid: uid, ...userDoc.data() };
+            updateDashboardData(window.currentUser);
+        }
+        
+    } catch (error) {
+        console.error('Error completing investment:', error);
     }
 }
 
@@ -271,7 +376,6 @@ function closeInvestModal() {
     const modal = document.getElementById('investModal');
     if (modal) {
         modal.style.display = 'none';
-        // Reset form
         const form = document.getElementById('investForm');
         if (form) form.reset();
     }
@@ -291,7 +395,7 @@ async function handleInvest(event) {
     }
     
     if (amount > user.balance) {
-        alert('Insufficient balance! Please deposit funds first.');
+        alert(`Insufficient balance!\n\nAvailable: ${formatCurrency(user.balance)}\nRequired: ${formatCurrency(amount)}\n\nPlease deposit funds first.`);
         return;
     }
     
@@ -300,53 +404,65 @@ async function handleInvest(event) {
         return;
     }
     
-    // Calculate fee based on plan
-    let feePercent = 0.5;
-    let planName = 'Starter';
+    // Plan configurations
+    const planConfigs = {
+        starter: { name: 'Silver', feePercent: 0.5, roiPercent: 15, durationDays: 7 },
+        professional: { name: 'Gold', feePercent: 0.3, roiPercent: 20, durationDays: 14 },
+        enterprise: { name: 'Diamond', feePercent: 0.1, roiPercent: 25, durationDays: 30 }
+    };
     
-    if (plan === 'professional') {
-        feePercent = 0.3;
-        planName = 'Professional';
-    }
-    if (plan === 'enterprise') {
-        feePercent = 0.1;
-        planName = 'Enterprise';
-    }
-    
-    const fee = amount * (feePercent / 100);
+    const config = planConfigs[plan];
+    const fee = amount * (config.feePercent / 100);
     const investAmount = amount - fee;
     
     try {
-        // Update user balance in Firestore
         const newBalance = user.balance - amount;
+        const now = Date.now();
+        const endTime = now + (config.durationDays * 24 * 60 * 60 * 1000);
         
+        // Update user balance
         await firebase.firestore().collection('users').doc(user.uid).update({
             balance: newBalance
         });
+        
+        // Create investment record
+        const investment = {
+            planName: config.name,
+            amount: investAmount,
+            originalAmount: amount,
+            fee: fee,
+            roiPercent: config.roiPercent,
+            durationDays: config.durationDays,
+            startTime: now,
+            endTime: endTime,
+            status: 'active',
+            credited: false,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        await firebase.firestore().collection('users').doc(user.uid)
+            .collection('investments').add(investment);
+        
+        // Add transaction record
+        await firebase.firestore().collection('users').doc(user.uid)
+            .collection('transactions').add({
+                type: 'investment',
+                amount: amount,
+                fee: fee,
+                investAmount: investAmount,
+                plan: config.name,
+                status: 'completed',
+                date: firebase.firestore.FieldValue.serverTimestamp()
+            });
         
         // Update local user object
         user.balance = newBalance;
         window.currentUser = user;
         
-        // Create transaction record
-        const transaction = {
-            type: 'investment',
-            amount: amount,
-            fee: fee,
-            investAmount: investAmount,
-            plan: planName,
-            status: 'completed',
-            date: firebase.firestore.FieldValue.serverTimestamp()
-        };
-        
-        // Add transaction to Firestore
-        await firebase.firestore().collection('users').doc(user.uid)
-            .collection('transactions').add(transaction);
-        
         // Show success message
-        alert(`Investment successful!\n\nAmount: ${formatCurrency(amount)}\nFee: ${formatCurrency(fee)}\nInvested: ${formatCurrency(investAmount)}\nPlan: ${planName}`);
+        alert(`Investment Successful! 🎉\n\nPlan: ${config.name}\nAmount: ${formatCurrency(amount)}\nFee: ${formatCurrency(fee)}\nInvested: ${formatCurrency(investAmount)}\nROI: ${config.roiPercent}%\nDuration: ${config.durationDays} days\n\nYour profits will start accumulating immediately!`);
         
-        // Close modal and refresh dashboard
+        // Close modal and refresh
         closeInvestModal();
         updateDashboardData(user);
         
@@ -355,51 +471,15 @@ async function handleInvest(event) {
         alert('Investment failed. Please try again.');
     }
 }
-async function loadInvestments(user) {
-    const list = document.getElementById('investmentList');
-    list.innerHTML = '';
 
-    const snap = await firebase.firestore()
-        .collection('users')
-        .doc(user.uid)
-        .collection('investments')
-        .where('status', '==', 'active')
-        .get();
-
-    let totalProfit = 0;
-
-    snap.forEach(doc => {
-        const inv = doc.data();
-        const now = Date.now();
-
-        const progress = Math.min(
-            (now - inv.start) / (inv.end - inv.start),
-            1
-        );
-
-        const earned = inv.profit * progress;
-        totalProfit += earned;
-
-        list.innerHTML += `
-            <div class="transaction-item">
-                <div>
-                    <strong>${inv.plan.days} Days Plan</strong><br>
-                    Invested: ${formatCurrency(inv.amount)}
-                </div>
-                <div class="transaction-amount positive">
-                    +${formatCurrency(earned)}
-                </div>
-            </div>
-        `;
-    });
-
-    document.getElementById('totalProfit').innerText =
-        '+' + formatCurrency(totalProfit);
-}
-
-// Handle logout from dashboard
+// Handle logout
 function handleDashboardLogout() {
     if (confirm('Are you sure you want to logout?')) {
+        // Clear profit update interval
+        if (profitUpdateInterval) {
+            clearInterval(profitUpdateInterval);
+        }
+        
         firebase.auth().signOut().then(() => {
             window.currentUser = null;
             dashboardInitialized = false;
@@ -420,49 +500,10 @@ window.addEventListener('click', function(event) {
     }
 });
 
-// Export functions for global access
+// Export functions
 window.openInvestModal = openInvestModal;
 window.closeInvestModal = closeInvestModal;
 window.handleInvest = handleInvest;
 window.handleDashboardLogout = handleDashboardLogout;
 
 console.log('Dashboard.js loaded successfully');
-
-// ===============================
-// AUTO CREDIT INVESTMENT (PURE JS)
-// ===============================
-async function autoCreditInvestment(uid, investmentId, inv, totalProfit) {
-    try {
-        const userRef = firebase.firestore().collection('users').doc(uid);
-        const investmentRef = userRef.collection('investments').doc(investmentId);
-
-        const payout = inv.amount + totalProfit;
-
-        // Credit balance + profit
-        await userRef.update({
-            balance: firebase.firestore.FieldValue.increment(payout),
-            totalProfit: firebase.firestore.FieldValue.increment(totalProfit)
-        });
-
-        // Mark investment completed
-        await investmentRef.update({
-            status: "completed",
-            credited: true,
-            completedAt: Date.now()
-        });
-
-        // Add transaction record
-        await userRef.collection('transactions').add({
-            type: "investment_maturity",
-            amount: payout,
-            description: "Investment matured & credited",
-            date: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        console.log(`Investment ${investmentId} credited successfully`);
-    } catch (error) {
-        console.error("Auto credit failed:", error);
-    }
-}
-
-
