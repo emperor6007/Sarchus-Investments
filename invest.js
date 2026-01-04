@@ -57,3 +57,14 @@ document.getElementById('investmentForm').addEventListener('submit', async e => 
     alert("Investment successful");
     location.href = "dashboard.html";
 });
+
+await ref.collection('investments').add({
+    planName: plan.toUpperCase(),
+    amount,
+    roiPercent: selectedPlan.roi,
+    durationDays: selectedPlan.days,
+    startTime: Date.now(),
+    endTime: Date.now() + selectedPlan.days * 86400000,
+    status: "active",
+    credited: false
+});
