@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invest Funds</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+<div class="dashboard-main">
+    <h1>Select Investment Plan</h1>
+
+    <div class="dashboard-grid">
+
+        <!-- Silver -->
+        <div class="dashboard-card">
+            <h3>Silver Plan</h3>
+            <p>15% ROI • 14 Days</p>
+            <p>$100 – $999</p>
+            <button onclick="selectPlan('silver')">Select</button>
+        </div>
+
+        <!-- Gold -->
+        <div class="dashboard-card">
+            <h3>Gold Plan</h3>
+            <p>20% ROI • 21 Days</p>
+            <p>$1,000 – $4,999</p>
+            <button onclick="selectPlan('gold')">Select</button>
+        </div>
+
+        <!-- Diamond -->
+        <div class="dashboard-card">
+            <h3>Diamond Plan</h3>
+            <p>25% ROI • 30 Days</p>
+            <p>$5,000 – $24,999</p>
+            <button onclick="selectPlan('diamond')">Select</button>
+        </div>
+
+    </div>
+
+    <form id="investmentForm" style="display:none; margin-top:30px;">
+        <h2 id="selectedPlan"></h2>
+        <input type="number" id="amount" placeholder="Enter amount" required>
+        <button type="submit">Confirm Investment</button>
+    </form>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script src="firebase-config.js"></script>
+<script src="invest.js"></script>
+
+</body>
+</html>
