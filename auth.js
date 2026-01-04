@@ -23,20 +23,44 @@ function initializeAuth() {
 
     console.log('Firebase initialized successfully');
 
+    // Get current page
+    const currentPage = window.location.pathname.split('/').pop();
+    const isAuthPage = currentPage === 'login.html' || currentPage === 'register.html';
+    const isDashboardPage = currentPage === 'dashboard.html';
+
     // Monitor authentication state changes
     firebase.auth().onAuthStateChanged(async (user) => {
         if (user) {
-            console.log('User logged in:', user.email);
-            await loadUserData(user.uid);
+            console.log('User authenticated:', user.uid);
             
-            // Redirect authenticated users away from auth pages
-            const currentPage = window.location.pathname.split('/').pop();
-            if (currentPage === 'login.html' || currentPage === 'register.html') {
-                window.location.href = 'dashboard.html';
+            // Load user data from Firestore
+            try {
+                const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                
+                if (userDoc.exists) {
+                    window.currentUser = {
+                        uid: user.uid,
+                        ...userDoc.data()
+                    };
+                    console.log('User data loaded');
+                    
+                    // Redirect from auth pages to dashboard
+                    if (isAuthPage) {
+                        console.log('Redirecting to dashboard...');
+                        window.location.href = 'dashboard.html';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
             }
         } else {
-            console.log('No user logged in');
-            checkProtectedPages();
+            console.log('No user authenticated');
+            
+            // Only redirect to login if on a protected page and not already on auth page
+            if (isDashboardPage && !isAuthPage) {
+                console.log('Redirecting to login...');
+                window.location.href = 'login.html';
+            }
         }
     });
 
@@ -83,28 +107,6 @@ async function loadUserData(uid) {
 // Get current user data
 function getUserData() {
     return window.currentUser || null;
-}
-
-// Check if current page requires authentication
-function checkProtectedPages() {
-    const protectedPages = [
-        'dashboard.html', 
-        'deposit.html', 
-        'withdraw.html', 
-        'transactions.html', 
-        'settings.html'
-    ];
-    
-    const currentPath = window.location.pathname;
-    const currentPage = currentPath.substring(currentPath.lastIndexOf('/') + 1);
-    
-    if (protectedPages.includes(currentPage)) {
-        const user = firebase.auth().currentUser;
-        if (!user) {
-            alert('Please login to access this page.');
-            window.location.href = 'login.html';
-        }
-    }
 }
 
 // Handle user registration
@@ -197,10 +199,9 @@ async function handleRegister(event) {
         };
         
         // Success message
-        alert(`Welcome to CryptoVest, ${firstName}!\n\nYour account has been created successfully.\n\nA verification email has been sent to ${email}.\nPlease verify your email address.`);
+        alert(`Welcome to CryptoVest, ${firstName}!\n\nYour account has been created successfully.`);
         
-        // Redirect to dashboard
-        window.location.href = 'dashboard.html';
+        // Firebase will automatically redirect via onAuthStateChanged
         
     } catch (error) {
         console.error('Registration error:', error);
@@ -291,8 +292,8 @@ async function handleLogin(event) {
             // Welcome message
             alert(`Welcome back, ${userData.firstName}!`);
             
-            // Redirect to dashboard
-            window.location.href = 'dashboard.html';
+            // Firebase will automatically redirect via onAuthStateChanged
+            
         } else {
             console.error('User document not found');
             alert('User data not found. Please contact support.');
@@ -398,7 +399,8 @@ async function socialLogin(provider) {
             }
             
             alert(`Welcome, ${window.currentUser.firstName}!`);
-            window.location.href = 'dashboard.html';
+            
+            // Firebase will automatically redirect via onAuthStateChanged
             
         } catch (error) {
             console.error('Google sign-in error:', error);
