@@ -19,26 +19,10 @@ async function fetchCryptoPrices() {
         const ethPrice = `$${data.ethereum.usd.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         const usdtPrice = `$${data.tether.usd.toFixed(4)}`;
         
-        // Update all BTC price elements (for seamless scrolling)
-        const btcElements = ['btcPrice', 'btcPrice2', 'btcPrice3', 'btcPrice4'];
-        btcElements.forEach(id => {
-            const element = document.getElementById(id);
-            if (element) element.textContent = btcPrice;
-        });
-        
-        // Update all ETH price elements
-        const ethElements = ['ethPrice', 'ethPrice2', 'ethPrice3', 'ethPrice4'];
-        ethElements.forEach(id => {
-            const element = document.getElementById(id);
-            if (element) element.textContent = ethPrice;
-        });
-        
-        // Update all USDT price elements
-        const usdtElements = ['usdtPrice', 'usdtPrice2', 'usdtPrice3', 'usdtPrice4'];
-        usdtElements.forEach(id => {
-            const element = document.getElementById(id);
-            if (element) element.textContent = usdtPrice;
-        });
+        // Update ALL price elements dynamically
+        updateAllPriceElements('btcPrice', btcPrice);
+        updateAllPriceElements('ethPrice', ethPrice);
+        updateAllPriceElements('usdtPrice', usdtPrice);
         
         return data;
     } catch (error) {
@@ -49,24 +33,21 @@ async function fetchCryptoPrices() {
         const fallbackEth = '$3,456.78';
         const fallbackUsdt = '$1.0000';
         
-        const btcElements = ['btcPrice', 'btcPrice2', 'btcPrice3', 'btcPrice4'];
-        const ethElements = ['ethPrice', 'ethPrice2', 'ethPrice3', 'ethPrice4'];
-        const usdtElements = ['usdtPrice', 'usdtPrice2', 'usdtPrice3', 'usdtPrice4'];
-        
-        btcElements.forEach(id => {
-            const element = document.getElementById(id);
-            if (element) element.textContent = fallbackBtc;
-        });
-        
-        ethElements.forEach(id => {
-            const element = document.getElementById(id);
-            if (element) element.textContent = fallbackEth;
-        });
-        
-        usdtElements.forEach(id => {
-            const element = document.getElementById(id);
-            if (element) element.textContent = fallbackUsdt;
-        });
+        updateAllPriceElements('btcPrice', fallbackBtc);
+        updateAllPriceElements('ethPrice', fallbackEth);
+        updateAllPriceElements('usdtPrice', fallbackUsdt);
+    }
+}
+
+// Helper function to update all elements with a given base ID
+function updateAllPriceElements(baseId, value) {
+    // Update elements with IDs like: btcPrice, btcPrice2, btcPrice3, btcPrice4
+    for (let i = 1; i <= 10; i++) {
+        const id = i === 1 ? baseId : `${baseId}${i}`;
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = value;
+        }
     }
 }
 
