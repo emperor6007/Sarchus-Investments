@@ -304,6 +304,47 @@ async function handleInvest(event) {
         alert('Investment failed. Please try again.');
     }
 }
+async function loadInvestments(user) {
+    const list = document.getElementById('investmentList');
+    list.innerHTML = '';
+
+    const snap = await firebase.firestore()
+        .collection('users')
+        .doc(user.uid)
+        .collection('investments')
+        .where('status', '==', 'active')
+        .get();
+
+    let totalProfit = 0;
+
+    snap.forEach(doc => {
+        const inv = doc.data();
+        const now = Date.now();
+
+        const progress = Math.min(
+            (now - inv.start) / (inv.end - inv.start),
+            1
+        );
+
+        const earned = inv.profit * progress;
+        totalProfit += earned;
+
+        list.innerHTML += `
+            <div class="transaction-item">
+                <div>
+                    <strong>${inv.plan.days} Days Plan</strong><br>
+                    Invested: ${formatCurrency(inv.amount)}
+                </div>
+                <div class="transaction-amount positive">
+                    +${formatCurrency(earned)}
+                </div>
+            </div>
+        `;
+    });
+
+    document.getElementById('totalProfit').innerText =
+        '+' + formatCurrency(totalProfit);
+}
 
 // Handle logout from dashboard
 function handleDashboardLogout() {
@@ -335,3 +376,4 @@ window.handleInvest = handleInvest;
 window.handleDashboardLogout = handleDashboardLogout;
 
 console.log('Dashboard.js loaded successfully');
+
