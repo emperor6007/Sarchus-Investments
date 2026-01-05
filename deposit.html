@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deposit Funds - Sarchus Investments</title>
-    <link rel="icon" type="png" href="SarchusInvestments.png">
+    <link rel="icon" type="image/png" href="SarchusInvestments.png">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="deposit.css">
 </head>
 <body>
     <nav>
@@ -21,18 +22,17 @@
                 <span></span>
             </button>
             <ul class="nav-menu">
-                <li><a href="dashboard.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="services.html">Services</a></li>
-                <li><a href="portfolio.html">Portfolio</a></li>
-                <li><a href="contact.html">Contact</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="deposit.html" class="active">Deposit</a></li>
+                <li><a href="withdraw.html">Withdraw</a></li>
+                <li><a href="transactions.html">Transactions</a></li>
+                <li><a href="#" onclick="handleDashboardLogout(); return false;">Logout</a></li>
             </ul>
         </div>
     </nav>
 
-   <div class="btc-price" id="cryptoPrices">
+    <div class="btc-price" id="cryptoPrices">
         <div class="btc-price-wrapper">
-            <!-- First set -->
             <div class="btc-price-content">
                 <div class="crypto-price-item">
                     <img src="btc.png" alt="Bitcoin" class="crypto-icon">
@@ -66,7 +66,6 @@
                 </div>
             </div>
             
-            <!-- Duplicate set for seamless loop -->
             <div class="btc-price-content">
                 <div class="crypto-price-item">
                     <img src="btc.png" alt="Bitcoin" class="crypto-icon">
@@ -101,7 +100,6 @@
             </div>
         </div>
     </div>
-    </nav>
 
     <div class="dashboard-container">
         <aside class="dashboard-sidebar">
@@ -110,7 +108,7 @@
                 <li><a href="deposit.html" class="active">💳 Deposit</a></li>
                 <li><a href="withdraw.html">💰 Withdraw</a></li>
                 <li><a href="transactions.html">📝 Transactions</a></li>
-                <li><a href="#" onclick="handleDashboardLogout(); return false;">⛔ Logout</a></li>
+                <li><a href="#" onclick="handleDashboardLogout(); return false;">🚪 Logout</a></li>
             </ul>
         </aside>
 
@@ -121,41 +119,48 @@
             </div>
 
             <div class="deposit-container">
-                <!-- Cryptocurrency Deposit Form -->
+                <!-- Cryptocurrency Selector Dropdown -->
                 <div class="dashboard-card">
                     <h2>Select Cryptocurrency</h2>
-                    <div class="crypto-selector">
-                        <div class="crypto-option" onclick="selectCrypto('BTC')">
-                            <input type="radio" name="crypto" id="cryptoBTC" value="BTC" checked>
-                            <label for="cryptoBTC">
-                                <img src="btc.png" alt="Bitcoin" class="crypto-option-icon">
-                                <div class="crypto-info">
+                    <div class="crypto-dropdown-container">
+                        <button class="crypto-dropdown-btn" onclick="toggleCryptoDropdown()">
+                            <div class="selected-crypto">
+                                <img src="btc.png" alt="Bitcoin" class="crypto-dropdown-icon" id="selectedCryptoIcon">
+                                <div class="crypto-dropdown-info">
+                                    <h3 id="selectedCryptoName">Bitcoin (BTC)</h3>
+                                    <p id="selectedCryptoNetwork">Bitcoin Network</p>
+                                </div>
+                            </div>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        
+                        <div class="crypto-dropdown-menu" id="cryptoDropdownMenu">
+                            <div class="crypto-dropdown-item" onclick="selectCrypto('BTC')">
+                                <img src="btc.png" alt="Bitcoin" class="crypto-dropdown-icon">
+                                <div class="crypto-dropdown-info">
                                     <h3>Bitcoin (BTC)</h3>
                                     <p>Bitcoin Network</p>
                                 </div>
-                            </label>
-                        </div>
-
-                        <div class="crypto-option" onclick="selectCrypto('ETH')">
-                            <input type="radio" name="crypto" id="cryptoETH" value="ETH">
-                            <label for="cryptoETH">
-                                <img src="eth.png" alt="Ethereum" class="crypto-option-icon">
-                                <div class="crypto-info">
+                                <span class="check-icon">✓</span>
+                            </div>
+                            
+                            <div class="crypto-dropdown-item" onclick="selectCrypto('ETH')">
+                                <img src="eth.png" alt="Ethereum" class="crypto-dropdown-icon">
+                                <div class="crypto-dropdown-info">
                                     <h3>Ethereum (ETH)</h3>
                                     <p>ERC-20 Network</p>
                                 </div>
-                            </label>
-                        </div>
-
-                        <div class="crypto-option" onclick="selectCrypto('USDT')">
-                            <input type="radio" name="crypto" id="cryptoUSDT" value="USDT">
-                            <label for="cryptoUSDT">
-                                <img src="usdt.png" alt="USDT" class="crypto-option-icon">
-                                <div class="crypto-info">
+                                <span class="check-icon">✓</span>
+                            </div>
+                            
+                            <div class="crypto-dropdown-item" onclick="selectCrypto('USDT')">
+                                <img src="usdt.png" alt="USDT" class="crypto-dropdown-icon">
+                                <div class="crypto-dropdown-info">
                                     <h3>Tether (USDT)</h3>
                                     <p>TRC-20 Network</p>
                                 </div>
-                            </label>
+                                <span class="check-icon">✓</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -194,7 +199,7 @@
                     <!-- Proof of Payment Upload -->
                     <div class="upload-section">
                         <h3>Submit Deposit Notification (Optional)</h3>
-                        <p>Upload a screenshot of your transaction to speed up verification</p>
+                        <p>Upload details of your transaction to speed up verification</p>
                         <form id="depositNotificationForm" onsubmit="handleDepositNotification(event)">
                             <div class="form-group">
                                 <label for="txHash">Transaction Hash (Optional)</label>
@@ -203,7 +208,7 @@
                             
                             <div class="form-group">
                                 <label for="depositAmount">Amount Sent (USD)</label>
-                                <input type="number" id="depositAmount" min="10" required placeholder="Enter amount for tracking">
+                                <input type="number" id="depositAmount" min="10" step="0.01" required placeholder="Enter amount for tracking">
                             </div>
 
                             <div class="form-group">
@@ -247,21 +252,14 @@
         </main>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
     <script src="firebase-config.js"></script>
     <script src="main.js"></script>
     <script src="dashboard.js"></script>
     <script src="deposit.js"></script>
 </body>
-
 </html>
-
-
-
-
-
-
-
-
