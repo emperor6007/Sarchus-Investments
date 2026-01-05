@@ -1,0 +1,492 @@
+/* Deposit Page Specific Styles - Complete Version */
+
+.deposit-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Crypto Dropdown Styles */
+.crypto-dropdown-container {
+    position: relative;
+    margin-top: 1rem;
+}
+
+.crypto-dropdown-btn {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.crypto-dropdown-btn:hover {
+    border-color: var(--primary);
+    box-shadow: 0 3px 10px rgba(247, 147, 26, 0.15);
+    transform: translateY(-1px);
+}
+
+.crypto-dropdown-btn:active {
+    transform: translateY(0);
+}
+
+.selected-crypto {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.crypto-dropdown-icon {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.crypto-dropdown-info {
+    text-align: left;
+}
+
+.crypto-dropdown-info h3 {
+    font-size: 1.1rem;
+    color: var(--dark);
+    margin-bottom: 0.2rem;
+    font-weight: 600;
+}
+
+.crypto-dropdown-info p {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+}
+
+.dropdown-arrow {
+    font-size: 1rem;
+    color: var(--primary);
+    transition: transform 0.3s ease;
+    font-weight: bold;
+}
+
+.crypto-dropdown-btn.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.crypto-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.crypto-dropdown-menu.active {
+    max-height: 500px;
+    opacity: 1;
+}
+
+.crypto-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #f0f0f0;
+    position: relative;
+}
+
+.crypto-dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.crypto-dropdown-item:hover {
+    background: #fef5ed;
+}
+
+.crypto-dropdown-item.selected {
+    background: #fef5ed;
+    border-left: 4px solid var(--primary);
+    padding-left: calc(1.5rem - 4px);
+}
+
+.check-icon {
+    position: absolute;
+    right: 1.5rem;
+    color: var(--primary);
+    font-size: 1.3rem;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.crypto-dropdown-item.selected .check-icon {
+    opacity: 1;
+}
+
+/* Deposit Address Section */
+.crypto-deposit-card {
+    margin-top: 2rem;
+}
+
+.deposit-instruction {
+    color: #666;
+    margin-bottom: 2rem;
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+.crypto-address-box {
+    background: linear-gradient(135deg, #fef5ed 0%, #fff9f5 100%);
+    padding: 2rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+    text-align: center;
+    border: 2px solid #ffe5cc;
+}
+
+.address-display {
+    background: white;
+    padding: 1.2rem;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.95rem;
+    word-break: break-all;
+    margin-bottom: 1.5rem;
+    border: 2px solid #e0e0e0;
+    color: var(--dark);
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.copy-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 3px 8px rgba(247, 147, 26, 0.3);
+}
+
+.copy-btn:hover {
+    background: #d47e16;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(247, 147, 26, 0.4);
+}
+
+.copy-btn:active {
+    transform: translateY(0);
+}
+
+.qr-code-section {
+    margin: 2.5rem 0;
+    text-align: center;
+    padding: 2rem;
+    background: var(--light);
+    border-radius: 10px;
+}
+
+.qr-code-section h3 {
+    margin-bottom: 1.5rem;
+    color: var(--dark);
+    font-size: 1.2rem;
+}
+
+.qr-code {
+    display: inline-block;
+}
+
+.qr-code img {
+    border: 5px solid white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    max-width: 100%;
+    height: auto;
+}
+
+/* Deposit Info */
+.deposit-info {
+    background: #fff3cd;
+    padding: 1.8rem;
+    border-radius: 10px;
+    margin-top: 2rem;
+    border: 2px solid #ffc107;
+}
+
+.deposit-info h3 {
+    color: #856404;
+    margin-bottom: 1.2rem;
+    font-size: 1.1rem;
+}
+
+.deposit-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.deposit-info li {
+    padding: 0.6rem 0;
+    color: #856404;
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+.deposit-info li strong {
+    font-weight: 600;
+}
+
+/* Upload Section */
+.upload-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid #f0f0f0;
+}
+
+.upload-section h3 {
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.upload-section > p {
+    color: #666;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(247, 147, 26, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+/* Status Badge */
+.status-badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    background: #fff3cd;
+    color: #856404;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid #ffc107;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #999;
+}
+
+.empty-state p {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.empty-state small {
+    font-size: 0.9rem;
+    color: #bbb;
+}
+
+/* Help Card */
+.help-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem !important;
+}
+
+.help-card h3 {
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.help-card p {
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.help-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.help-btn {
+    background: white;
+    color: #667eea;
+    border: none;
+    padding: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+.help-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+.help-btn:active {
+    transform: translateY(-1px);
+}
+
+/* CTA Button Override for Deposit Page */
+.deposit-container .cta-button {
+    background: linear-gradient(135deg, var(--primary) 0%, #f39c12 100%);
+    box-shadow: 0 4px 10px rgba(247, 147, 26, 0.3);
+}
+
+.deposit-container .cta-button:hover {
+    box-shadow: 0 6px 15px rgba(247, 147, 26, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .crypto-dropdown-icon {
+        width: 38px;
+        height: 38px;
+    }
+
+    .crypto-dropdown-info h3 {
+        font-size: 1rem;
+    }
+
+    .crypto-dropdown-info p {
+        font-size: 0.85rem;
+    }
+
+    .crypto-dropdown-btn {
+        padding: 1.2rem;
+    }
+
+    .crypto-dropdown-item {
+        padding: 1rem;
+    }
+
+    .address-display {
+        font-size: 0.85rem;
+        padding: 1rem;
+    }
+
+    .copy-btn {
+        padding: 0.8rem 1.8rem;
+        font-size: 0.95rem;
+    }
+
+    .help-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .qr-code-section {
+        padding: 1.5rem;
+    }
+
+    .deposit-info {
+        padding: 1.5rem;
+    }
+
+    .upload-section {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .deposit-container {
+        padding: 0 0.5rem;
+    }
+
+    .selected-crypto {
+        gap: 0.8rem;
+    }
+
+    .crypto-dropdown-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .crypto-dropdown-info h3 {
+        font-size: 0.95rem;
+    }
+
+    .crypto-dropdown-info p {
+        font-size: 0.8rem;
+    }
+
+    .crypto-dropdown-btn {
+        padding: 1rem;
+    }
+
+    .deposit-info li {
+        font-size: 0.9rem;
+        padding: 0.5rem 0;
+    }
+
+    .crypto-address-box {
+        padding: 1.5rem;
+    }
+
+    .qr-code-section h3 {
+        font-size: 1.1rem;
+    }
+}
