@@ -108,14 +108,14 @@
                 <li><a href="deposit.html" class="active">💳 Deposit</a></li>
                 <li><a href="withdraw.html">💰 Withdraw</a></li>
                 <li><a href="transactions.html">📝 Transactions</a></li>
-                <li><a href="#" onclick="handleDashboardLogout(); return false;">⛔ Logout</a></li>
+                <li><a href="#" onclick="handleDashboardLogout(); return false;">🚪 Logout</a></li>
             </ul>
         </aside>
 
         <main class="dashboard-main">
             <div class="page-header-small">
                 <h1>Deposit Cryptocurrency</h1>
-                <p>Send cryptocurrency to your wallet address below</p>
+                <p>Send cryptocurrency to your unique wallet address below</p>
             </div>
 
             <div class="deposit-container">
@@ -135,7 +135,7 @@
                         </button>
                         
                         <div class="crypto-dropdown-menu" id="cryptoDropdownMenu">
-                            <div class="crypto-dropdown-item" onclick="selectCrypto('BTC')">
+                            <div class="crypto-dropdown-item selected" onclick="selectCrypto('BTC')">
                                 <img src="btc.png" alt="Bitcoin" class="crypto-dropdown-icon">
                                 <div class="crypto-dropdown-info">
                                     <h3>Bitcoin (BTC)</h3>
@@ -167,69 +167,106 @@
 
                 <!-- Deposit Address Display -->
                 <div class="dashboard-card crypto-deposit-card">
-                    <h2>Deposit Address</h2>
-                    <p class="deposit-instruction">Send <strong id="selectedCrypto">Bitcoin (BTC)</strong> to the address below. Your deposit will be credited after network confirmations.</p>
+                    <h2>Your Unique Deposit Address</h2>
+                    <p class="deposit-instruction">
+                        This is <strong>your personal <span id="selectedCrypto">Bitcoin (BTC)</span> wallet address</strong>. 
+                        Send cryptocurrency to this address and notify us below. Your deposit will be credited after verification.
+                    </p>
 
                     <div class="crypto-address-box">
-                        <div class="address-display" id="cryptoAddress">bc1q0wa4efcyfcpwsl8jfqww5emhdzgv4d64lgceem</div>
+                        <h3 style="margin-bottom: 1rem; color: var(--dark);">Wallet Address</h3>
+                        <div class="address-display" id="cryptoAddress">Loading your wallet address...</div>
                         <button type="button" class="copy-btn" onclick="copyAddress()">
                             <span id="copyIcon">📋</span> Copy Address
                         </button>
                     </div>
 
                     <div class="qr-code-section">
-                        <h3>Scan QR Code</h3>
+                        <h3>Scan QR Code with Your Wallet App</h3>
+                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 1rem;">
+                            Use any cryptocurrency wallet app to scan this QR code
+                        </p>
                         <div class="qr-code">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=bc1q0wa4efcyfcpwsl8jfqww5emhdzgv4d64lgceem" alt="QR Code" id="qrCode">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=bitcoin:loading&margin=10" 
+                                 alt="Wallet QR Code" 
+                                 id="qrCode"
+                                 style="border-radius: 10px;">
                         </div>
                     </div>
 
                     <div class="deposit-info">
-                        <h3>Important Information:</h3>
+                        <h3>⚠️ Important Information:</h3>
                         <ul>
                             <li>✓ Minimum deposit: <strong id="minDeposit">0.0001 BTC (~$10)</strong></li>
                             <li>✓ Network confirmations required: <strong id="confirmations">3 confirmations</strong></li>
                             <li>✓ Estimated time: <strong id="estimatedTime">30-60 minutes</strong></li>
                             <li>⚠️ <strong>Only send <span id="warningCrypto">Bitcoin</span></strong> to this address</li>
-                            <li>⚠️ Sending other cryptocurrencies may result in <strong>permanent loss</strong></li>
-                            <li>⚠️ Your deposit will be reviewed and credited manually by our team</li>
+                            <li>⚠️ Sending other cryptocurrencies will result in <strong>permanent loss of funds</strong></li>
+                            <li>⚠️ This is your <strong>unique personal wallet</strong> - do not share with others</li>
+                            <li>✓ Your deposit will be reviewed and credited by our team within <strong>24 hours</strong></li>
                         </ul>
                     </div>
 
                     <!-- Proof of Payment Upload -->
                     <div class="upload-section">
-                        <h3>Submit Deposit Notification (Optional)</h3>
-                        <p>Upload details of your transaction to speed up verification</p>
+                        <h3>📤 Submit Deposit Notification</h3>
+                        <p>After sending your deposit, fill out the form below to speed up verification</p>
                         <form id="depositNotificationForm" onsubmit="handleDepositNotification(event)">
                             <div class="form-group">
                                 <label for="txHash">Transaction Hash (Optional)</label>
-                                <input type="text" id="txHash" placeholder="Enter transaction hash if available">
+                                <input type="text" 
+                                       id="txHash" 
+                                       placeholder="Enter transaction hash/ID if available"
+                                       style="font-family: 'Courier New', monospace;">
+                                <small style="color: #666; font-size: 0.85rem;">
+                                    You can find this in your wallet's transaction history
+                                </small>
                             </div>
                             
                             <div class="form-group">
-                                <label for="depositAmount">Amount Sent (USD)</label>
-                                <input type="number" id="depositAmount" min="10" step="0.01" required placeholder="Enter amount for tracking">
+                                <label for="depositAmount">Amount Sent (USD) <span style="color: #e74c3c;">*</span></label>
+                                <input type="number" 
+                                       id="depositAmount" 
+                                       min="10" 
+                                       step="0.01" 
+                                       required 
+                                       placeholder="Enter the USD value of your deposit">
+                                <small style="color: #666; font-size: 0.85rem;">
+                                    Enter the approximate USD value for tracking purposes
+                                </small>
                             </div>
 
                             <div class="form-group">
                                 <label for="depositNote">Additional Notes (Optional)</label>
-                                <textarea id="depositNote" rows="3" placeholder="Any additional information..."></textarea>
+                                <textarea id="depositNote" 
+                                          rows="3" 
+                                          placeholder="Any additional information about your deposit..."></textarea>
                             </div>
 
-                            <button type="submit" class="cta-button full-width">Notify Admin of Deposit</button>
+                            <button type="submit" class="cta-button full-width">
+                                🔔 Notify Admin of My Deposit
+                            </button>
                         </form>
+                        
+                        <div style="margin-top: 1rem; padding: 1rem; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196f3;">
+                            <strong style="color: #1976d2;">💡 Pro Tip:</strong>
+                            <p style="margin: 0.5rem 0 0 0; color: #1565c0; font-size: 0.9rem;">
+                                Submitting this notification helps our team process your deposit faster. 
+                                You'll receive an email confirmation once your account is credited.
+                            </p>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Recent Deposits Status -->
                 <div class="dashboard-card">
                     <div class="card-header">
-                        <h3>Pending Deposits</h3>
-                        <span class="status-badge">Awaiting Confirmation</span>
+                        <h3>Your Deposit History</h3>
+                        <span class="status-badge">Recent Activity</span>
                     </div>
                     <div class="transactions-list" id="pendingDeposits">
                         <div class="empty-state">
-                            <p>No pending deposits</p>
+                            <p>No deposits yet</p>
                             <small>Your deposits will appear here once submitted</small>
                         </div>
                     </div>
@@ -237,15 +274,30 @@
 
                 <!-- Help Section -->
                 <div class="dashboard-card help-card">
-                    <h3>Need Help?</h3>
-                    <p>If you've made a deposit and it hasn't been credited within 24 hours, please contact support:</p>
+                    <h3>🆘 Need Help?</h3>
+                    <p>
+                        If you've made a deposit and it hasn't been credited within 24 hours, 
+                        or if you have any questions about the deposit process, please contact our support team:
+                    </p>
                     <div class="help-buttons">
                         <button class="help-btn" onclick="window.location.href='contact.html'">
-                            📧 Contact Support
+                            📧 Email Support
                         </button>
-                        <button class="help-btn" onclick="alert('Live chat opening soon!')">
+                        <button class="help-btn" onclick="alert('Live chat opening soon! For now, please use email support.')">
                             💬 Live Chat
                         </button>
+                        <button class="help-btn" onclick="window.location.href='transactions.html'">
+                            📝 View All Transactions
+                        </button>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.2); border-radius: 8px;">
+                        <strong style="display: block; margin-bottom: 0.5rem;">📞 Support Hours:</strong>
+                        <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">
+                            Monday - Friday: 9:00 AM - 6:00 PM EST<br>
+                            Saturday: 10:00 AM - 4:00 PM EST<br>
+                            Sunday: Closed
+                        </p>
                     </div>
                 </div>
             </div>
@@ -263,4 +315,3 @@
     <script src="deposit.js"></script>
 </body>
 </html>
-
