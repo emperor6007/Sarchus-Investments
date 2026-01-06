@@ -1,4 +1,4 @@
-// Dashboard JavaScript - Complete Investment System
+// Enhanced Dashboard JavaScript with Transaction Display
 
 let dashboardInitialized = false;
 let profitUpdateInterval = null;
@@ -36,11 +36,24 @@ function initializeDashboard() {
                     
                     console.log('User data loaded:', window.currentUser);
                     
+                    // Initialize user wallets if not exists
+                    if (!userData.wallets && typeof createUserWallets === 'function') {
+                        await createUserWallets(user.uid);
+                        const updatedDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                        window.currentUser = {
+                            uid: user.uid,
+                            ...updatedDoc.data()
+                        };
+                    }
+                    
                     updateDashboardUI(window.currentUser);
                     dashboardInitialized = true;
                     
                     // Start real-time profit updates
                     startProfitSimulation(user.uid);
+                    
+                    // Load recent transactions
+                    loadRecentTransactions(user.uid);
                 } else {
                     console.error('User document not found');
                     alert('User data not found. Please contact support.');
@@ -153,17 +166,97 @@ async function updateDashboardData(user) {
     }
 }
 
+// Load Recent Transactions
+async function loadRecentTransactions(userId) {
+    try {
+        const transactionsContainer = document.getElementById('recentTransactions');
+        if (!transactionsContainer) return;
+        
+        const transactionsSnapshot = await firebase.firestore()
+            .collection('users')
+            .doc(userId)
+            .collection('transactions')
+            .orderBy('date', 'desc')
+            .limit(5)
+            .get();
+        
+        if (transactionsSnapshot.empty) {
+            transactionsContainer.innerHTML = `
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <span class="transaction-type">No transactions yet</span>
+                        <span class="transaction-date">Start investing today!</span>
+                    </div>
+                    <div class="transaction-amount">$0.00</div>
+                </div>
+            `;
+            return;
+        }
+        
+        transactionsContainer.innerHTML = '';
+        
+        transactionsSnapshot.forEach(doc => {
+            const transaction = doc.data();
+            const date = transaction.date ? 
+                (transaction.date.toDate ? transaction.date.toDate() : new Date(transaction.date)) : 
+                new Date();
+            
+            const amount = transaction.usdAmount || transaction.amount || 0;
+            const isPositive = ['deposit', 'profit', 'investment_maturity'].includes(transaction.type);
+            
+            const typeLabels = {
+                'deposit': 'Deposit',
+                'withdrawal': 'Withdrawal',
+                'investment': 'Investment',
+                'profit': 'Profit',
+                'investment_maturity': 'Investment Maturity'
+            };
+            
+            const typeLabel = typeLabels[transaction.type] || transaction.type;
+            const typeClass = transaction.type;
+            const amountClass = isPositive ? 'positive' : '';
+            
+            const transactionItem = document.createElement('div');
+            transactionItem.className = 'transaction-item';
+            transactionItem.innerHTML = `
+                <div class="transaction-info">
+                    <span class="transaction-type ${typeClass}">${typeLabel}</span>
+                    <span class="transaction-date">${formatTransactionDate(date)}</span>
+                </div>
+                <div class="transaction-amount ${amountClass}">
+                    ${isPositive ? '+' : '-'}${formatCurrency(Math.abs(amount))}
+                </div>
+            `;
+            
+            transactionsContainer.appendChild(transactionItem);
+        });
+        
+    } catch (error) {
+        console.error('Error loading recent transactions:', error);
+    }
+}
+
+// Format transaction date
+function formatTransactionDate(date) {
+    const now = new Date();
+    const diff = now - date;
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    
+    if (hours < 1) return 'Just now';
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 7) return `${days}d ago`;
+    return date.toLocaleDateString();
+}
+
 // Start Profit Simulation (Updates every 10 seconds)
 function startProfitSimulation(uid) {
-    // Clear any existing interval
     if (profitUpdateInterval) {
         clearInterval(profitUpdateInterval);
     }
     
-    // Update immediately
     calculateLiveProfits(uid);
     
-    // Then update every 10 seconds
     profitUpdateInterval = setInterval(() => {
         calculateLiveProfits(uid);
     }, 10000);
@@ -185,25 +278,21 @@ async function calculateLiveProfits(uid) {
         for (const doc of investmentsSnapshot.docs) {
             const investment = doc.data();
             
-            // Calculate elapsed time
             const startTime = investment.startTime;
             const endTime = investment.endTime;
             const durationMs = endTime - startTime;
             const elapsedMs = Math.min(now - startTime, durationMs);
             
-            // Calculate current profit based on time elapsed
             const totalProfitPotential = investment.amount * (investment.roiPercent / 100);
             const currentProfit = (elapsedMs / durationMs) * totalProfitPotential;
             
             totalLiveProfit += currentProfit;
             
-            // Auto-complete investment if time is up
             if (now >= endTime && !investment.credited) {
                 await completeInvestment(uid, doc.id, investment, totalProfitPotential);
             }
         }
         
-        // Update total profit display
         const totalProfitEl = document.getElementById('totalProfit');
         if (totalProfitEl) {
             totalProfitEl.className = 'balance-amount positive';
@@ -308,7 +397,7 @@ async function loadActiveInvestments(uid) {
     }
 }
 
-// Complete Investment (Auto-credit when matured)
+// Complete Investment
 async function completeInvestment(uid, investmentId, investment, totalProfit) {
     try {
         console.log(`Completing investment ${investmentId}...`);
@@ -318,20 +407,17 @@ async function completeInvestment(uid, investmentId, investment, totalProfit) {
         
         const totalPayout = investment.amount + totalProfit;
         
-        // Credit balance and update total profit
         await userRef.update({
             balance: firebase.firestore.FieldValue.increment(totalPayout),
             totalProfit: firebase.firestore.FieldValue.increment(totalProfit)
         });
         
-        // Mark investment as completed
         await investmentRef.update({
             status: 'completed',
             credited: true,
             completedAt: Date.now()
         });
         
-        // Add transaction record
         await userRef.collection('transactions').add({
             type: 'investment_maturity',
             amount: totalPayout,
@@ -343,11 +429,11 @@ async function completeInvestment(uid, investmentId, investment, totalProfit) {
         
         console.log(`Investment ${investmentId} completed successfully`);
         
-        // Refresh user data
         const userDoc = await userRef.get();
         if (userDoc.exists) {
             window.currentUser = { uid: uid, ...userDoc.data() };
             updateDashboardData(window.currentUser);
+            loadRecentTransactions(uid);
         }
         
     } catch (error) {
@@ -394,12 +480,6 @@ async function handleInvest(event) {
         return;
     }
     
-    console.log('Investment attempt:', {
-        amount: amount,
-        userBalance: user.balance,
-        plan: plan
-    });
-    
     if (amount > user.balance) {
         alert(`Insufficient balance!\n\nAvailable: ${formatCurrency(user.balance)}\nRequired: ${formatCurrency(amount)}\n\nPlease deposit funds first.`);
         return;
@@ -410,7 +490,6 @@ async function handleInvest(event) {
         return;
     }
     
-    // Plan configurations
     const planConfigs = {
         starter: { name: 'Silver', feePercent: 0.5, roiPercent: 15, durationDays: 7 },
         professional: { name: 'Gold', feePercent: 0.3, roiPercent: 20, durationDays: 14 },
@@ -421,7 +500,6 @@ async function handleInvest(event) {
     const fee = amount * (config.feePercent / 100);
     const investAmount = amount - fee;
     
-    // Show loading
     const submitBtn = event.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
     submitBtn.textContent = 'Processing...';
@@ -432,9 +510,6 @@ async function handleInvest(event) {
         const now = Date.now();
         const endTime = now + (config.durationDays * 24 * 60 * 60 * 1000);
         
-        console.log('Creating investment...');
-        
-        // Create investment record first
         const investmentData = {
             planName: config.name,
             amount: investAmount,
@@ -449,24 +524,16 @@ async function handleInvest(event) {
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
         
-        console.log('Investment data:', investmentData);
-        
         const investmentRef = await firebase.firestore()
             .collection('users')
             .doc(user.uid)
             .collection('investments')
             .add(investmentData);
         
-        console.log('Investment created with ID:', investmentRef.id);
-        
-        // Update user balance
         await firebase.firestore().collection('users').doc(user.uid).update({
             balance: newBalance
         });
         
-        console.log('Balance updated');
-        
-        // Add transaction record
         await firebase.firestore().collection('users').doc(user.uid)
             .collection('transactions').add({
                 type: 'investment',
@@ -478,40 +545,28 @@ async function handleInvest(event) {
                 date: firebase.firestore.FieldValue.serverTimestamp()
             });
         
-        console.log('Transaction recorded');
-        
-        // Update local user object
         user.balance = newBalance;
         window.currentUser = user;
         
-        // Show success message
         alert(`Investment Successful! 🎉\n\nPlan: ${config.name}\nAmount: ${formatCurrency(amount)}\nFee: ${formatCurrency(fee)}\nInvested: ${formatCurrency(investAmount)}\nROI: ${config.roiPercent}%\nDuration: ${config.durationDays} days\n\nYour profits will start accumulating immediately!`);
         
-        // Close modal and refresh
         closeInvestModal();
         updateDashboardData(user);
+        loadRecentTransactions(user.uid);
         
     } catch (error) {
         console.error('Investment error:', error);
-        console.error('Error details:', {
-            code: error.code,
-            message: error.message,
-            stack: error.stack
-        });
         
         let errorMessage = 'Investment failed. ';
         
         if (error.code === 'permission-denied') {
             errorMessage += 'Permission denied. Please contact support.';
-        } else if (error.code === 'not-found') {
-            errorMessage += 'User not found. Please login again.';
         } else {
             errorMessage += error.message || 'Please try again.';
         }
         
         alert(errorMessage);
         
-        // Reset button
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
     }
@@ -520,7 +575,6 @@ async function handleInvest(event) {
 // Handle logout
 function handleDashboardLogout() {
     if (confirm('Are you sure you want to logout?')) {
-        // Clear profit update interval
         if (profitUpdateInterval) {
             clearInterval(profitUpdateInterval);
         }
@@ -550,5 +604,6 @@ window.openInvestModal = openInvestModal;
 window.closeInvestModal = closeInvestModal;
 window.handleInvest = handleInvest;
 window.handleDashboardLogout = handleDashboardLogout;
+window.updateDashboardData = updateDashboardData;
 
-console.log('Dashboard.js loaded successfully');
+console.log('Enhanced dashboard.js loaded successfully');
