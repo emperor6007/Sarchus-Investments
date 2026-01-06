@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Sarchus Investments</title>
+    <link rel="icon" type="image/png" href="SarchusInvestments.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .pending-deposit-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 4px solid #f39c12;
+        }
+        
+        .deposit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .deposit-info-item {
+            padding: 0.8rem;
+            background: var(--light);
+            border-radius: 5px;
+        }
+        
+        .deposit-info-item strong {
+            display: block;
+            color: #999;
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .deposit-info-item span {
+            color: var(--dark);
+            font-weight: 600;
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .approve-btn {
+            background: #27ae60;
+            color: white;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .approve-btn:hover {
+            background: #229954;
+            transform: translateY(-2px);
+        }
+        
+        .reject-btn {
+            background: #e74c3c;
+            color: white;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .reject-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .edit-amount-input {
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            width: 150px;
+            font-size: 1rem;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .tab-btn {
+            padding: 1rem 2rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+        
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .processed-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #27ae60;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .rejected-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #e74c3c;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="dashboard.html" class="logo-link">
+                <img src="SarchusInvestments.png" alt="Sarchus Investments" class="logo-img">
+                <span class="logo-text">Sarchus Admin</span>
+            </a>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="admin.html" class="active">Pending Deposits</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="#" onclick="handleDashboardLogout(); return false;">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="page-header-small">
+            <h1>Deposit Management</h1>
+            <p>Review and approve pending deposits</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('pending')">Pending</button>
+            <button class="tab-btn" onclick="switchTab('processed')">Processed</button>
+            <button class="tab-btn" onclick="switchTab('all')">All</button>
+        </div>
+
+        <!-- Pending Deposits -->
+        <div id="pendingDepositsContainer">
+            <p style="text-align: center; padding: 3rem; color: #999;">
+                Loading pending deposits...
+            </p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <script src="firebase-config.js"></script>
+    <script src="main.js"></script>
+    <script src="dashboard.js"></script>
+    <script>
+        let currentTab = 'pending';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkAuth = setInterval(() => {
+                if (typeof firebase !== 'undefined' && firebase.auth) {
+                    clearInterval(checkAuth);
+                    
+                    firebase.auth().onAuthStateChanged(async (user) => {
+                        if (user) {
+                            await loadDeposits();
+                            
+                            // Set up real-time listener
+                            firebase.firestore()
+                                .collection('pendingDeposits')
+                                .onSnapshot(() => {
+                                    loadDeposits();
+                                });
+                        } else {
+                            alert('Please login as admin');
+                            window.location.href = 'login.html';
+                        }
+                    });
+                }
+            }, 100);
+        });
+        
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase() === tab) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            loadDeposits();
+        }
+        
+        async function loadDeposits() {
+            const container = document.getElementById('pendingDepositsContainer');
+            if (!container) return;
+            
+            try {
+                let query = firebase.firestore().collection('pendingDeposits');
+                
+                if (currentTab === 'pending') {
+                    query = query.where('processed', '==', false);
+                } else if (currentTab === 'processed') {
+                    query = query.where('processed', '==', true);
+                }
+                
+                query = query.orderBy('createdAt', 'desc').limit(50);
+                
+                const snapshot = await query.get();
+                
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <p style="text-align: center; padding: 3rem; color: #999;">
+                            No ${currentTab} deposits found
+                        </p>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                snapshot.forEach(doc => {
+                    const deposit = doc.data();
+                    const card = createDepositCard(doc.id, deposit);
+                    container.appendChild(card);
+                });
+                
+            } catch (error) {
+                console.error('Error loading deposits:', error);
+                container.innerHTML = `
+                    <p style="text-align: center; padding: 3rem; color: #e74c3c;">
+                        Error loading deposits. Please refresh.
+                    </p>
+                `;
+            }
+        }
+        
+        function createDepositCard(depositId, deposit) {
+            const card = document.createElement('div');
+            card.className = 'pending-deposit-card';
+            
+            const date = deposit.createdAt ? deposit.createdAt.toDate() : new Date();
+            
+            card.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <div>
+                        <h3 style="margin-bottom: 0.5rem;">${deposit.userName || 'User'}</h3>
+                        <p style="color: #666; font-size: 0.9rem;">${deposit.userEmail}</p>
+                    </div>
+                    ${deposit.processed ? 
+                        `<span class="processed-badge">Processed</span>` : 
+                        `<span style="padding: 0.5rem 1rem; background: #fff3cd; color: #856404; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">Pending</span>`
+                    }
+                </div>
+                
+                <div class="deposit-grid">
+                    <div class="deposit-info-item">
+                        <strong>Amount (USD)</strong>
+                        <span>$${deposit.usdAmount.toFixed(2)}</span>
+                    </div>
+                    <div class="deposit-info-item">
+                        <strong>Cryptocurrency</strong>
+                        <span>${deposit.cryptocurrency}</span>
+                    </div>
+                    <div class="deposit-info-item">
+                        <strong>User Wallet</strong>
+                        <span style="font-family: monospace; font-size: 0.85rem; word-break: break-all;">${deposit.userWalletAddress || 'N/A'}</span>
+                    </div>
+                    <div class="deposit-info-item">
+                        <strong>Date</strong>
+                        <span>${date.toLocaleString()}</span>
+                    </div>
+                </div>
+                
+                ${deposit.transactionHash !== 'Not provided' ? `
+                    <div style="margin: 1rem 0; padding: 1rem; background: var(--light); border-radius: 5px;">
+                        <strong style="display: block; margin-bottom: 0.5rem; color: #666;">Transaction Hash:</strong>
+                        <code style="font-size: 0.85rem; word-break: break-all;">${deposit.transactionHash}</code>
+                    </div>
+                ` : ''}
+                
+                ${deposit.note && deposit.note !== 'None' ? `
+                    <div style="margin: 1rem 0; padding: 1rem; background: var(--light); border-radius: 5px;">
+                        <strong style="display: block; margin-bottom: 0.5rem; color: #666;">Note:</strong>
+                        <p style="margin: 0;">${deposit.note}</p>
+                    </div>
+                ` : ''}
+                
+                ${!deposit.processed ? `
+                    <div class="admin-actions">
+                        <input type="number" 
+                               id="amount_${depositId}" 
+                               class="edit-amount-input" 
+                               value="${deposit.usdAmount}" 
+                               step="0.01" 
+                               min="0"
+                               placeholder="Amount">
+                        <button class="approve-btn" onclick="approveDeposit('${depositId}', '${deposit.userId}', '${deposit.cryptocurrency}')">
+                            ✓ Approve & Credit
+                        </button>
+                        <button class="reject-btn" onclick="rejectDeposit('${depositId}')">
+                            ✗ Reject
+                        </button>
+                    </div>
+                ` : `
+                    <div style="margin-top: 1rem; padding: 1rem; background: #e8f5e9; border-radius: 5px; color: #27ae60;">
+                        <strong>Processed on:</strong> ${deposit.processedAt ? deposit.processedAt.toDate().toLocaleString() : 'N/A'}<br>
+                        <strong>Credited Amount:</strong> $${deposit.creditedAmount?.toFixed(2) || deposit.usdAmount.toFixed(2)}
+                    </div>
+                `}
+            `;
+            
+            return card;
+        }
+        
+        async function approveDeposit(depositId, userId, cryptocurrency) {
+            const amountInput = document.getElementById(`amount_${depositId}`);
+            const amount = parseFloat(amountInput.value);
+            
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+            
+            if (!confirm(`Approve and credit $${amount.toFixed(2)} to user account?`)) {
+                return;
+            }
+            
+            try {
+                // Process the deposit
+                const depositData = {
+                    userId: userId,
+                    cryptocurrency: cryptocurrency,
+                    amount: amount / (cryptocurrency === 'USDT' ? 1 : cryptocurrency === 'BTC' ? 98547.23 : 3421.45),
+                    transactionHash: 'Admin Approved'
+                };
+                
+                await processDeposit(userId, depositId, depositData);
+                
+                // Update deposit record
+                await firebase.firestore().collection('pendingDeposits').doc(depositId).update({
+                    processed: true,
+                    processedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    creditedAmount: amount
+                });
+                
+                alert('Deposit approved and credited successfully!');
+                loadDeposits();
+                
+            } catch (error) {
+                console.error('Error approving deposit:', error);
+                alert('Error approving deposit: ' + error.message);
+            }
+        }
+        
+        async function rejectDeposit(depositId) {
+            if (!confirm('Are you sure you want to reject this deposit?')) {
+                return;
+            }
+            
+            try {
+                await firebase.firestore().collection('pendingDeposits').doc(depositId).update({
+                    processed: true,
+                    rejected: true,
+                    processedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                alert('Deposit rejected');
+                loadDeposits();
+                
+            } catch (error) {
+                console.error('Error rejecting deposit:', error);
+                alert('Error rejecting deposit: ' + error.message);
+            }
+        }
+        
+        window.switchTab = switchTab;
+        window.approveDeposit = approveDeposit;
+        window.rejectDeposit = rejectDeposit;
+    </script>
+</body>
+</html>
