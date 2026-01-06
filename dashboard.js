@@ -1,4 +1,4 @@
-// Enhanced Dashboard JavaScript with Transaction Display
+// Enhanced Dashboard JavaScript with Total Investments Display
 
 let dashboardInitialized = false;
 let profitUpdateInterval = null;
@@ -112,6 +112,40 @@ async function fetchBitcoinPrice() {
     }
 }
 
+// Calculate Total Investments (Locked Amount)
+async function calculateTotalInvestments(uid) {
+    try {
+        const investmentsSnapshot = await firebase.firestore()
+            .collection('users')
+            .doc(uid)
+            .collection('investments')
+            .where('status', '==', 'active')
+            .get();
+        
+        let totalLockedAmount = 0;
+        let activeCount = 0;
+        
+        investmentsSnapshot.forEach(doc => {
+            const investment = doc.data();
+            // Sum up the actual invested amounts that are locked
+            totalLockedAmount += investment.amount || 0;
+            activeCount++;
+        });
+        
+        return {
+            totalAmount: totalLockedAmount,
+            activeCount: activeCount
+        };
+        
+    } catch (error) {
+        console.error('Error calculating total investments:', error);
+        return {
+            totalAmount: 0,
+            activeCount: 0
+        };
+    }
+}
+
 // Update Dashboard Data
 async function updateDashboardData(user) {
     try {
@@ -127,30 +161,42 @@ async function updateDashboardData(user) {
             console.log('Using fallback BTC price');
         }
         
-        const btcValue = (user.btcHoldings || 0) * btcPrice;
-        const totalBalance = (user.balance || 0) + btcValue;
+        // Calculate total locked investments
+        const totalInvestments = await calculateTotalInvestments(user.uid);
         
-        // Update balance displays
+        // Total balance = Available balance + Locked investments
+        const totalBalance = (user.balance || 0) + totalInvestments.totalAmount;
+        
+        // Update Total Balance
         const totalBalanceEl = document.getElementById('totalBalance');
         if (totalBalanceEl) {
             totalBalanceEl.textContent = formatCurrency(totalBalance);
         }
         
-        const btcHoldingsEl = document.getElementById('btcHoldings');
-        if (btcHoldingsEl) {
-            btcHoldingsEl.textContent = (user.btcHoldings || 0).toFixed(8) + ' BTC';
+        // Update Total Investments (Locked Amount)
+        const totalInvestmentsEl = document.getElementById('totalInvestments');
+        if (totalInvestmentsEl) {
+            totalInvestmentsEl.textContent = formatCurrency(totalInvestments.totalAmount);
         }
         
-        const btcValueEl = document.getElementById('btcValue');
-        if (btcValueEl) {
-            btcValueEl.textContent = '≈ ' + formatCurrency(btcValue);
+        // Update Active Investments Count
+        const activeInvestmentsCountEl = document.getElementById('activeInvestmentsCount');
+        if (activeInvestmentsCountEl) {
+            const count = totalInvestments.activeCount;
+            if (count === 0) {
+                activeInvestmentsCountEl.textContent = 'No locked funds';
+            } else {
+                activeInvestmentsCountEl.textContent = `${count} active investment${count !== 1 ? 's' : ''} (locked)`;
+            }
         }
         
+        // Update Available Balance
         const availableBalanceEl = document.getElementById('availableBalance');
         if (availableBalanceEl) {
             availableBalanceEl.textContent = formatCurrency(user.balance || 0);
         }
         
+        // Update BTC Price Mini
         const btcPriceMini = document.getElementById('btcPriceMini');
         if (btcPriceMini) {
             btcPriceMini.textContent = 'BTC: ' + formatCurrency(btcPrice);
@@ -160,6 +206,9 @@ async function updateDashboardData(user) {
         await loadActiveInvestments(user.uid);
         
         console.log('Dashboard data updated successfully');
+        console.log('Locked Amount:', totalInvestments.totalAmount);
+        console.log('Available Balance:', user.balance);
+        console.log('Total Balance:', totalBalance);
         
     } catch (error) {
         console.error('Error updating dashboard:', error);
@@ -301,8 +350,9 @@ async function calculateLiveProfits(uid) {
         
         const profitPercentEl = document.getElementById('profitPercent');
         if (profitPercentEl) {
-            const profitPercent = window.currentUser.balance > 0 
-                ? (totalLiveProfit / window.currentUser.balance) * 100 
+            const totalInvestments = await calculateTotalInvestments(uid);
+            const profitPercent = totalInvestments.totalAmount > 0 
+                ? (totalLiveProfit / totalInvestments.totalAmount) * 100 
                 : 0;
             profitPercentEl.textContent = '+' + profitPercent.toFixed(2) + '%';
         }
@@ -548,7 +598,7 @@ async function handleInvest(event) {
         user.balance = newBalance;
         window.currentUser = user;
         
-        alert(`Investment Successful! 🎉\n\nPlan: ${config.name}\nAmount: ${formatCurrency(amount)}\nFee: ${formatCurrency(fee)}\nInvested: ${formatCurrency(investAmount)}\nROI: ${config.roiPercent}%\nDuration: ${config.durationDays} days\n\nYour profits will start accumulating immediately!`);
+        alert(`Investment Successful! 🎉\n\nPlan: ${config.name}\nAmount: ${formatCurrency(amount)}\nFee: ${formatCurrency(fee)}\nInvested: ${formatCurrency(investAmount)}\nROI: ${config.roiPercent}%\nDuration: ${config.durationDays} days\n\nYour funds are now locked and earning profits!`);
         
         closeInvestModal();
         updateDashboardData(user);
