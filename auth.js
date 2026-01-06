@@ -199,7 +199,7 @@ async function handleRegister(event) {
         };
         
         // Success message
-        alert(`Welcome to CryptoVest, ${firstName}!\n\nYour account has been created successfully.`);
+        alert(`Welcome to Sarchus, ${firstName}!\n\nYour account has been created successfully.`);
         
         // Firebase will automatically redirect via onAuthStateChanged
         
@@ -458,3 +458,4 @@ window.resetPassword = resetPassword;
 window.getUserData = getUserData;
 
 console.log('Auth.js loaded successfully');
+
