@@ -177,11 +177,30 @@ function displayWalletAddress(crypto) {
         addressElement.textContent = address;
     }
     
-    // Update QR code
+    // Update QR code with proper cryptocurrency URI format
     const qrCode = document.getElementById('qrCode');
     if (qrCode) {
-        qrCode.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(address)}`;
-        qrCode.alt = `${crypto} QR Code`;
+        // Generate proper cryptocurrency URI for QR code
+        let qrData = '';
+        
+        switch(crypto) {
+            case 'BTC':
+                qrData = `bitcoin:${address}`;
+                break;
+            case 'ETH':
+                qrData = `ethereum:${address}`;
+                break;
+            case 'USDT':
+                // USDT on Tron network
+                qrData = address; // Tron addresses work with just the address
+                break;
+            default:
+                qrData = address;
+        }
+        
+        // Use QR code API with proper encoding
+        qrCode.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrData)}&margin=10`;
+        qrCode.alt = `${crypto} Wallet QR Code`;
     }
 }
 
