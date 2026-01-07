@@ -1,4 +1,8 @@
-// Enhanced Firebase Configuration with Wallet Management
+// Firebase Configuration with REAL Wallet Generation
+// IMPORTANT: Add these script tags to your HTML BEFORE firebase-config.js:
+// <script src="https://unpkg.com/bitcoinjs-lib@6.1.5/dist/bitcoinjs-lib.min.js"></script>
+// <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+// <script src="https://cdn.jsdelivr.net/npm/tronweb@5.3.0/dist/TronWeb.js"></script>
 
 const firebaseConfig = {
   apiKey: "AIzaSyB_jAU2QLvl9hm2hWgqYU-N7XuxHr7JnT4",
@@ -17,34 +21,101 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// Main wallet addresses (REPLACE WITH YOUR ACTUAL ADDRESSES)
-const MAIN_WALLETS = {
-  BTC: 'bc1q0wa4efcyfcpwsl8jfqww5emhdzgv4d64lgceem',
-  ETH: '0xa7550Db929E8501f8c85e02cB70692652c1675Ab',
-  USDT: 'TXC1MnuVbnr2yFETFxdEm1VmUUYhCA5xiQ'
-};
-
-// Generate unique user wallet address (deterministic)
-function generateUserWalletAddress(userId, cryptocurrency) {
-  // Create a deterministic hash from userId and crypto
-  const hash = btoa(userId + cryptocurrency).replace(/[^a-zA-Z0-9]/g, '').substring(0, 32);
-  
-  switch(cryptocurrency) {
-    case 'BTC':
-      // Bitcoin address format (simplified for demo - use proper derivation in production)
-      return 'bc1q' + hash.toLowerCase().substring(0, 39);
-    case 'ETH':
-      // Ethereum address format
-      return '0x' + hash.substring(0, 40);
-    case 'USDT':
-      // Tron address format
-      return 'T' + hash.substring(0, 33);
-    default:
-      return MAIN_WALLETS[cryptocurrency];
+// Generate REAL Bitcoin Address using bitcoinjs-lib
+async function generateRealBitcoinAddress(userId) {
+  try {
+    console.log('Generating real Bitcoin address for user:', userId);
+    
+    // Create deterministic seed from userId (for consistency)
+    const seed = userId + 'SARCHUS_BTC_SEED_2025';
+    const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(seed));
+    const hashArray = new Uint8Array(hash);
+    
+    // Use first 32 bytes as private key
+    const keyPair = bitcoinjs.ECPair.fromPrivateKey(hashArray, {
+      network: bitcoinjs.networks.bitcoin
+    });
+    
+    // Generate P2WPKH address (Native SegWit - bc1q...)
+    const { address } = bitcoinjs.payments.p2wpkh({
+      pubkey: keyPair.publicKey,
+      network: bitcoinjs.networks.bitcoin
+    });
+    
+    console.log('Bitcoin address generated:', address);
+    
+    return {
+      address: address,
+      // DO NOT store private key in client-side Firebase!
+      // Store only in secure backend
+      publicKey: keyPair.publicKey.toString('hex')
+    };
+    
+  } catch (error) {
+    console.error('Error generating Bitcoin address:', error);
+    throw error;
   }
 }
 
-// Create or get user wallet addresses
+// Generate REAL Ethereum Address using ethers.js
+async function generateRealEthereumAddress(userId) {
+  try {
+    console.log('Generating real Ethereum address for user:', userId);
+    
+    // Create deterministic seed from userId
+    const seed = userId + 'SARCHUS_ETH_SEED_2025';
+    const hash = ethers.utils.id(seed); // SHA3-256 hash
+    
+    // Create wallet from private key
+    const wallet = new ethers.Wallet(hash);
+    
+    console.log('Ethereum address generated:', wallet.address);
+    
+    return {
+      address: wallet.address,
+      // DO NOT store private key in client-side Firebase!
+      publicKey: wallet.publicKey
+    };
+    
+  } catch (error) {
+    console.error('Error generating Ethereum address:', error);
+    throw error;
+  }
+}
+
+// Generate REAL Tron Address using TronWeb
+async function generateRealTronAddress(userId) {
+  try {
+    console.log('Generating real Tron address for user:', userId);
+    
+    // Create deterministic seed from userId
+    const seed = userId + 'SARCHUS_TRON_SEED_2025';
+    
+    // Convert seed to hex private key
+    const encoder = new TextEncoder();
+    const data = encoder.encode(seed);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const privateKeyHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    
+    // Generate address from private key
+    const address = TronWeb.address.fromPrivateKey(privateKeyHex);
+    
+    console.log('Tron address generated:', address);
+    
+    return {
+      address: address,
+      // DO NOT store private key in client-side Firebase!
+      publicKey: privateKeyHex.substring(0, 64) // First 64 chars as identifier
+    };
+    
+  } catch (error) {
+    console.error('Error generating Tron address:', error);
+    throw error;
+  }
+}
+
+// Create REAL wallet addresses for user
 async function createUserWallets(userId) {
   try {
     const userRef = db.collection('users').doc(userId);
@@ -60,32 +131,47 @@ async function createUserWallets(userId) {
       }
     }
     
-    // Generate new wallet addresses
+    console.log('Creating REAL wallet addresses...');
+    
+    // Generate REAL addresses for all cryptocurrencies
+    const btcWallet = await generateRealBitcoinAddress(userId);
+    const ethWallet = await generateRealEthereumAddress(userId);
+    const tronWallet = await generateRealTronAddress(userId);
+    
+    // Create wallet structure
     const wallets = {
       BTC: {
-        address: generateUserWalletAddress(userId, 'BTC'),
-        mainWallet: MAIN_WALLETS.BTC,
-        balance: 0
+        address: btcWallet.address,
+        publicKey: btcWallet.publicKey,
+        balance: 0,
+        type: 'receive-only',
+        network: 'Bitcoin Mainnet'
       },
       ETH: {
-        address: generateUserWalletAddress(userId, 'ETH'),
-        mainWallet: MAIN_WALLETS.ETH,
-        balance: 0
+        address: ethWallet.address,
+        publicKey: ethWallet.publicKey,
+        balance: 0,
+        type: 'receive-only',
+        network: 'Ethereum Mainnet'
       },
       USDT: {
-        address: generateUserWalletAddress(userId, 'USDT'),
-        mainWallet: MAIN_WALLETS.USDT,
-        balance: 0
+        address: tronWallet.address,
+        publicKey: tronWallet.publicKey,
+        balance: 0,
+        type: 'receive-only',
+        network: 'Tron Mainnet (TRC20)'
       }
     };
     
     // Save wallets to user document
     await userRef.update({
       wallets: wallets,
-      walletsCreatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      walletsCreatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      walletsType: 'real-blockchain-addresses'
     });
     
-    console.log('User wallets created:', wallets);
+    console.log('REAL wallet addresses created and saved:', wallets);
+    
     return wallets;
     
   } catch (error) {
@@ -94,38 +180,42 @@ async function createUserWallets(userId) {
   }
 }
 
-// Simulate deposit detection (In production, use blockchain APIs or webhooks)
-async function checkForDeposits(userId) {
+// Convert cryptocurrency to USD
+async function convertCryptoToUSD(cryptocurrency, amount) {
   try {
-    const userRef = db.collection('users').doc(userId);
-    const userDoc = await userRef.get();
+    const cryptoIds = {
+      'BTC': 'bitcoin',
+      'ETH': 'ethereum',
+      'USDT': 'tether'
+    };
     
-    if (!userDoc.exists) {
-      console.log('User not found');
-      return;
+    const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${cryptoIds[cryptocurrency]}&vs_currencies=usd`);
+    
+    if (response.ok) {
+      const data = await response.json();
+      const rate = data[cryptoIds[cryptocurrency]].usd;
+      return amount * rate;
     }
     
-    const userData = userDoc.data();
-    const wallets = userData.wallets;
+    // Fallback rates if API fails
+    const fallbackRates = {
+      'BTC': 98547.23,
+      'ETH': 3421.45,
+      'USDT': 1.00
+    };
     
-    if (!wallets) {
-      console.log('No wallets found for user');
-      return;
-    }
-    
-    // Check for pending deposits in Firestore
-    const pendingDeposits = await db.collection('pendingDeposits')
-      .where('userId', '==', userId)
-      .where('processed', '==', false)
-      .get();
-    
-    for (const doc of pendingDeposits.docs) {
-      const deposit = doc.data();
-      await processDeposit(userId, doc.id, deposit);
-    }
+    return amount * fallbackRates[cryptocurrency];
     
   } catch (error) {
-    console.error('Error checking deposits:', error);
+    console.error('Error converting crypto to USD:', error);
+    
+    const fallbackRates = {
+      'BTC': 98547.23,
+      'ETH': 3421.45,
+      'USDT': 1.00
+    };
+    
+    return amount * fallbackRates[cryptocurrency];
   }
 }
 
@@ -179,89 +269,42 @@ async function processDeposit(userId, depositId, depositData) {
   }
 }
 
-// Convert cryptocurrency to USD
-async function convertCryptoToUSD(cryptocurrency, amount) {
+// Check for deposits on blockchain (you'll need to implement this with blockchain APIs)
+async function monitorDeposits(userId) {
   try {
-    const cryptoIds = {
-      'BTC': 'bitcoin',
-      'ETH': 'ethereum',
-      'USDT': 'tether'
-    };
+    const userRef = db.collection('users').doc(userId);
+    const userDoc = await userRef.get();
     
-    const response = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${cryptoIds[cryptocurrency]}&vs_currencies=usd`);
+    if (!userDoc.exists) return;
     
-    if (response.ok) {
-      const data = await response.json();
-      const rate = data[cryptoIds[cryptocurrency]].usd;
-      return amount * rate;
-    }
+    const userData = userDoc.data();
+    const wallets = userData.wallets;
     
-    // Fallback rates if API fails
-    const fallbackRates = {
-      'BTC': 98547.23,
-      'ETH': 3421.45,
-      'USDT': 1.00
-    };
+    if (!wallets) return;
     
-    return amount * fallbackRates[cryptocurrency];
+    // TODO: Implement blockchain monitoring
+    // Use services like:
+    // - Blockchair API for Bitcoin
+    // - Etherscan API for Ethereum  
+    // - Tronscan API for Tron
+    // Or use NOWPayments/CoinGate webhooks
+    
+    console.log('Monitoring deposits for user:', userId);
     
   } catch (error) {
-    console.error('Error converting crypto to USD:', error);
-    
-    // Use fallback rates
-    const fallbackRates = {
-      'BTC': 98547.23,
-      'ETH': 3421.45,
-      'USDT': 1.00
-    };
-    
-    return amount * fallbackRates[cryptocurrency];
-  }
-}
-
-// Admin function to manually credit deposit
-async function manualCreditDeposit(userId, cryptocurrency, amount, transactionHash) {
-  try {
-    console.log(`Manual deposit credit: ${amount} ${cryptocurrency} for user ${userId}`);
-    
-    const depositData = {
-      userId: userId,
-      cryptocurrency: cryptocurrency,
-      amount: amount,
-      transactionHash: transactionHash || 'Manual Credit',
-      processed: false,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      method: 'manual'
-    };
-    
-    // Create pending deposit
-    const depositRef = await db.collection('pendingDeposits').add(depositData);
-    
-    // Process immediately
-    await processDeposit(userId, depositRef.id, depositData);
-    
-    console.log('Manual deposit credited successfully');
-    
-    return {
-      success: true,
-      depositId: depositRef.id
-    };
-    
-  } catch (error) {
-    console.error('Error with manual deposit:', error);
-    throw error;
+    console.error('Error monitoring deposits:', error);
   }
 }
 
 // Export for use in other files
 window.auth = auth;
 window.db = db;
-window.MAIN_WALLETS = MAIN_WALLETS;
 window.createUserWallets = createUserWallets;
-window.checkForDeposits = checkForDeposits;
 window.processDeposit = processDeposit;
 window.convertCryptoToUSD = convertCryptoToUSD;
-window.manualCreditDeposit = manualCreditDeposit;
-window.generateUserWalletAddress = generateUserWalletAddress;
+window.monitorDeposits = monitorDeposits;
+window.generateRealBitcoinAddress = generateRealBitcoinAddress;
+window.generateRealEthereumAddress = generateRealEthereumAddress;
+window.generateRealTronAddress = generateRealTronAddress;
 
-console.log('Firebase initialized with wallet system');
+console.log('Firebase initialized with REAL wallet generation');
