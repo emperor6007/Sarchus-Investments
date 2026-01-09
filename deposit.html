@@ -107,7 +107,7 @@
                 <li><a href="dashboard.html">📊 Dashboard</a></li>
                 <li><a href="deposit.html" class="active">💳 Deposit</a></li>
                 <li><a href="withdraw.html">💰 Withdraw</a></li>
-                <li><a href="transactions.html">📝 Transactions</a></li>
+                <li><a href="transactions.html">📄 Transactions</a></li>
                 <li><a href="#" onclick="handleDashboardLogout(); return false;">🚪 Logout</a></li>
             </ul>
         </aside>
@@ -115,7 +115,7 @@
         <main class="dashboard-main">
             <div class="page-header-small">
                 <h1>Deposit Cryptocurrency</h1>
-                <p>Send cryptocurrency to your unique wallet address below</p>
+                <p>Send cryptocurrency to our wallet address below and verify with transaction hash</p>
             </div>
 
             <div class="deposit-container">
@@ -167,15 +167,15 @@
 
                 <!-- Deposit Address Display -->
                 <div class="dashboard-card crypto-deposit-card">
-                    <h2>Your Unique Deposit Address</h2>
+                    <h2>Company Deposit Address</h2>
                     <p class="deposit-instruction">
-                        This is <strong>your personal <span id="selectedCrypto">Bitcoin (BTC)</span> wallet address</strong>. 
-                        Send cryptocurrency to this address and notify us below. Your deposit will be credited after verification.
+                        Send <strong><span id="selectedCrypto">Bitcoin (BTC)</span></strong> to this address. 
+                        After sending, submit the transaction hash below for verification. Your deposit will be credited after confirmation.
                     </p>
 
                     <div class="crypto-address-box">
                         <h3 style="margin-bottom: 1rem; color: var(--dark);">Wallet Address</h3>
-                        <div class="address-display" id="cryptoAddress">Loading your wallet address...</div>
+                        <div class="address-display" id="cryptoAddress">Loading wallet address...</div>
                         <button type="button" class="copy-btn" onclick="copyAddress()">
                             <span id="copyIcon">📋</span> Copy Address
                         </button>
@@ -202,24 +202,25 @@
                             <li>✓ Estimated time: <strong id="estimatedTime">30-60 minutes</strong></li>
                             <li>⚠️ <strong>Only send <span id="warningCrypto">Bitcoin</span></strong> to this address</li>
                             <li>⚠️ Sending other cryptocurrencies will result in <strong>permanent loss of funds</strong></li>
-                            <li>⚠️ This is your <strong>unique personal wallet</strong> - do not share with others</li>
                             <li>✓ Your deposit will be reviewed and credited by our team within <strong>24 hours</strong></li>
+                            <li>⚠️ <strong>Transaction hash is REQUIRED for verification</strong></li>
                         </ul>
                     </div>
 
                     <!-- Proof of Payment Upload -->
                     <div class="upload-section">
                         <h3>📤 Submit Deposit Notification</h3>
-                        <p>After sending your deposit, fill out the form below to speed up verification</p>
+                        <p>After sending your deposit, fill out the form below with your transaction hash</p>
                         <form id="depositNotificationForm" onsubmit="handleDepositNotification(event)">
                             <div class="form-group">
-                                <label for="txHash">Transaction Hash (Optional)</label>
+                                <label for="txHash">Transaction Hash <span style="color: #e74c3c;">*</span></label>
                                 <input type="text" 
                                        id="txHash" 
-                                       placeholder="Enter transaction hash/ID if available"
+                                       required
+                                       placeholder="Enter transaction hash/ID (Required)"
                                        style="font-family: 'Courier New', monospace;">
                                 <small style="color: #666; font-size: 0.85rem;">
-                                    You can find this in your wallet's transaction history
+                                    You can find this in your wallet's transaction history. This is required for verification.
                                 </small>
                             </div>
                             
@@ -244,14 +245,14 @@
                             </div>
 
                             <button type="submit" class="cta-button full-width">
-                                🔔 Notify Admin of My Deposit
+                                📝 Notify Admin of My Deposit
                             </button>
                         </form>
                         
                         <div style="margin-top: 1rem; padding: 1rem; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196f3;">
                             <strong style="color: #1976d2;">💡 Pro Tip:</strong>
                             <p style="margin: 0.5rem 0 0 0; color: #1565c0; font-size: 0.9rem;">
-                                Submitting this notification helps our team process your deposit faster. 
+                                Submitting your transaction hash helps our team process your deposit faster. 
                                 You'll receive an email confirmation once your account is credited.
                             </p>
                         </div>
@@ -287,7 +288,7 @@
                             💬 Live Chat
                         </button>
                         <button class="help-btn" onclick="window.location.href='transactions.html'">
-                            📝 View All Transactions
+                            📄 View All Transactions
                         </button>
                     </div>
                     
@@ -304,21 +305,14 @@
         </main>
     </div>
 
-    </div> <!-- End of main content -->
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-<!-- ADD THESE SCRIPTS HERE -->
-<script src="https://unpkg.com/bitcoinjs-lib@6.1.5/dist/bitcoinjs-lib.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tronweb@5.3.0/dist/TronWeb.js"></script>
-
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
-<script src="firebase-config.js"></script>
-<script src="main.js"></script>
-<script src="dashboard.js"></script>
-<script src="deposit.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="main.js"></script>
+    <script src="dashboard.js"></script>
+    <script src="deposit.js"></script>
 </body>
 </html>
