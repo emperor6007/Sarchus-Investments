@@ -1,8 +1,7 @@
-// Firebase Authentication System - Fixed Version
+// Fixed Firebase Authentication System
 
 // Wait for DOM and Firebase to be ready
 document.addEventListener('DOMContentLoaded', function() {
-    // Small delay to ensure Firebase is fully loaded
     setTimeout(() => {
         initializeAuth();
     }, 500);
@@ -33,7 +32,6 @@ function initializeAuth() {
         if (user) {
             console.log('User authenticated:', user.uid);
             
-            // Load user data from Firestore
             try {
                 const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
                 
@@ -56,8 +54,8 @@ function initializeAuth() {
         } else {
             console.log('No user authenticated');
             
-            // Only redirect to login if on a protected page and not already on auth page
-            if (isDashboardPage && !isAuthPage) {
+            // Only redirect to login if on a protected page
+            if (isDashboardPage) {
                 console.log('Redirecting to login...');
                 window.location.href = 'login.html';
             }
@@ -81,32 +79,6 @@ function attachFormListeners() {
         loginForm.addEventListener('submit', handleLogin);
         console.log('Login form listener attached');
     }
-}
-
-// Load user data from Firestore
-async function loadUserData(uid) {
-    try {
-        const userDoc = await firebase.firestore().collection('users').doc(uid).get();
-        if (userDoc.exists) {
-            window.currentUser = {
-                uid: uid,
-                ...userDoc.data()
-            };
-            console.log('User data loaded successfully');
-            return window.currentUser;
-        } else {
-            console.warn('User document not found in Firestore');
-            return null;
-        }
-    } catch (error) {
-        console.error('Error loading user data:', error);
-        return null;
-    }
-}
-
-// Get current user data
-function getUserData() {
-    return window.currentUser || null;
 }
 
 // Handle user registration
@@ -165,13 +137,10 @@ async function handleRegister(event) {
         
         console.log('User created:', user.uid);
         
-        // Send email verification
-        try {
-            await user.sendEmailVerification();
-            console.log('Verification email sent');
-        } catch (emailError) {
-            console.warn('Could not send verification email:', emailError);
-        }
+        // Send email verification (non-blocking)
+        user.sendEmailVerification().catch(err => {
+            console.warn('Could not send verification email:', err);
+        });
         
         // Create user document in Firestore
         const userData = {
@@ -201,7 +170,8 @@ async function handleRegister(event) {
         // Success message
         alert(`Welcome to Sarchus, ${firstName}!\n\nYour account has been created successfully.`);
         
-        // Firebase will automatically redirect via onAuthStateChanged
+        // Redirect to dashboard
+        window.location.href = 'dashboard.html';
         
     } catch (error) {
         console.error('Registration error:', error);
@@ -209,24 +179,18 @@ async function handleRegister(event) {
         let errorMessage = 'Registration failed. Please try again.';
         
         // Handle specific error codes
-        switch(error.code) {
-            case 'auth/email-already-in-use':
-                errorMessage = 'This email is already registered. Please login instead.';
-                break;
-            case 'auth/invalid-email':
-                errorMessage = 'Invalid email address format.';
-                break;
-            case 'auth/weak-password':
-                errorMessage = 'Password is too weak. Please use a stronger password.';
-                break;
-            case 'auth/network-request-failed':
-                errorMessage = 'Network error. Please check your internet connection.';
-                break;
-            case 'auth/operation-not-allowed':
-                errorMessage = 'Email/password authentication is not enabled. Please contact support.';
-                break;
-            default:
-                errorMessage = `Registration failed: ${error.message}`;
+        if (error.code === 'auth/email-already-in-use') {
+            errorMessage = 'This email is already registered. Please login instead.';
+        } else if (error.code === 'auth/invalid-email') {
+            errorMessage = 'Invalid email address format.';
+        } else if (error.code === 'auth/weak-password') {
+            errorMessage = 'Password is too weak. Please use a stronger password.';
+        } else if (error.code === 'auth/network-request-failed') {
+            errorMessage = 'Network error. Please check your internet connection.';
+        } else if (error.code === 'auth/operation-not-allowed') {
+            errorMessage = 'Email/password authentication is not enabled. Please contact support.';
+        } else {
+            errorMessage = `Registration failed: ${error.message}`;
         }
         
         alert(errorMessage);
@@ -292,7 +256,8 @@ async function handleLogin(event) {
             // Welcome message
             alert(`Welcome back, ${userData.firstName}!`);
             
-            // Firebase will automatically redirect via onAuthStateChanged
+            // Redirect to dashboard
+            window.location.href = 'dashboard.html';
             
         } else {
             console.error('User document not found');
@@ -307,30 +272,22 @@ async function handleLogin(event) {
         let errorMessage = 'Login failed. Please try again.';
         
         // Handle specific error codes
-        switch(error.code) {
-            case 'auth/user-not-found':
-                errorMessage = 'No account found with this email. Please register first.';
-                break;
-            case 'auth/wrong-password':
-                errorMessage = 'Incorrect password. Please try again.';
-                break;
-            case 'auth/invalid-email':
-                errorMessage = 'Invalid email address format.';
-                break;
-            case 'auth/user-disabled':
-                errorMessage = 'This account has been disabled. Please contact support.';
-                break;
-            case 'auth/network-request-failed':
-                errorMessage = 'Network error. Please check your internet connection.';
-                break;
-            case 'auth/too-many-requests':
-                errorMessage = 'Too many failed login attempts. Please try again later.';
-                break;
-            case 'auth/invalid-credential':
-                errorMessage = 'Invalid email or password. Please check your credentials.';
-                break;
-            default:
-                errorMessage = `Login failed: ${error.message}`;
+        if (error.code === 'auth/user-not-found') {
+            errorMessage = 'No account found with this email. Please register first.';
+        } else if (error.code === 'auth/wrong-password') {
+            errorMessage = 'Incorrect password. Please try again.';
+        } else if (error.code === 'auth/invalid-email') {
+            errorMessage = 'Invalid email address format.';
+        } else if (error.code === 'auth/user-disabled') {
+            errorMessage = 'This account has been disabled. Please contact support.';
+        } else if (error.code === 'auth/network-request-failed') {
+            errorMessage = 'Network error. Please check your internet connection.';
+        } else if (error.code === 'auth/too-many-requests') {
+            errorMessage = 'Too many failed login attempts. Please try again later.';
+        } else if (error.code === 'auth/invalid-credential') {
+            errorMessage = 'Invalid email or password. Please check your credentials.';
+        } else {
+            errorMessage = `Login failed: ${error.message}`;
         }
         
         alert(errorMessage);
@@ -357,7 +314,7 @@ async function handleLogout() {
     }
 }
 
-// Handle social login (Google, Facebook, etc.)
+// Handle social login (Google)
 async function socialLogin(provider) {
     if (provider === 'google') {
         try {
@@ -399,8 +356,7 @@ async function socialLogin(provider) {
             }
             
             alert(`Welcome, ${window.currentUser.firstName}!`);
-            
-            // Firebase will automatically redirect via onAuthStateChanged
+            window.location.href = 'dashboard.html';
             
         } catch (error) {
             console.error('Google sign-in error:', error);
@@ -415,8 +371,6 @@ async function socialLogin(provider) {
         }
     } else if (provider === 'facebook') {
         alert('Facebook login will be integrated soon. Please use email/password or Google for now.');
-    } else {
-        alert(`${provider} login is not yet available.`);
     }
 }
 
@@ -424,9 +378,7 @@ async function socialLogin(provider) {
 async function resetPassword() {
     const email = prompt('Enter your email address:');
     
-    if (!email) {
-        return;
-    }
+    if (!email) return;
     
     if (!email.includes('@')) {
         alert('Please enter a valid email address.');
@@ -455,7 +407,5 @@ window.handleLogin = handleLogin;
 window.handleLogout = handleLogout;
 window.socialLogin = socialLogin;
 window.resetPassword = resetPassword;
-window.getUserData = getUserData;
 
 console.log('Auth.js loaded successfully');
-
