@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Sarchus Investments</title>
+    <link rel="icon" type="image/png" href="SarchusInvestments.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="profile.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="dashboard.html" class="logo-link">
+                <img src="SarchusInvestments.png" alt="Sarchus Investments" class="logo-img">
+                <span class="logo-text">Sarchus Investments</span>
+            </a>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="deposit.html">Deposit</a></li>
+                <li><a href="withdraw.html">Withdraw</a></li>
+                <li><a href="transactions.html">Transactions</a></li>
+                <li><a href="profile.html" class="active">Profile</a></li>
+                <li><a href="#" onclick="handleDashboardLogout(); return false;">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="btc-price" id="cryptoPrices">
+        <div class="btc-price-wrapper">
+            <div class="btc-price-content">
+                <div class="crypto-price-item">
+                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
+                    <span class="crypto-name">BTC:</span>
+                    <span class="price-value" id="btcPrice">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
+                    <span class="crypto-name">ETH:</span>
+                    <span class="price-value" id="ethPrice">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="usdt.png" alt="USDT" class="crypto-icon">
+                    <span class="crypto-name">USDT:</span>
+                    <span class="price-value" id="usdtPrice">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
+                    <span class="crypto-name">BTC:</span>
+                    <span class="price-value" id="btcPrice2">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
+                    <span class="crypto-name">ETH:</span>
+                    <span class="price-value" id="ethPrice2">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="usdt.png" alt="USDT" class="crypto-icon">
+                    <span class="crypto-name">USDT:</span>
+                    <span class="price-value" id="usdtPrice2">Loading...</span>
+                </div>
+            </div>
+            
+            <div class="btc-price-content">
+                <div class="crypto-price-item">
+                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
+                    <span class="crypto-name">BTC:</span>
+                    <span class="price-value" id="btcPrice3">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
+                    <span class="crypto-name">ETH:</span>
+                    <span class="price-value" id="ethPrice3">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="usdt.png" alt="USDT" class="crypto-icon">
+                    <span class="crypto-name">USDT:</span>
+                    <span class="price-value" id="usdtPrice3">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
+                    <span class="crypto-name">BTC:</span>
+                    <span class="price-value" id="btcPrice4">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
+                    <span class="crypto-name">ETH:</span>
+                    <span class="price-value" id="ethPrice4">Loading...</span>
+                </div>
+                <div class="crypto-price-item">
+                    <img src="usdt.png" alt="USDT" class="crypto-icon">
+                    <span class="crypto-name">USDT:</span>
+                    <span class="price-value" id="usdtPrice4">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <aside class="dashboard-sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html">📊 Dashboard</a></li>
+                <li><a href="deposit.html">💳 Deposit</a></li>
+                <li><a href="withdraw.html">💰 Withdraw</a></li>
+                <li><a href="transactions.html">📄 Transactions</a></li>
+                <li><a href="profile.html" class="active">👤 Profile</a></li>
+                <li><a href="#" onclick="handleDashboardLogout(); return false;">🚪 Logout</a></li>
+            </ul>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="page-header-small">
+                <h1>My Profile</h1>
+                <p>Manage your account information and settings</p>
+            </div>
+
+            <div class="profile-container">
+                <!-- Profile Header Card -->
+                <div class="dashboard-card profile-header-card">
+                    <div class="profile-avatar-section">
+                        <div class="profile-avatar">
+                            <span id="avatarInitials">U</span>
+                        </div>
+                        <div class="profile-header-info">
+                            <h2 id="profileFullName">Loading...</h2>
+                            <p id="profileEmail">user@example.com</p>
+                            <span class="profile-badge" id="accountStatus">Active Account</span>
+                        </div>
+                    </div>
+                    <div class="profile-stats">
+                        <div class="profile-stat">
+                            <span class="stat-label">Member Since</span>
+                            <span class="stat-value" id="memberSince">Jan 2025</span>
+                        </div>
+                        <div class="profile-stat">
+                            <span class="stat-label">Account Balance</span>
+                            <span class="stat-value" id="profileBalance">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Information -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Personal Information</h3>
+                        <button class="edit-btn" onclick="toggleEditMode()">
+                            <span id="editBtnText">✏️ Edit</span>
+                        </button>
+                    </div>
+                    
+                    <form id="profileForm" class="profile-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input type="text" id="firstName" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input type="text" id="lastName" disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" id="username" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select id="gender" disabled>
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                    <option value="prefer_not_to_say">Prefer not to say</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dateOfBirth">Date of Birth</label>
+                                <input type="date" id="dateOfBirth" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" disabled>
+                            <small class="form-hint">Email cannot be changed</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <textarea id="address" rows="3" disabled></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <input type="text" id="city" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="state">State/Province</label>
+                                <input type="text" id="state" disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="zipCode">Zip/Postal Code</label>
+                                <input type="text" id="zipCode" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="country">Country</label>
+                                <select id="country" disabled>
+                                    <option value="">Select Country</option>
+                                    <option value="US">United States</option>
+                                    <option value="UK">United Kingdom</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="AU">Australia</option>
+                                    <option value="DE">Germany</option>
+                                    <option value="FR">France</option>
+                                    <option value="NG">Nigeria</option>
+                                    <option value="ZA">South Africa</option>
+                                    <option value="KE">Kenya</option>
+                                    <option value="GH">Ghana</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-actions" id="formActions" style="display: none;">
+                            <button type="button" class="btn-secondary" onclick="cancelEdit()">Cancel</button>
+                            <button type="submit" class="btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Account Security -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Account Security</h3>
+                        <span class="security-icon">🔒</span>
+                    </div>
+                    
+                    <div class="security-section">
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h4>Password</h4>
+                                <p>Last changed: <span id="passwordLastChanged">Never</span></p>
+                            </div>
+                            <button class="btn-secondary" onclick="openChangePasswordModal()">Change Password</button>
+                        </div>
+                        
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h4>Email Verification</h4>
+                                <p id="emailVerificationStatus">Not verified</p>
+                            </div>
+                            <button class="btn-secondary" id="verifyEmailBtn" onclick="sendVerificationEmail()">Verify Email</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Activity -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Account Activity</h3>
+                        <span class="activity-icon">📊</span>
+                    </div>
+                    
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-info">
+                                <span class="activity-label">Total Deposits</span>
+                                <span class="activity-value" id="totalDeposits">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-info">
+                                <span class="activity-label">Total Withdrawals</span>
+                                <span class="activity-value" id="totalWithdrawals">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-info">
+                                <span class="activity-label">Total Investments</span>
+                                <span class="activity-value" id="totalInvestmentsAmount">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-info">
+                                <span class="activity-label">Total Profit Earned</span>
+                                <span class="activity-value profit-green" id="totalProfitEarned">+$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeChangePasswordModal()">&times;</span>
+            <h2>Change Password</h2>
+            <form id="changePasswordForm" onsubmit="handleChangePassword(event)">
+                <div class="form-group">
+                    <label for="currentPassword">Current Password</label>
+                    <input type="password" id="currentPassword" required placeholder="Enter current password">
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" required minlength="8" placeholder="Enter new password">
+                    <small class="form-hint">Must be at least 8 characters with uppercase and number</small>
+                </div>
+                <div class="form-group">
+                    <label for="confirmNewPassword">Confirm New Password</label>
+                    <input type="password" id="confirmNewPassword" required placeholder="Confirm new password">
+                </div>
+                <button type="submit" class="cta-button">Update Password</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <script src="firebase-config.js"></script>
+    <script src="main.js"></script>
+    <script src="dashboard.js"></script>
+    <script src="profile.js"></script>
+</body>
+</html>
