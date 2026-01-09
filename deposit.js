@@ -1,4 +1,4 @@
-// Enhanced Deposit System with Unique User Wallets - Complete Version
+// Simplified Deposit System - Single Main Wallet for All Users
 
 const CRYPTO_INFO = {
     'BTC': {
@@ -28,10 +28,9 @@ const CRYPTO_INFO = {
 };
 
 let currentCrypto = 'BTC';
-let userWallets = null;
 let depositListener = null;
 
-// Initialize page and load user wallet
+// Initialize page
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Deposit page initialized');
     
@@ -44,8 +43,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.log('User authenticated on deposit page:', user.uid);
                     
                     try {
-                        // Initialize or get user wallets
-                        await initializeUserWallets(user.uid);
+                        // Display the main wallet address
+                        displayWalletAddress(currentCrypto);
                         
                         // Load pending deposits
                         await loadPendingDeposits();
@@ -67,107 +66,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 100);
 });
 
-// Initialize user wallets
-async function initializeUserWallets(userId) {
-    try {
-        console.log('Initializing user wallets...');
-        
-        // Get user document
-        const userDoc = await firebase.firestore().collection('users').doc(userId).get();
-        
-        if (!userDoc.exists) {
-            throw new Error('User document not found');
-        }
-        
-        const userData = userDoc.data();
-        
-        // Check if wallets exist
-        if (!userData.wallets) {
-            console.log('Creating wallets for user...');
-            
-            // Create wallets if they don't exist
-            if (typeof createUserWallets === 'function') {
-                userWallets = await createUserWallets(userId);
-            } else {
-                userWallets = await createWalletsForUser(userId);
-            }
-        } else {
-            userWallets = userData.wallets;
-        }
-        
-        console.log('User wallets loaded:', userWallets);
-        
-        // Display the wallet address for current crypto
-        displayWalletAddress(currentCrypto);
-        
-        // Mark BTC as selected
-        setTimeout(() => {
-            const btcItem = document.querySelector('.crypto-dropdown-item');
-            if (btcItem) {
-                btcItem.classList.add('selected');
-            }
-        }, 100);
-        
-    } catch (error) {
-        console.error('Error initializing wallets:', error);
-        alert('Error loading wallet information. Please refresh the page or contact support.');
-        throw error;
-    }
-}
-
-// Create wallets for user (fallback function)
-async function createWalletsForUser(userId) {
-    try {
-        const hash = btoa(userId).replace(/[^a-zA-Z0-9]/g, '').substring(0, 32);
-        
-        const mainWallets = {
-            BTC: window.MAIN_WALLETS?.BTC || 'bc1q0wa4efcyfcpwsl8jfqww5emhdzgv4d64lgceem',
-            ETH: window.MAIN_WALLETS?.ETH || '0xa7550Db929E8501f8c85e02cB70692652c1675Ab',
-            USDT: window.MAIN_WALLETS?.USDT || 'TXC1MnuVbnr2yFETFxdEm1VmUUYhCA5xiQ'
-        };
-        
-        const wallets = {
-            BTC: {
-                address: 'bc1q' + hash.toLowerCase().substring(0, 39),
-                mainWallet: mainWallets.BTC,
-                balance: 0
-            },
-            ETH: {
-                address: '0x' + hash.substring(0, 40),
-                mainWallet: mainWallets.ETH,
-                balance: 0
-            },
-            USDT: {
-                address: 'T' + hash.substring(0, 33),
-                mainWallet: mainWallets.USDT,
-                balance: 0
-            }
-        };
-        
-        // Save to Firestore
-        await firebase.firestore().collection('users').doc(userId).update({
-            wallets: wallets,
-            walletsCreatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        
-        console.log('Wallets created and saved:', wallets);
-        return wallets;
-        
-    } catch (error) {
-        console.error('Error creating wallets:', error);
-        throw error;
-    }
-}
-
 // Display wallet address for selected crypto
 function displayWalletAddress(crypto) {
-    if (!userWallets || !userWallets[crypto]) {
-        console.error('Wallet not found for', crypto);
-        return;
-    }
+    // Get main wallet address from window object
+    const mainWallets = window.MAIN_WALLETS || {
+        BTC: 'bc1q0wa4efcyfcpwsl8jfqww5emhdzgv4d64lgceem',
+        ETH: '0xa7550Db929E8501f8c85e02cB70692652c1675Ab',
+        USDT: 'TXC1MnuVbnr2yFETFxdEm1VmUUYhCA5xiQ'
+    };
     
-    const wallet = userWallets[crypto];
-    const address = wallet.address;
+    const address = mainWallets[crypto];
     
     console.log(`Displaying ${crypto} wallet:`, address);
     
@@ -177,10 +85,9 @@ function displayWalletAddress(crypto) {
         addressElement.textContent = address;
     }
     
-    // Update QR code with proper cryptocurrency URI format
+    // Update QR code
     const qrCode = document.getElementById('qrCode');
     if (qrCode) {
-        // Generate proper cryptocurrency URI for QR code
         let qrData = '';
         
         switch(crypto) {
@@ -191,14 +98,12 @@ function displayWalletAddress(crypto) {
                 qrData = `ethereum:${address}`;
                 break;
             case 'USDT':
-                // USDT on Tron network
-                qrData = address; // Tron addresses work with just the address
+                qrData = address;
                 break;
             default:
                 qrData = address;
         }
         
-        // Use QR code API with proper encoding
         qrCode.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrData)}&margin=10`;
         qrCode.alt = `${crypto} Wallet QR Code`;
     }
@@ -210,11 +115,8 @@ function toggleCryptoDropdown() {
     const btn = document.querySelector('.crypto-dropdown-btn');
     
     if (menu && btn) {
-        const isActive = menu.classList.contains('active');
         menu.classList.toggle('active');
         btn.classList.toggle('active');
-        
-        console.log('Dropdown toggled:', !isActive);
     }
 }
 
@@ -237,7 +139,6 @@ function selectCrypto(crypto) {
     console.log('Selecting cryptocurrency:', crypto);
     
     currentCrypto = crypto;
-    
     const info = CRYPTO_INFO[crypto];
     
     if (!info) {
@@ -270,7 +171,7 @@ function selectCrypto(crypto) {
         }
     });
     
-    // Display user's wallet address for selected crypto
+    // Display wallet address for selected crypto
     displayWalletAddress(crypto);
     
     // Update selected state in dropdown
@@ -329,7 +230,7 @@ function fallbackCopyAddress(address, copyIcon, copyBtn) {
     tempInput.style.left = '-9999px';
     document.body.appendChild(tempInput);
     tempInput.select();
-    tempInput.setSelectionRange(0, 99999); // For mobile devices
+    tempInput.setSelectionRange(0, 99999);
     
     try {
         const successful = document.execCommand('copy');
@@ -387,25 +288,21 @@ async function handleDepositNotification(event) {
     const usdAmount = parseFloat(amountElement.value);
     const note = noteElement ? noteElement.value.trim() : '';
     
-    // Validate wallet
-    if (!userWallets || !userWallets[currentCrypto]) {
-        alert('Wallet not found. Please refresh the page.');
-        return;
-    }
-    
-    const walletAddress = userWallets[currentCrypto].address;
-    const mainWalletAddress = userWallets[currentCrypto].mainWallet;
-    
     console.log('Form data:', { 
         amount: usdAmount, 
-        crypto: currentCrypto, 
-        wallet: walletAddress,
+        crypto: currentCrypto,
         txHash: txHash 
     });
     
     // Validate amount
     if (isNaN(usdAmount) || usdAmount < 10) {
         alert('Minimum deposit amount is $10');
+        return;
+    }
+    
+    // Validate transaction hash (required for verification)
+    if (!txHash || txHash.length < 10) {
+        alert('Please enter a valid transaction hash. This is required for verification.');
         return;
     }
     
@@ -428,6 +325,15 @@ async function handleDepositNotification(event) {
             userEmail = window.currentUser.email || user.email;
         }
         
+        // Get main wallet address
+        const mainWallets = window.MAIN_WALLETS || {
+            BTC: 'bc1q0wa4efcyfcpwsl8jfqww5emhdzgv4d64lgceem',
+            ETH: '0xa7550Db929E8501f8c85e02cB70692652c1675Ab',
+            USDT: 'TXC1MnuVbnr2yFETFxdEm1VmUUYhCA5xiQ'
+        };
+        
+        const walletAddress = mainWallets[currentCrypto];
+        
         console.log('Creating deposit notification...');
         
         // Create deposit notification
@@ -437,9 +343,8 @@ async function handleDepositNotification(event) {
             userName: userName,
             cryptocurrency: currentCrypto,
             usdAmount: usdAmount,
-            userWalletAddress: walletAddress,
-            mainWalletAddress: mainWalletAddress,
-            transactionHash: txHash || 'Not provided',
+            walletAddress: walletAddress,
+            transactionHash: txHash,
             note: note || 'None',
             status: 'pending',
             processed: false,
@@ -466,7 +371,7 @@ async function handleDepositNotification(event) {
                 cryptocurrency: currentCrypto,
                 usdAmount: usdAmount,
                 status: 'pending',
-                transactionHash: txHash || 'Not provided',
+                transactionHash: txHash,
                 walletAddress: walletAddress,
                 depositId: depositRef.id,
                 date: firebase.firestore.FieldValue.serverTimestamp()
@@ -479,8 +384,8 @@ async function handleDepositNotification(event) {
             `Deposit Notification Submitted! 🎉\n\n` +
             `Amount: $${usdAmount.toFixed(2)}\n` +
             `Cryptocurrency: ${currentCrypto}\n` +
-            `Your Wallet: ${walletAddress.substring(0, 20)}...\n\n` +
-            `Our team will verify and credit your account within 24 hours.\n\n` +
+            `Transaction Hash: ${txHash.substring(0, 20)}...\n\n` +
+            `Our team will verify your transaction and credit your account within 24 hours.\n\n` +
             `Thank you for your patience!`
         );
         
@@ -494,8 +399,7 @@ async function handleDepositNotification(event) {
         console.error('Error submitting deposit:', error);
         console.error('Error details:', {
             code: error.code,
-            message: error.message,
-            stack: error.stack
+            message: error.message
         });
         
         let errorMessage = 'Error submitting deposit notification. ';
@@ -545,7 +449,7 @@ async function loadPendingDeposits() {
         if (depositsSnapshot.empty) {
             container.innerHTML = `
                 <div class="empty-state">
-                    <p>No pending deposits</p>
+                    <p>No deposits yet</p>
                     <small>Your deposits will appear here once submitted</small>
                 </div>
             `;
@@ -570,9 +474,7 @@ async function loadPendingDeposits() {
                 <div class="transaction-info">
                     <span class="transaction-type ${statusClass}">${deposit.cryptocurrency} Deposit</span>
                     <span class="transaction-date">${formatDate(date)} - ${statusText}</span>
-                    ${deposit.transactionHash !== 'Not provided' ? 
-                        `<small style="color: #999; font-size: 0.8rem;">TX: ${deposit.transactionHash.substring(0, 20)}...</small>` : 
-                        ''}
+                    <small style="color: #999; font-size: 0.8rem;">TX: ${deposit.transactionHash.substring(0, 20)}...</small>
                 </div>
                 <div class="transaction-amount ${deposit.processed && !deposit.rejected ? 'positive' : ''}">
                     $${deposit.usdAmount.toFixed(2)}
@@ -595,7 +497,6 @@ async function loadPendingDeposits() {
 
 // Setup real-time deposit listener
 function setupDepositListener(userId) {
-    // Clear existing listener if any
     if (depositListener) {
         depositListener();
         depositListener = null;
@@ -617,7 +518,7 @@ function setupDepositListener(userId) {
                     
                     // Check if deposit was just processed
                     if (deposit.processed && !deposit.rejected && !deposit.notificationShown) {
-                        // Mark as notified to prevent duplicate alerts
+                        // Mark as notified
                         change.doc.ref.update({ notificationShown: true })
                             .catch(err => console.error('Error updating notification flag:', err));
                         
@@ -673,4 +574,4 @@ window.selectCrypto = selectCrypto;
 window.copyAddress = copyAddress;
 window.handleDepositNotification = handleDepositNotification;
 
-console.log('Enhanced deposit.js loaded successfully');
+console.log('Simplified deposit.js loaded successfully');
