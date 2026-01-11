@@ -242,7 +242,7 @@ async function handleWithdrawalRequest(event) {
             `Cryptocurrency: ${crypto}\n\n` +
             `Your balance has been reserved.\n` +
             `Request will be processed within 24 hours.\n\n` +
-            `Check Firebase Console to approve and process this withdrawal.`
+            ``
         );
         
         // Reset form
@@ -432,3 +432,4 @@ if (typeof module !== 'undefined' && module.exports) {
         initializeWithdrawPage
     };
 }
+
