@@ -1,4 +1,4 @@
-// Crypto-Only Withdrawal System with Firebase
+// Crypto-Only Withdrawal System with Firebase - FIXED
 
 // Network fees
 const NETWORK_FEES = {
@@ -26,9 +26,15 @@ async function initializeWithdrawPage() {
     
     // Load user data
     if (!window.currentUser) {
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        if (userDoc.exists) {
-            window.currentUser = { uid: user.uid, ...userDoc.data() };
+        try {
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            if (userDoc.exists) {
+                window.currentUser = { uid: user.uid, ...userDoc.data() };
+            }
+        } catch (error) {
+            console.error('Error loading user data:', error);
+            alert('Error loading user data. Please refresh the page.');
+            return;
         }
     }
     
@@ -69,20 +75,26 @@ async function updateWithdrawalSummary() {
     
     // Calculate crypto amount
     try {
-        let btcPrice = 98547.23; // Fallback
+        let cryptoPrice = 98547.23; // Fallback for BTC
         
-        try {
-            const response = await fetch('https://api.coindesk.com/v1/bpi/currentprice.json');
-            if (response.ok) {
-                const data = await response.json();
-                btcPrice = parseFloat(data.bpi.USD.rate.replace(/,/g, ''));
+        // Get current price based on crypto type
+        if (crypto === 'BTC') {
+            try {
+                const response = await fetch('https://api.coindesk.com/v1/bpi/currentprice.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    cryptoPrice = parseFloat(data.bpi.USD.rate.replace(/,/g, ''));
+                }
+            } catch (e) {
+                console.log('Using fallback BTC price');
             }
-        } catch (e) {
-            console.log('Using fallback BTC price');
+        } else if (crypto === 'ETH') {
+            cryptoPrice = 3421.45; // Fallback
+        } else if (crypto === 'USDT') {
+            cryptoPrice = 1.00;
         }
         
-        // Simplified calculation (in reality, would need different exchange rates)
-        const cryptoAmount = total / btcPrice;
+        const cryptoAmount = total / cryptoPrice;
         document.getElementById('summaryCrypto').textContent = cryptoAmount.toFixed(8) + ' ' + crypto;
         
     } catch (error) {
@@ -112,6 +124,16 @@ async function handleWithdrawalRequest(event) {
     if (amount < 20) {
         alert('Minimum withdrawal amount is $20');
         return;
+    }
+    
+    // Refresh user balance from database
+    try {
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        if (userDoc.exists) {
+            window.currentUser.balance = userDoc.data().balance || 0;
+        }
+    } catch (error) {
+        console.error('Error refreshing balance:', error);
     }
     
     const userBalance = window.currentUser?.balance || 0;
@@ -154,11 +176,15 @@ async function handleWithdrawalRequest(event) {
     submitBtn.disabled = true;
     
     try {
-        // Create withdrawal request in Firestore
+        // Create withdrawal document reference first
+        const withdrawalRef = db.collection('withdrawals').doc();
+        
+        // Withdrawal data
         const withdrawalData = {
+            id: withdrawalRef.id,
             userId: user.uid,
-            userEmail: window.currentUser.email,
-            userName: window.currentUser.fullName,
+            userEmail: window.currentUser.email || user.email,
+            userName: window.currentUser.fullName || window.currentUser.firstName || 'User',
             cryptocurrency: crypto,
             amount: amount,
             networkFee: fee,
@@ -169,28 +195,52 @@ async function handleWithdrawalRequest(event) {
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             processedAt: null,
             processedBy: null,
-            transactionHash: null
+            transactionHash: null,
+            notes: ''
         };
         
-        await db.collection('withdrawals').add(withdrawalData);
+        // Add withdrawal request
+        await withdrawalRef.set(withdrawalData);
+        console.log('Withdrawal request created');
         
-        // Add to user's transaction history
+        // Deduct balance from user account
+        const userRef = db.collection('users').doc(user.uid);
+        await userRef.update({
+            balance: firebase.firestore.FieldValue.increment(-amount)
+        });
+        console.log('Balance deducted');
+        
+        // Add transaction to user's history
         await db.collection('users').doc(user.uid).collection('transactions').add({
             type: 'withdrawal',
             cryptocurrency: crypto,
             amount: amount,
+            networkFee: fee,
+            netAmount: netAmount,
             status: 'pending',
             walletAddress: walletAddress,
+            withdrawalId: withdrawalRef.id,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        console.log('Transaction history updated');
+        
+        // Update local user balance
+        window.currentUser.balance = (window.currentUser.balance || 0) - amount;
+        
+        // Update UI
+        const availableBalanceElements = document.querySelectorAll('#availableBalance, #maxAmount');
+        availableBalanceElements.forEach(el => {
+            el.textContent = formatCurrency(window.currentUser.balance);
         });
         
         alert(
-            `Withdrawal Request Submitted!\n\n` +
+            `✅ Withdrawal Request Submitted!\n\n` +
             `Amount: ${formatCurrency(amount)}\n` +
             `Fee: ${formatCurrency(fee)}\n` +
             `Net Amount: ${formatCurrency(netAmount)}\n` +
             `Cryptocurrency: ${crypto}\n\n` +
-            `Your request will be processed within 24 hours.\n` +
+            `Your balance has been reserved.\n` +
+            `Request will be processed within 24 hours.\n` +
             `You will receive a notification once processed.`
         );
         
@@ -200,11 +250,31 @@ async function handleWithdrawalRequest(event) {
         updateWithdrawalSummary();
         
         // Reload withdrawal requests
-        loadWithdrawalRequests();
+        setTimeout(() => loadWithdrawalRequests(), 1000);
         
     } catch (error) {
         console.error('Error submitting withdrawal:', error);
-        alert('Error submitting withdrawal request. Please try again or contact support.');
+        
+        // Provide specific error messages
+        let errorMessage = 'Error submitting withdrawal request. ';
+        
+        if (error.code === 'permission-denied') {
+            errorMessage += 'Permission denied. Please contact support.';
+        } else if (error.code === 'unavailable') {
+            errorMessage += 'Service temporarily unavailable. Please try again.';
+        } else if (error.code === 'failed-precondition') {
+            errorMessage += 'Please ensure you have sufficient balance.';
+        } else if (error.message) {
+            errorMessage += error.message;
+        } else {
+            errorMessage += 'Please try again or contact support.';
+        }
+        
+        alert(errorMessage);
+        
+        // Reload page to ensure balance is accurate
+        console.log('Reloading to ensure balance is accurate...');
+        setTimeout(() => window.location.reload(), 2000);
     } finally {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
@@ -244,23 +314,27 @@ async function loadWithdrawalRequests() {
             
             let statusClass = 'pending';
             let statusText = 'Pending';
+            let statusIcon = '⏳';
             
             if (withdrawal.status === 'completed') {
                 statusClass = 'completed';
                 statusText = 'Completed';
+                statusIcon = '✅';
             } else if (withdrawal.status === 'rejected') {
                 statusClass = 'rejected';
                 statusText = 'Rejected';
+                statusIcon = '❌';
             }
             
             const withdrawalItem = document.createElement('div');
             withdrawalItem.className = 'transaction-item';
             withdrawalItem.innerHTML = `
                 <div class="transaction-info">
-                    <span class="transaction-type ${statusClass}">${withdrawal.cryptocurrency} Withdrawal</span>
+                    <span class="transaction-type ${statusClass}">${statusIcon} ${withdrawal.cryptocurrency} Withdrawal</span>
                     <span class="transaction-date">${formatDate(date)} - ${statusText}</span>
                     <small>To: ${withdrawal.walletAddress.substring(0, 15)}...${withdrawal.walletAddress.substring(withdrawal.walletAddress.length - 10)}</small>
-                    ${withdrawal.transactionHash ? `<small>TX: ${withdrawal.transactionHash.substring(0, 20)}...</small>` : ''}
+                    ${withdrawal.transactionHash ? `<small>TX: <a href="${getTxUrl(withdrawal.cryptocurrency, withdrawal.transactionHash)}" target="_blank" style="color: #2196F3;">${withdrawal.transactionHash.substring(0, 20)}...</a></small>` : ''}
+                    ${withdrawal.notes ? `<small class="rejection-note" style="color: #f44336;">Note: ${withdrawal.notes}</small>` : ''}
                 </div>
                 <div class="transaction-amount">$${withdrawal.amount.toFixed(2)}</div>
             `;
@@ -270,7 +344,26 @@ async function loadWithdrawalRequests() {
         
     } catch (error) {
         console.error('Error loading withdrawal requests:', error);
+        const container = document.getElementById('withdrawalRequests');
+        if (container) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <p>Error loading withdrawal requests</p>
+                    <small>Please refresh the page</small>
+                </div>
+            `;
+        }
     }
+}
+
+// Get transaction explorer URL
+function getTxUrl(crypto, hash) {
+    const explorers = {
+        'BTC': `https://blockchain.com/btc/tx/${hash}`,
+        'ETH': `https://etherscan.io/tx/${hash}`,
+        'USDT': `https://tronscan.org/#/transaction/${hash}`
+    };
+    return explorers[crypto] || '#';
 }
 
 // Format date
