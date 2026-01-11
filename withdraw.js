@@ -1,4 +1,4 @@
-// Crypto-Only Withdrawal System with Firebase - FIXED
+// Crypto-Only Withdrawal System with Firebase - FIXED FOR FIRESTORE RULES
 
 // Network fees
 const NETWORK_FEES = {
@@ -176,10 +176,10 @@ async function handleWithdrawalRequest(event) {
     submitBtn.disabled = true;
     
     try {
-        // Create withdrawal document reference first
-        const withdrawalRef = db.collection('withdrawals').doc();
+        console.log('Starting withdrawal process...');
         
-        // Withdrawal data
+        // Step 1: Create withdrawal request first
+        const withdrawalRef = db.collection('withdrawals').doc();
         const withdrawalData = {
             id: withdrawalRef.id,
             userId: user.uid,
@@ -199,19 +199,20 @@ async function handleWithdrawalRequest(event) {
             notes: ''
         };
         
-        // Add withdrawal request
         await withdrawalRef.set(withdrawalData);
-        console.log('Withdrawal request created');
+        console.log('Withdrawal request created successfully');
         
-        // Deduct balance from user account
+        // Step 2: Deduct balance from user
         const userRef = db.collection('users').doc(user.uid);
-        await userRef.update({
-            balance: firebase.firestore.FieldValue.increment(-amount)
-        });
-        console.log('Balance deducted');
+        const newBalance = userBalance - amount;
         
-        // Add transaction to user's history
-        await db.collection('users').doc(user.uid).collection('transactions').add({
+        await userRef.update({
+            balance: newBalance
+        });
+        console.log('Balance updated successfully');
+        
+        // Step 3: Add to transaction history
+        await userRef.collection('transactions').add({
             type: 'withdrawal',
             cryptocurrency: crypto,
             amount: amount,
@@ -222,10 +223,10 @@ async function handleWithdrawalRequest(event) {
             withdrawalId: withdrawalRef.id,
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-        console.log('Transaction history updated');
+        console.log('Transaction history updated successfully');
         
-        // Update local user balance
-        window.currentUser.balance = (window.currentUser.balance || 0) - amount;
+        // Update local balance
+        window.currentUser.balance = newBalance;
         
         // Update UI
         const availableBalanceElements = document.querySelectorAll('#availableBalance, #maxAmount');
@@ -240,8 +241,8 @@ async function handleWithdrawalRequest(event) {
             `Net Amount: ${formatCurrency(netAmount)}\n` +
             `Cryptocurrency: ${crypto}\n\n` +
             `Your balance has been reserved.\n` +
-            `Request will be processed within 24 hours.\n` +
-            `You will receive a notification once processed.`
+            `Request will be processed within 24 hours.\n\n` +
+            `Check Firebase Console to approve and process this withdrawal.`
         );
         
         // Reset form
@@ -253,27 +254,32 @@ async function handleWithdrawalRequest(event) {
         setTimeout(() => loadWithdrawalRequests(), 1000);
         
     } catch (error) {
-        console.error('Error submitting withdrawal:', error);
+        console.error('Detailed error:', error);
+        console.error('Error code:', error.code);
+        console.error('Error message:', error.message);
         
         // Provide specific error messages
-        let errorMessage = 'Error submitting withdrawal request. ';
+        let errorMessage = 'Error submitting withdrawal request.\n\n';
         
         if (error.code === 'permission-denied') {
-            errorMessage += 'Permission denied. Please contact support.';
+            errorMessage += 'Permission denied. This could mean:\n' +
+                          '1. Firestore rules need to be updated\n' +
+                          '2. You may need to re-login\n\n' +
+                          'Please update your Firestore rules in Firebase Console.';
         } else if (error.code === 'unavailable') {
             errorMessage += 'Service temporarily unavailable. Please try again.';
         } else if (error.code === 'failed-precondition') {
             errorMessage += 'Please ensure you have sufficient balance.';
         } else if (error.message) {
-            errorMessage += error.message;
+            errorMessage += 'Details: ' + error.message;
         } else {
             errorMessage += 'Please try again or contact support.';
         }
         
         alert(errorMessage);
         
-        // Reload page to ensure balance is accurate
-        console.log('Reloading to ensure balance is accurate...');
+        // Reload to refresh balance
+        console.log('Reloading page to refresh data...');
         setTimeout(() => window.location.reload(), 2000);
     } finally {
         submitBtn.textContent = originalText;
@@ -313,7 +319,7 @@ async function loadWithdrawalRequests() {
             const date = withdrawal.createdAt ? withdrawal.createdAt.toDate() : new Date();
             
             let statusClass = 'pending';
-            let statusText = 'Pending';
+            let statusText = 'Pending Admin Approval';
             let statusIcon = '⏳';
             
             if (withdrawal.status === 'completed') {
