@@ -46,6 +46,9 @@ function initializeDashboard() {
                         };
                     }
                     
+                    // Check and complete any matured investments FIRST
+                    await checkAndCompleteMatureInvestments(user.uid);
+                    
                     updateDashboardUI(window.currentUser);
                     dashboardInitialized = true;
                     
@@ -298,6 +301,46 @@ function formatTransactionDate(date) {
     return date.toLocaleDateString();
 }
 
+// Check and Complete Matured Investments (called on dashboard load)
+async function checkAndCompleteMatureInvestments(uid) {
+    try {
+        console.log('Checking for matured investments...');
+        
+        const investmentsSnapshot = await firebase.firestore()
+            .collection('users')
+            .doc(uid)
+            .collection('investments')
+            .where('status', '==', 'active')
+            .get();
+        
+        const now = Date.now();
+        let completedCount = 0;
+        
+        for (const doc of investmentsSnapshot.docs) {
+            const investment = doc.data();
+            
+            // Check if investment has matured and not yet credited
+            if (now >= investment.endTime && !investment.credited) {
+                const totalProfit = investment.amount * (investment.roiPercent / 100);
+                await completeInvestment(uid, doc.id, investment, totalProfit);
+                completedCount++;
+            }
+        }
+        
+        if (completedCount > 0) {
+            console.log(`Completed ${completedCount} matured investment(s)`);
+            // Refresh user data after completing investments
+            const userDoc = await firebase.firestore().collection('users').doc(uid).get();
+            if (userDoc.exists) {
+                window.currentUser = { uid: uid, ...userDoc.data() };
+            }
+        }
+        
+    } catch (error) {
+        console.error('Error checking matured investments:', error);
+    }
+}
+
 // Start Profit Simulation (Updates every 10 seconds)
 function startProfitSimulation(uid) {
     if (profitUpdateInterval) {
@@ -455,30 +498,39 @@ async function completeInvestment(uid, investmentId, investment, totalProfit) {
         const userRef = firebase.firestore().collection('users').doc(uid);
         const investmentRef = userRef.collection('investments').doc(investmentId);
         
+        // Total payout = original investment + profit
         const totalPayout = investment.amount + totalProfit;
         
+        // Update user balance (add back investment + profit)
         await userRef.update({
             balance: firebase.firestore.FieldValue.increment(totalPayout),
             totalProfit: firebase.firestore.FieldValue.increment(totalProfit)
         });
         
+        // Mark investment as completed
         await investmentRef.update({
             status: 'completed',
             credited: true,
-            completedAt: Date.now()
+            completedAt: Date.now(),
+            finalProfit: totalProfit,
+            finalPayout: totalPayout
         });
         
+        // Add transaction record
         await userRef.collection('transactions').add({
             type: 'investment_maturity',
             amount: totalPayout,
             profit: totalProfit,
+            investmentAmount: investment.amount,
             description: `${investment.planName} investment matured`,
             status: 'completed',
             date: firebase.firestore.FieldValue.serverTimestamp()
         });
         
         console.log(`Investment ${investmentId} completed successfully`);
+        console.log(`Principal: ${investment.amount}, Profit: ${totalProfit}, Total Payout: ${totalPayout}`);
         
+        // Refresh user data
         const userDoc = await userRef.get();
         if (userDoc.exists) {
             window.currentUser = { uid: uid, ...userDoc.data() };
