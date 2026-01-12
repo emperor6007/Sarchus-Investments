@@ -164,6 +164,13 @@ async function updateDashboardData(user) {
             console.log('Using fallback BTC price');
         }
         
+        // Refresh user data to get latest balance
+        const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+        if (userDoc.exists) {
+            window.currentUser = { uid: user.uid, ...userDoc.data() };
+            user = window.currentUser;
+        }
+        
         // Calculate total locked investments
         const totalInvestments = await calculateTotalInvestments(user.uid);
         
@@ -319,9 +326,18 @@ async function checkAndCompleteMatureInvestments(uid) {
         for (const doc of investmentsSnapshot.docs) {
             const investment = doc.data();
             
+            console.log(`Investment ${doc.id}:`, {
+                startTime: new Date(investment.startTime).toISOString(),
+                endTime: new Date(investment.endTime).toISOString(),
+                now: new Date(now).toISOString(),
+                isMatured: now >= investment.endTime,
+                credited: investment.credited
+            });
+            
             // Check if investment has matured and not yet credited
             if (now >= investment.endTime && !investment.credited) {
                 const totalProfit = investment.amount * (investment.roiPercent / 100);
+                console.log(`Processing matured investment ${doc.id} - Amount: ${investment.amount}, Profit: ${totalProfit}`);
                 await completeInvestment(uid, doc.id, investment, totalProfit);
                 completedCount++;
             }
@@ -334,10 +350,13 @@ async function checkAndCompleteMatureInvestments(uid) {
             if (userDoc.exists) {
                 window.currentUser = { uid: uid, ...userDoc.data() };
             }
+        } else {
+            console.log('No matured investments found to complete');
         }
         
     } catch (error) {
         console.error('Error checking matured investments:', error);
+        alert('Error processing matured investments: ' + error.message);
     }
 }
 
@@ -380,7 +399,9 @@ async function calculateLiveProfits(uid) {
             
             totalLiveProfit += currentProfit;
             
+            // Check if investment matured during this update
             if (now >= endTime && !investment.credited) {
+                console.log(`Found matured investment during profit update: ${doc.id}`);
                 await completeInvestment(uid, doc.id, investment, totalProfitPotential);
             }
         }
@@ -433,16 +454,16 @@ async function loadActiveInvestments(uid) {
             const durationMs = endTime - startTime;
             const elapsedMs = Math.min(now - startTime, durationMs);
             
-            const progress = (elapsedMs / durationMs) * 100;
+            const progress = Math.min((elapsedMs / durationMs) * 100, 100);
             const totalProfitPotential = investment.amount * (investment.roiPercent / 100);
             const currentProfit = (elapsedMs / durationMs) * totalProfitPotential;
             
-            const daysRemaining = Math.ceil((endTime - now) / (1000 * 60 * 60 * 24));
+            const daysRemaining = Math.max(0, Math.ceil((endTime - now) / (1000 * 60 * 60 * 24)));
             const statusText = investment.status === 'completed' 
-                ? 'Completed' 
+                ? 'Completed ✓' 
                 : daysRemaining > 0 
                     ? `${daysRemaining} days remaining`
-                    : 'Maturing...';
+                    : 'Ready to Complete';
             
             const statusClass = investment.status === 'completed' ? 'completed' : 'active';
             
@@ -493,7 +514,8 @@ async function loadActiveInvestments(uid) {
 // Complete Investment
 async function completeInvestment(uid, investmentId, investment, totalProfit) {
     try {
-        console.log(`Completing investment ${investmentId}...`);
+        console.log(`Starting completion of investment ${investmentId}...`);
+        console.log('Investment data:', investment);
         
         const userRef = firebase.firestore().collection('users').doc(uid);
         const investmentRef = userRef.collection('investments').doc(investmentId);
@@ -501,11 +523,23 @@ async function completeInvestment(uid, investmentId, investment, totalProfit) {
         // Total payout = original investment + profit
         const totalPayout = investment.amount + totalProfit;
         
+        console.log(`Payout calculation:
+            - Principal: ${investment.amount}
+            - Profit: ${totalProfit}
+            - Total Payout: ${totalPayout}`);
+        
+        // Get current user balance
+        const userDoc = await userRef.get();
+        const currentBalance = userDoc.data().balance || 0;
+        console.log(`Current balance: ${currentBalance}`);
+        
         // Update user balance (add back investment + profit)
         await userRef.update({
             balance: firebase.firestore.FieldValue.increment(totalPayout),
             totalProfit: firebase.firestore.FieldValue.increment(totalProfit)
         });
+        
+        console.log(`Balance updated: ${currentBalance} + ${totalPayout} = ${currentBalance + totalPayout}`);
         
         // Mark investment as completed
         await investmentRef.update({
@@ -515,6 +549,8 @@ async function completeInvestment(uid, investmentId, investment, totalProfit) {
             finalProfit: totalProfit,
             finalPayout: totalPayout
         });
+        
+        console.log('Investment marked as completed');
         
         // Add transaction record
         await userRef.collection('transactions').add({
@@ -527,19 +563,23 @@ async function completeInvestment(uid, investmentId, investment, totalProfit) {
             date: firebase.firestore.FieldValue.serverTimestamp()
         });
         
-        console.log(`Investment ${investmentId} completed successfully`);
-        console.log(`Principal: ${investment.amount}, Profit: ${totalProfit}, Total Payout: ${totalPayout}`);
+        console.log('Transaction record created');
+        console.log(`Investment ${investmentId} completed successfully!`);
         
         // Refresh user data
-        const userDoc = await userRef.get();
-        if (userDoc.exists) {
-            window.currentUser = { uid: uid, ...userDoc.data() };
+        const updatedUserDoc = await userRef.get();
+        if (updatedUserDoc.exists) {
+            window.currentUser = { uid: uid, ...updatedUserDoc.data() };
+            console.log('Updated user balance:', window.currentUser.balance);
             updateDashboardData(window.currentUser);
             loadRecentTransactions(uid);
         }
         
     } catch (error) {
         console.error('Error completing investment:', error);
+        console.error('Error code:', error.code);
+        console.error('Error message:', error.message);
+        alert(`Failed to complete investment: ${error.message}\n\nPlease contact support if this issue persists.`);
     }
 }
 
