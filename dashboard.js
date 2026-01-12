@@ -1,4 +1,4 @@
-// ================= DASHBOARD.JS (PRODUCTION-READY) =================
+// ================= DASHBOARD.JS (FINAL FIXED VERSION) =================
 
 let dashboardInitialized = false;
 let profitUpdateInterval = null;
@@ -26,8 +26,9 @@ function initializeDashboard() {
 
         try {
             const userRef = firebase.firestore().collection('users').doc(user.uid);
-            const userDoc = await userRef.get();
 
+            // Load user
+            let userDoc = await userRef.get();
             if (!userDoc.exists) {
                 alert('User data not found');
                 return;
@@ -35,8 +36,12 @@ function initializeDashboard() {
 
             window.currentUser = { uid: user.uid, ...userDoc.data() };
 
-            // ✅ CRITICAL FIX — process matured investments on load
+            // 🔥 PROCESS MATURITY
             await processMaturedInvestments(user.uid);
+
+            // 🔥 RELOAD USER AFTER CREDIT (CRITICAL FIX)
+            userDoc = await userRef.get();
+            window.currentUser = { uid: user.uid, ...userDoc.data() };
 
             updateDashboardUI(window.currentUser);
             startProfitSimulation(user.uid);
@@ -52,26 +57,22 @@ function initializeDashboard() {
 
 // ================= PROCESS MATURED INVESTMENTS =================
 async function processMaturedInvestments(uid) {
-    try {
-        const snapshot = await firebase.firestore()
-            .collection('users')
-            .doc(uid)
-            .collection('investments')
-            .where('status', '==', 'active')
-            .get();
+    const snapshot = await firebase.firestore()
+        .collection('users')
+        .doc(uid)
+        .collection('investments')
+        .where('status', '==', 'active')
+        .get();
 
-        const now = Date.now();
+    const now = Date.now();
 
-        for (const doc of snapshot.docs) {
-            const investment = doc.data();
+    for (const doc of snapshot.docs) {
+        const investment = doc.data();
 
-            if (now >= investment.endTime && !investment.credited) {
-                const profit = investment.amount * (investment.roiPercent / 100);
-                await completeInvestment(uid, doc.id, investment, profit);
-            }
+        if (now >= investment.endTime && !investment.credited) {
+            const profit = investment.amount * (investment.roiPercent / 100);
+            await completeInvestment(uid, doc.id, investment, profit, false);
         }
-    } catch (error) {
-        console.error('Maturity processing error:', error);
     }
 }
 
@@ -86,37 +87,25 @@ function updateDashboardUI(user) {
 
 // ================= DASHBOARD DATA =================
 async function updateDashboardData(user) {
-    try {
-        const totals = await calculateTotalInvestments(user.uid);
-        const totalBalance = (user.balance || 0) + totals.totalAmount;
+    const totals = await calculateTotalInvestments(user.uid);
+    const totalBalance = (user.balance || 0) + totals.totalAmount;
 
-        const availableBalanceEl = document.getElementById('availableBalance');
-        if (availableBalanceEl) {
-            availableBalanceEl.textContent = formatCurrency(user.balance || 0);
-        }
-
-        const totalBalanceEl = document.getElementById('totalBalance');
-        if (totalBalanceEl) {
-            totalBalanceEl.textContent = formatCurrency(totalBalance);
-        }
-
-        const totalInvestmentsEl = document.getElementById('totalInvestments');
-        if (totalInvestmentsEl) {
-            totalInvestmentsEl.textContent = formatCurrency(totals.totalAmount);
-        }
-
-        const activeCountEl = document.getElementById('activeInvestmentsCount');
-        if (activeCountEl) {
-            activeCountEl.textContent = totals.activeCount
-                ? `${totals.activeCount} active investment(s)`
-                : 'No locked funds';
-        }
-
-        await loadActiveInvestments(user.uid);
-
-    } catch (error) {
-        console.error('Dashboard update error:', error);
+    const availableBalanceEl = document.getElementById('availableBalance');
+    if (availableBalanceEl) {
+        availableBalanceEl.textContent = formatCurrency(user.balance || 0);
     }
+
+    const totalBalanceEl = document.getElementById('totalBalance');
+    if (totalBalanceEl) {
+        totalBalanceEl.textContent = formatCurrency(totalBalance);
+    }
+
+    const totalInvestmentsEl = document.getElementById('totalInvestments');
+    if (totalInvestmentsEl) {
+        totalInvestmentsEl.textContent = formatCurrency(totals.totalAmount);
+    }
+
+    await loadActiveInvestments(user.uid);
 }
 
 // ================= CALCULATE LOCKED INVESTMENTS =================
@@ -140,42 +129,32 @@ async function calculateTotalInvestments(uid) {
 // ================= PROFIT SIMULATION =================
 function startProfitSimulation(uid) {
     if (profitUpdateInterval) clearInterval(profitUpdateInterval);
-
     calculateLiveProfits(uid);
     profitUpdateInterval = setInterval(() => calculateLiveProfits(uid), 10000);
 }
 
 async function calculateLiveProfits(uid) {
-    try {
-        const snapshot = await firebase.firestore()
-            .collection('users')
-            .doc(uid)
-            .collection('investments')
-            .where('status', '==', 'active')
-            .get();
+    const snapshot = await firebase.firestore()
+        .collection('users')
+        .doc(uid)
+        .collection('investments')
+        .where('status', '==', 'active')
+        .get();
 
-        const now = Date.now();
-        let totalLiveProfit = 0;
+    const now = Date.now();
+    let totalLiveProfit = 0;
 
-        for (const doc of snapshot.docs) {
-            const inv = doc.data();
-            const duration = inv.endTime - inv.startTime;
-            const elapsed = Math.min(now - inv.startTime, duration);
-            const profit = (elapsed / duration) * (inv.amount * inv.roiPercent / 100);
-            totalLiveProfit += profit;
+    for (const doc of snapshot.docs) {
+        const inv = doc.data();
+        const duration = inv.endTime - inv.startTime;
+        const elapsed = Math.min(now - inv.startTime, duration);
+        const profit = (elapsed / duration) * (inv.amount * inv.roiPercent / 100);
+        totalLiveProfit += profit;
+    }
 
-            if (now >= inv.endTime && !inv.credited) {
-                await completeInvestment(uid, doc.id, inv, inv.amount * inv.roiPercent / 100);
-            }
-        }
-
-        const totalProfitEl = document.getElementById('totalProfit');
-        if (totalProfitEl) {
-            totalProfitEl.textContent = '+' + formatCurrency(totalLiveProfit);
-        }
-
-    } catch (error) {
-        console.error('Profit calculation error:', error);
+    const totalProfitEl = document.getElementById('totalProfit');
+    if (totalProfitEl) {
+        totalProfitEl.textContent = '+' + formatCurrency(totalLiveProfit);
     }
 }
 
@@ -196,26 +175,18 @@ async function loadActiveInvestments(uid) {
 
     snapshot.forEach(doc => {
         const inv = doc.data();
-        const completed = inv.status === 'completed' || now >= inv.endTime;
+        const completed = inv.status === 'completed';
 
         const duration = inv.endTime - inv.startTime;
         const elapsed = Math.min(now - inv.startTime, duration);
         const progress = Math.min((elapsed / duration) * 100, 100);
-        const profit = inv.amount * (inv.roiPercent / 100);
 
         list.innerHTML += `
         <div class="investment-card ${completed ? 'completed' : 'active'}">
-            <div class="investment-header">
-                <h4>${inv.planName} Plan</h4>
-                <span class="investment-status">
-                    ${completed ? 'Completed' : `${Math.ceil((inv.endTime - now) / 86400000)} days remaining`}
-                </span>
-            </div>
-
+            <h4>${inv.planName} Plan</h4>
+            <p>Status: ${completed ? 'Completed' : 'Active'}</p>
             <p>Amount: ${formatCurrency(inv.amount)}</p>
             <p>ROI: ${inv.roiPercent}%</p>
-            <p>Expected Profit: +${formatCurrency(profit)}</p>
-
             <div class="progress-bar">
                 <div class="progress-fill" style="width:${progress}%"></div>
             </div>
@@ -224,40 +195,36 @@ async function loadActiveInvestments(uid) {
 }
 
 // ================= COMPLETE INVESTMENT =================
-async function completeInvestment(uid, investmentId, investment, profit) {
-    try {
-        const userRef = firebase.firestore().collection('users').doc(uid);
-        const invRef = userRef.collection('investments').doc(investmentId);
+async function completeInvestment(uid, investmentId, investment, profit, refreshUI = true) {
+    const userRef = firebase.firestore().collection('users').doc(uid);
+    const invRef = userRef.collection('investments').doc(investmentId);
 
-        const payout = investment.amount + profit;
+    const payout = investment.amount + profit;
 
-        await userRef.update({
-            balance: firebase.firestore.FieldValue.increment(payout),
-            totalProfit: firebase.firestore.FieldValue.increment(profit)
-        });
+    await userRef.update({
+        balance: firebase.firestore.FieldValue.increment(payout),
+        totalProfit: firebase.firestore.FieldValue.increment(profit)
+    });
 
-        await invRef.update({
-            status: 'completed',
-            credited: true,
-            completedAt: Date.now()
-        });
+    await invRef.update({
+        status: 'completed',
+        credited: true,
+        completedAt: Date.now()
+    });
 
-        await userRef.collection('transactions').add({
-            type: 'investment_maturity',
-            amount: payout,
-            profit: profit,
-            status: 'completed',
-            date: firebase.firestore.FieldValue.serverTimestamp()
-        });
+    await userRef.collection('transactions').add({
+        type: 'investment_maturity',
+        amount: payout,
+        profit: profit,
+        status: 'completed',
+        date: firebase.firestore.FieldValue.serverTimestamp()
+    });
 
+    if (refreshUI) {
         const updatedUser = await userRef.get();
         window.currentUser = { uid, ...updatedUser.data() };
-
         updateDashboardData(window.currentUser);
         loadRecentTransactions(uid);
-
-    } catch (error) {
-        console.error('Investment completion error:', error);
     }
 }
 
@@ -277,11 +244,7 @@ async function loadRecentTransactions(uid) {
     box.innerHTML = '';
     snap.forEach(doc => {
         const t = doc.data();
-        box.innerHTML += `
-            <div class="transaction-item">
-                <span>${t.type}</span>
-                <strong>${formatCurrency(t.amount)}</strong>
-            </div>`;
+        box.innerHTML += `<div>${t.type} — ${formatCurrency(t.amount)}</div>`;
     });
 }
 
@@ -293,12 +256,4 @@ function formatCurrency(amount) {
     });
 }
 
-// ================= LOGOUT =================
-function handleDashboardLogout() {
-    if (profitUpdateInterval) clearInterval(profitUpdateInterval);
-    firebase.auth().signOut().then(() => location.href = 'login.html');
-}
-
-window.handleDashboardLogout = handleDashboardLogout;
-
-console.log('✅ Dashboard.js loaded (production-ready)');
+console.log('✅ Dashboard.js loaded — FINAL FIX');
