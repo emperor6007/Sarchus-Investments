@@ -1,4 +1,4 @@
-// Crypto-Only Withdrawal System with Firebase - FIXED FOR FIRESTORE RULES
+// Crypto-Only Withdrawal System with Firebase - UPDATED MINIMUM $50
 
 // Network fees
 const NETWORK_FEES = {
@@ -6,6 +6,9 @@ const NETWORK_FEES = {
     'ETH': 3,
     'USDT': 2
 };
+
+// UPDATED MINIMUM WITHDRAWAL
+const MINIMUM_WITHDRAWAL = 50; // Changed from $20 to $50
 
 // Network options
 const NETWORKS = {
@@ -44,6 +47,13 @@ async function initializeWithdrawPage() {
     availableBalanceElements.forEach(el => {
         el.textContent = formatCurrency(balance);
     });
+    
+    // Update minimum withdrawal display in the form
+    const withdrawAmountInput = document.getElementById('withdrawAmount');
+    if (withdrawAmountInput) {
+        withdrawAmountInput.setAttribute('min', MINIMUM_WITHDRAWAL);
+        withdrawAmountInput.setAttribute('placeholder', `Minimum $${MINIMUM_WITHDRAWAL}`);
+    }
     
     // Load withdrawal requests
     loadWithdrawalRequests();
@@ -120,9 +130,9 @@ async function handleWithdrawalRequest(event) {
     const network = document.getElementById('network').value;
     const confirmAddress = document.getElementById('confirmAddress').checked;
     
-    // Validation
-    if (amount < 20) {
-        alert('Minimum withdrawal amount is $20');
+    // Validation - UPDATED MINIMUM
+    if (amount < MINIMUM_WITHDRAWAL) {
+        alert(`Minimum withdrawal amount is $${MINIMUM_WITHDRAWAL}`);
         return;
     }
     
@@ -241,8 +251,7 @@ async function handleWithdrawalRequest(event) {
             `Net Amount: ${formatCurrency(netAmount)}\n` +
             `Cryptocurrency: ${crypto}\n\n` +
             `Your balance has been reserved.\n` +
-            `Request will be processed within 24 hours.\n\n` +
-            ``
+            `Request will be processed within 24 hours.`
         );
         
         // Reset form
@@ -433,3 +442,4 @@ if (typeof module !== 'undefined' && module.exports) {
     };
 }
 
+console.log('withdraw.js loaded with $50 minimum withdrawal');
