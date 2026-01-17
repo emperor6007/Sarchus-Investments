@@ -180,7 +180,7 @@
                     <label for="referralCode">Referral Code (Optional)</label>
                     <input type="text" id="referralCode" placeholder="Enter referral code" style="text-transform: uppercase;">
                     <div id="referralMessage" class="referral-message"></div>
-                    <small class="password-hint">Get $25 bonus by using a friend's referral code!</small>
+                    <small class="password-hint">Get $2 bonus by using a friend's referral code!</small>
                 </div>
 
                 <div class="form-group checkbox-group">
@@ -227,7 +227,7 @@
                     <li>✓ Instant Transactions</li>
                     <li>✓ Expert Investment Management</li>
                     <li>✓ 24/7 Support Team</li>
-                    <li>✓ Earn $50 per Referral!</li>
+                    <li>✓ Earn $2 per Referral!</li>
                 </ul>
             </div>
         </div>
@@ -242,11 +242,22 @@
     <script src="firebase-config.js"></script>
     <script src="main.js"></script>
     <script src="auth.js"></script>
+    <script src="register.js"></script>
     
     <script>
         // Real-time referral code validation
         const referralInput = document.getElementById('referralCode');
         const referralMessage = document.getElementById('referralMessage');
+        
+        // Check for referral code in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlReferralCode = urlParams.get('ref');
+        
+        if (urlReferralCode && referralInput) {
+            referralInput.value = urlReferralCode.toUpperCase();
+            // Trigger validation
+            validateAndShowReferralBonus(urlReferralCode);
+        }
         
         if (referralInput) {
             let validationTimeout;
@@ -269,22 +280,43 @@
                     return;
                 }
                 
-                validationTimeout = setTimeout(async () => {
-                    try {
-                        const isValid = await validateReferralCode(code);
-                        if (isValid) {
-                            referralMessage.textContent = '✓ Valid referral code! You\'ll get $25 bonus on signup.';
-                            referralMessage.className = 'referral-message valid';
-                        } else {
-                            referralMessage.textContent = '✗ Invalid referral code';
-                            referralMessage.className = 'referral-message invalid';
-                        }
-                        referralMessage.style.display = 'block';
-                    } catch (error) {
-                        console.error('Validation error:', error);
-                    }
+                validationTimeout = setTimeout(() => {
+                    validateAndShowReferralBonus(code);
                 }, 500);
             });
+        }
+        
+        // Validate referral code and show bonus message
+        async function validateAndShowReferralBonus(code) {
+            try {
+                const isValid = await validateReferralCode(code);
+                if (isValid) {
+                    referralMessage.textContent = '✓ Valid referral code! You\'ll get $2 bonus on signup.';
+                    referralMessage.className = 'referral-message valid';
+                } else {
+                    referralMessage.textContent = '✗ Invalid referral code';
+                    referralMessage.className = 'referral-message invalid';
+                }
+                referralMessage.style.display = 'block';
+            } catch (error) {
+                console.error('Validation error:', error);
+            }
+        }
+        
+        // Validate referral code function
+        async function validateReferralCode(code) {
+            try {
+                const snapshot = await firebase.firestore()
+                    .collection('users')
+                    .where('referralCode', '==', code)
+                    .limit(1)
+                    .get();
+                
+                return !snapshot.empty;
+            } catch (error) {
+                console.error('Error validating referral code:', error);
+                return false;
+            }
         }
     </script>
 </body>
