@@ -1,6 +1,10 @@
-// Referral Dashboard JavaScript
+// Referral Dashboard JavaScript - Updated with $2 bonus
 
 let referralInitialized = false;
+
+// UPDATED BONUS AMOUNTS
+const REFERRER_BONUS = 2; // $2 for the person who refers
+const REFEREE_BONUS = 2;  // $2 for the person who signs up
 
 document.addEventListener('DOMContentLoaded', function() {
     if (window.location.pathname.includes('referral.html')) {
@@ -183,7 +187,7 @@ async function loadReferralsList(userId) {
                     <div class="referral-name">${referredUserName}</div>
                     <div class="referral-date">${formatDate(date)}</div>
                 </div>
-                <div class="referral-reward">+${formatCurrency(referral.referrerBonus || 50)}</div>
+                <div class="referral-reward">+${formatCurrency(referral.referrerBonus || REFERRER_BONUS)}</div>
             `;
             
             referralsListEl.appendChild(referralItem);
@@ -303,7 +307,7 @@ function shareViaWhatsApp() {
         return;
     }
     
-    const message = `Join me on Sarchus Investments and earn $25 bonus! Use my referral code: ${referralCode} or sign up here: ${referralLink}`;
+    const message = `Join me on Sarchus Investments and earn $${REFEREE_BONUS} bonus! Use my referral code: ${referralCode} or sign up here: ${referralLink}`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
 }
@@ -318,7 +322,7 @@ function shareViaTwitter() {
         return;
     }
     
-    const message = `Join me on Sarchus Investments and get $25 bonus! Use code: ${referralCode}`;
+    const message = `Join me on Sarchus Investments and get $${REFEREE_BONUS} bonus! Use code: ${referralCode}`;
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(referralLink)}`;
     window.open(twitterUrl, '_blank');
 }
@@ -333,7 +337,7 @@ function shareViaEmail() {
         return;
     }
     
-    const subject = 'Join Sarchus Investments - Get $25 Bonus!';
+    const subject = `Join Sarchus Investments - Get $${REFEREE_BONUS} Bonus!`;
     const body = `Hi!
 
 I'm using Sarchus Investments for cryptocurrency trading and investment, and I think you'd love it too!
@@ -341,7 +345,7 @@ I'm using Sarchus Investments for cryptocurrency trading and investment, and I t
 Sign up using my referral code: ${referralCode}
 Or use this link: ${referralLink}
 
-You'll get $25 bonus when you sign up, and I'll earn a reward too!
+You'll get $${REFEREE_BONUS} bonus when you sign up, and I'll earn a reward too!
 
 Happy investing!`;
     
@@ -398,4 +402,4 @@ window.shareViaTwitter = shareViaTwitter;
 window.shareViaEmail = shareViaEmail;
 window.handleDashboardLogout = handleDashboardLogout;
 
-console.log('referral.js loaded successfully');
+console.log('referral.js loaded successfully with $2 bonus amounts');
