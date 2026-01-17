@@ -1,4 +1,8 @@
-// Fixed Firebase Authentication System with Referral Program
+// Complete Firebase Authentication System with $2 Referral Program
+
+// REFERRAL BONUS CONSTANTS - UPDATED TO $2
+const REFERRER_BONUS = 2; // $2 for the person who refers
+const REFEREE_BONUS = 2;  // $2 for the new user who signs up
 
 // Wait for DOM and Firebase to be ready
 document.addEventListener('DOMContentLoaded', function() {
@@ -25,7 +29,7 @@ async function validateReferralCode(referralCode) {
     }
 }
 
-// Process referral rewards
+// Process referral rewards - UPDATED TO $2 BONUSES
 async function processReferral(referralCode, newUserId) {
     try {
         console.log('Processing referral for code:', referralCode);
@@ -44,16 +48,13 @@ async function processReferral(referralCode, newUserId) {
         
         console.log('Found referrer:', referrerId);
         
-        // Referral rewards
-        const referrerBonus = 50; // $50 for referrer
-        const newUserBonus = 25; // $25 for new user
-        
         // Create referral record
         await firebase.firestore().collection('referrals').add({
             referrerId: referrerId,
             referredUserId: newUserId,
-            referrerBonus: referrerBonus,
-            newUserBonus: newUserBonus,
+            referralCode: referralCode,
+            referrerBonus: REFERRER_BONUS,
+            refereeBonus: REFEREE_BONUS,
             status: 'completed',
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -61,38 +62,47 @@ async function processReferral(referralCode, newUserId) {
         // Update referrer's stats and balance
         await firebase.firestore().collection('users').doc(referrerId).update({
             referralCount: firebase.firestore.FieldValue.increment(1),
-            referralEarnings: firebase.firestore.FieldValue.increment(referrerBonus),
-            balance: firebase.firestore.FieldValue.increment(referrerBonus)
+            referralEarnings: firebase.firestore.FieldValue.increment(REFERRER_BONUS),
+            balance: firebase.firestore.FieldValue.increment(REFERRER_BONUS)
         });
         
         // Add transaction for referrer
         await firebase.firestore().collection('users').doc(referrerId)
             .collection('transactions').add({
                 type: 'referral_bonus',
-                amount: referrerBonus,
+                amount: REFERRER_BONUS,
+                usdAmount: REFERRER_BONUS,
                 description: 'Referral bonus - New user signup',
                 status: 'completed',
+                referredUserId: newUserId,
                 date: firebase.firestore.FieldValue.serverTimestamp()
             });
         
         // Give bonus to new user
         await firebase.firestore().collection('users').doc(newUserId).update({
-            referralEarnings: newUserBonus,
-            balance: firebase.firestore.FieldValue.increment(newUserBonus)
+            referralEarnings: REFEREE_BONUS,
+            balance: firebase.firestore.FieldValue.increment(REFEREE_BONUS),
+            referredBy: referrerId
         });
         
         // Add transaction for new user
         await firebase.firestore().collection('users').doc(newUserId)
             .collection('transactions').add({
                 type: 'referral_bonus',
-                amount: newUserBonus,
+                amount: REFEREE_BONUS,
+                usdAmount: REFEREE_BONUS,
                 description: 'Welcome bonus - Referred signup',
                 status: 'completed',
+                referrerId: referrerId,
                 date: firebase.firestore.FieldValue.serverTimestamp()
             });
         
         console.log('Referral processed successfully');
-        return { success: true, referrerBonus, newUserBonus };
+        return { 
+            success: true, 
+            referrerBonus: REFERRER_BONUS, 
+            newUserBonus: REFEREE_BONUS 
+        };
         
     } catch (error) {
         console.error('Referral processing error:', error);
@@ -191,7 +201,7 @@ function attachFormListeners() {
             const referralMessage = document.getElementById('referralMessage');
             if (referralMessage) {
                 if (isValid) {
-                    referralMessage.textContent = '✓ Valid referral code! You\'ll get $25 bonus on signup.';
+                    referralMessage.textContent = `✓ Valid referral code! You'll get $${REFEREE_BONUS} bonus on signup.`;
                     referralMessage.className = 'referral-message valid';
                 } else {
                     referralMessage.textContent = '✗ Invalid referral code';
@@ -319,8 +329,8 @@ async function handleRegister(event) {
             ...userData
         };
         
-        // Success message with referral info
-        let welcomeMessage = `Welcome to Sarchus, ${firstName}!\n\nYour account has been created successfully.\n\nYour referral code: ${userReferralCode}\nShare it with friends to earn $50 per referral!`;
+        // Success message with referral info - UPDATED TO $2
+        let welcomeMessage = `Welcome to Sarchus, ${firstName}!\n\nYour account has been created successfully.\n\nYour referral code: ${userReferralCode}\nShare it with friends to earn $${REFERRER_BONUS} per referral!`;
         
         if (referralResult && referralResult.success) {
             welcomeMessage += `\n\n🎉 Bonus: You've received $${referralResult.newUserBonus} for using a referral code!`;
@@ -583,4 +593,4 @@ window.socialLogin = socialLogin;
 window.resetPassword = resetPassword;
 window.validateReferralCode = validateReferralCode;
 
-console.log('Auth.js with referral system loaded successfully');
+console.log('Auth.js with $2 referral system loaded successfully');
