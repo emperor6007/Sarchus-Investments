@@ -1,4 +1,4 @@
-// Fixed Firebase Authentication System
+// Fixed Firebase Authentication System with Referral Program
 
 // Wait for DOM and Firebase to be ready
 document.addEventListener('DOMContentLoaded', function() {
@@ -6,6 +6,99 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeAuth();
     }, 500);
 });
+
+// Generate unique referral code
+function generateReferralCode(userId) {
+    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+    return `SARCHUS${random}`;
+}
+
+// Validate referral code
+async function validateReferralCode(referralCode) {
+    try {
+        const usersRef = firebase.firestore().collection('users');
+        const snapshot = await usersRef.where('referralCode', '==', referralCode).get();
+        return !snapshot.empty;
+    } catch (error) {
+        console.error('Validation error:', error);
+        return false;
+    }
+}
+
+// Process referral rewards
+async function processReferral(referralCode, newUserId) {
+    try {
+        console.log('Processing referral for code:', referralCode);
+        
+        // Find the referrer
+        const usersRef = firebase.firestore().collection('users');
+        const snapshot = await usersRef.where('referralCode', '==', referralCode).get();
+        
+        if (snapshot.empty) {
+            console.log('Invalid referral code');
+            return { success: false, message: 'Invalid referral code' };
+        }
+        
+        const referrerDoc = snapshot.docs[0];
+        const referrerId = referrerDoc.id;
+        
+        console.log('Found referrer:', referrerId);
+        
+        // Referral rewards
+        const referrerBonus = 50; // $50 for referrer
+        const newUserBonus = 25; // $25 for new user
+        
+        // Create referral record
+        await firebase.firestore().collection('referrals').add({
+            referrerId: referrerId,
+            referredUserId: newUserId,
+            referrerBonus: referrerBonus,
+            newUserBonus: newUserBonus,
+            status: 'completed',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        // Update referrer's stats and balance
+        await firebase.firestore().collection('users').doc(referrerId).update({
+            referralCount: firebase.firestore.FieldValue.increment(1),
+            referralEarnings: firebase.firestore.FieldValue.increment(referrerBonus),
+            balance: firebase.firestore.FieldValue.increment(referrerBonus)
+        });
+        
+        // Add transaction for referrer
+        await firebase.firestore().collection('users').doc(referrerId)
+            .collection('transactions').add({
+                type: 'referral_bonus',
+                amount: referrerBonus,
+                description: 'Referral bonus - New user signup',
+                status: 'completed',
+                date: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        
+        // Give bonus to new user
+        await firebase.firestore().collection('users').doc(newUserId).update({
+            referralEarnings: newUserBonus,
+            balance: firebase.firestore.FieldValue.increment(newUserBonus)
+        });
+        
+        // Add transaction for new user
+        await firebase.firestore().collection('users').doc(newUserId)
+            .collection('transactions').add({
+                type: 'referral_bonus',
+                amount: newUserBonus,
+                description: 'Welcome bonus - Referred signup',
+                status: 'completed',
+                date: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        
+        console.log('Referral processed successfully');
+        return { success: true, referrerBonus, newUserBonus };
+        
+    } catch (error) {
+        console.error('Referral processing error:', error);
+        return { success: false, error: error.message };
+    }
+}
 
 // Initialize authentication system
 function initializeAuth() {
@@ -26,6 +119,14 @@ function initializeAuth() {
     const currentPage = window.location.pathname.split('/').pop();
     const isAuthPage = currentPage === 'login.html' || currentPage === 'register.html';
     const isDashboardPage = currentPage === 'dashboard.html';
+
+    // Check for referral code in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const referralCode = urlParams.get('ref');
+    if (referralCode) {
+        localStorage.setItem('pendingReferralCode', referralCode);
+        console.log('Referral code detected:', referralCode);
+    }
 
     // Monitor authentication state changes
     firebase.auth().onAuthStateChanged(async (user) => {
@@ -79,6 +180,27 @@ function attachFormListeners() {
         loginForm.addEventListener('submit', handleLogin);
         console.log('Login form listener attached');
     }
+    
+    // Display referral code if present
+    const referralCodeInput = document.getElementById('referralCode');
+    const pendingCode = localStorage.getItem('pendingReferralCode');
+    if (referralCodeInput && pendingCode) {
+        referralCodeInput.value = pendingCode;
+        // Validate the code
+        validateReferralCode(pendingCode).then(isValid => {
+            const referralMessage = document.getElementById('referralMessage');
+            if (referralMessage) {
+                if (isValid) {
+                    referralMessage.textContent = '✓ Valid referral code! You\'ll get $25 bonus on signup.';
+                    referralMessage.className = 'referral-message valid';
+                } else {
+                    referralMessage.textContent = '✗ Invalid referral code';
+                    referralMessage.className = 'referral-message invalid';
+                }
+                referralMessage.style.display = 'block';
+            }
+        });
+    }
 }
 
 // Handle user registration
@@ -94,6 +216,8 @@ async function handleRegister(event) {
     const confirmPassword = document.getElementById('confirmPassword').value;
     const country = document.getElementById('country').value;
     const agreeTerms = document.getElementById('agreeTerms').checked;
+    const referralCode = document.getElementById('referralCode')?.value.trim() || 
+                        localStorage.getItem('pendingReferralCode');
     
     // Validate password match
     if (password !== confirmPassword) {
@@ -122,6 +246,15 @@ async function handleRegister(event) {
         return;
     }
     
+    // Validate referral code if provided
+    if (referralCode) {
+        const isValid = await validateReferralCode(referralCode);
+        if (!isValid) {
+            const proceed = confirm('The referral code you entered is invalid. Do you want to continue registration without it?');
+            if (!proceed) return;
+        }
+    }
+    
     // Show loading state
     const submitBtn = event.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
@@ -142,6 +275,9 @@ async function handleRegister(event) {
             console.warn('Could not send verification email:', err);
         });
         
+        // Generate referral code for new user
+        const userReferralCode = generateReferralCode(user.uid);
+        
         // Create user document in Firestore
         const userData = {
             firstName: firstName,
@@ -153,6 +289,10 @@ async function handleRegister(event) {
             balance: 0,
             btcHoldings: 0,
             totalProfit: 0,
+            referralCode: userReferralCode,
+            referredBy: referralCode || null,
+            referralCount: 0,
+            referralEarnings: 0,
             registeredDate: firebase.firestore.FieldValue.serverTimestamp(),
             emailVerified: false,
             status: 'active'
@@ -161,14 +301,32 @@ async function handleRegister(event) {
         await firebase.firestore().collection('users').doc(user.uid).set(userData);
         console.log('User data saved to Firestore');
         
+        // Process referral if code was provided
+        let referralResult = null;
+        if (referralCode) {
+            referralResult = await processReferral(referralCode, user.uid);
+            if (referralResult.success) {
+                console.log('Referral processed:', referralResult);
+            }
+        }
+        
+        // Clear pending referral code
+        localStorage.removeItem('pendingReferralCode');
+        
         // Set current user in memory
         window.currentUser = {
             uid: user.uid,
             ...userData
         };
         
-        // Success message
-        alert(`Welcome to Sarchus, ${firstName}!\n\nYour account has been created successfully.`);
+        // Success message with referral info
+        let welcomeMessage = `Welcome to Sarchus, ${firstName}!\n\nYour account has been created successfully.\n\nYour referral code: ${userReferralCode}\nShare it with friends to earn $50 per referral!`;
+        
+        if (referralResult && referralResult.success) {
+            welcomeMessage += `\n\n🎉 Bonus: You've received $${referralResult.newUserBonus} for using a referral code!`;
+        }
+        
+        alert(welcomeMessage);
         
         // Redirect to dashboard
         window.location.href = 'dashboard.html';
@@ -332,6 +490,11 @@ async function socialLogin(provider) {
             if (!userDoc.exists) {
                 // Create new user document for first-time Google users
                 const names = user.displayName ? user.displayName.split(' ') : ['User', ''];
+                const userReferralCode = generateReferralCode(user.uid);
+                
+                // Check for pending referral code
+                const referralCode = localStorage.getItem('pendingReferralCode');
+                
                 const userData = {
                     firstName: names[0] || 'User',
                     lastName: names.slice(1).join(' ') || '',
@@ -342,12 +505,23 @@ async function socialLogin(provider) {
                     balance: 0,
                     btcHoldings: 0,
                     totalProfit: 0,
+                    referralCode: userReferralCode,
+                    referredBy: referralCode || null,
+                    referralCount: 0,
+                    referralEarnings: 0,
                     registeredDate: firebase.firestore.FieldValue.serverTimestamp(),
                     emailVerified: user.emailVerified,
                     status: 'active'
                 };
                 
                 await firebase.firestore().collection('users').doc(user.uid).set(userData);
+                
+                // Process referral if code exists
+                if (referralCode) {
+                    await processReferral(referralCode, user.uid);
+                    localStorage.removeItem('pendingReferralCode');
+                }
+                
                 window.currentUser = { uid: user.uid, ...userData };
                 console.log('New user document created');
             } else {
@@ -407,5 +581,6 @@ window.handleLogin = handleLogin;
 window.handleLogout = handleLogout;
 window.socialLogin = socialLogin;
 window.resetPassword = resetPassword;
+window.validateReferralCode = validateReferralCode;
 
-console.log('Auth.js loaded successfully');
+console.log('Auth.js with referral system loaded successfully');
