@@ -13,6 +13,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// Generate unique referral code
+function generateReferralCode(userId) {
+    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+    return `SARCHUS${random}`;
+}
+
 // Initialize Referral Dashboard
 function initializeReferralDashboard() {
     if (referralInitialized) return;
@@ -28,6 +34,31 @@ function initializeReferralDashboard() {
                 
                 if (userDoc.exists) {
                     const userData = userDoc.data();
+                    
+                    // Check if user has a referral code, if not generate one
+                    if (!userData.referralCode || userData.referralCode === 'N/A') {
+                        console.log('Generating missing referral code...');
+                        const newReferralCode = generateReferralCode(user.uid);
+                        
+                        try {
+                            await firebase.firestore().collection('users').doc(user.uid).update({
+                                referralCode: newReferralCode,
+                                referralCount: userData.referralCount || 0,
+                                referralEarnings: userData.referralEarnings || 0,
+                                referredBy: userData.referredBy || null
+                            });
+                            
+                            userData.referralCode = newReferralCode;
+                            userData.referralCount = userData.referralCount || 0;
+                            userData.referralEarnings = userData.referralEarnings || 0;
+                            
+                            console.log('Referral code generated:', newReferralCode);
+                        } catch (error) {
+                            console.error('Error generating referral code:', error);
+                            alert('Error generating referral code. Please refresh the page.');
+                        }
+                    }
+                    
                     window.currentUser = {
                         uid: user.uid,
                         ...userData
@@ -66,12 +97,12 @@ async function loadReferralData(userId, userData) {
         // Display referral code
         const referralCodeEl = document.getElementById('referralCode');
         if (referralCodeEl) {
-            referralCodeEl.textContent = userData.referralCode || 'N/A';
+            referralCodeEl.textContent = userData.referralCode || 'Loading...';
         }
         
         // Generate and display referral link
         const baseUrl = window.location.origin;
-        const referralLink = `${baseUrl}/register.html?ref=${userData.referralCode}`;
+        const referralLink = `${baseUrl}/register.html?ref=${userData.referralCode || ''}`;
         const referralLinkEl = document.getElementById('referralLink');
         if (referralLinkEl) {
             referralLinkEl.value = referralLink;
@@ -189,6 +220,11 @@ async function calculateMonthlyReferrals(userId) {
 function copyReferralCode() {
     const referralCode = document.getElementById('referralCode').textContent;
     
+    if (referralCode === 'Loading...' || referralCode === 'N/A') {
+        alert('Please wait for your referral code to load.');
+        return;
+    }
+    
     if (navigator.clipboard) {
         navigator.clipboard.writeText(referralCode).then(() => {
             showCopySuccess('Code copied!');
@@ -204,6 +240,11 @@ function copyReferralCode() {
 // Copy Referral Link
 function copyReferralLink() {
     const referralLink = document.getElementById('referralLink').value;
+    
+    if (referralLink.includes('undefined') || referralLink.endsWith('ref=')) {
+        alert('Please wait for your referral link to load.');
+        return;
+    }
     
     if (navigator.clipboard) {
         navigator.clipboard.writeText(referralLink).then(() => {
@@ -256,6 +297,12 @@ function showCopySuccess(message) {
 function shareViaWhatsApp() {
     const referralCode = document.getElementById('referralCode').textContent;
     const referralLink = document.getElementById('referralLink').value;
+    
+    if (referralCode === 'Loading...' || referralLink.includes('undefined')) {
+        alert('Please wait for your referral code to load.');
+        return;
+    }
+    
     const message = `Join me on Sarchus Investments and earn $25 bonus! Use my referral code: ${referralCode} or sign up here: ${referralLink}`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
@@ -265,6 +312,12 @@ function shareViaWhatsApp() {
 function shareViaTwitter() {
     const referralCode = document.getElementById('referralCode').textContent;
     const referralLink = document.getElementById('referralLink').value;
+    
+    if (referralCode === 'Loading...' || referralLink.includes('undefined')) {
+        alert('Please wait for your referral code to load.');
+        return;
+    }
+    
     const message = `Join me on Sarchus Investments and get $25 bonus! Use code: ${referralCode}`;
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(referralLink)}`;
     window.open(twitterUrl, '_blank');
@@ -274,6 +327,12 @@ function shareViaTwitter() {
 function shareViaEmail() {
     const referralCode = document.getElementById('referralCode').textContent;
     const referralLink = document.getElementById('referralLink').value;
+    
+    if (referralCode === 'Loading...' || referralLink.includes('undefined')) {
+        alert('Please wait for your referral code to load.');
+        return;
+    }
+    
     const subject = 'Join Sarchus Investments - Get $25 Bonus!';
     const body = `Hi!
 
