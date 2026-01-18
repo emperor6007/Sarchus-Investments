@@ -105,7 +105,7 @@
     </div>
 
     <div class="dashboard-container">
-        <aside class="dashboard-sidebar">
+        <aside class="dashboard-sidebar" id="dashboardSidebar">
             <ul class="sidebar-menu">
                 <li><a href="dashboard.html" class="active">📊 Dashboard</a></li>
                 <li><a href="deposit.html">💳 Deposit</a></li>
@@ -269,102 +269,112 @@
     <script>
     // Mobile Navigation Scroll Enhancement
     (function() {
-        // Only run on mobile devices
-        if (window.innerWidth <= 968) {
-            const sidebar = document.querySelector('.dashboard-sidebar');
-            
-            if (!sidebar) return;
+        function initMobileNav() {
+            // Only run on mobile devices
+            if (window.innerWidth <= 968) {
+                const sidebar = document.getElementById('dashboardSidebar');
+                
+                if (!sidebar) return;
 
-            // Create scroll indicator
-            const scrollIndicator = document.createElement('div');
-            scrollIndicator.className = 'mobile-scroll-indicator';
-            scrollIndicator.innerHTML = '← Swipe for more →';
-            scrollIndicator.style.cssText = `
-                position: absolute;
-                top: 50%;
-                right: 10px;
-                transform: translateY(-50%);
-                background: rgba(247, 147, 26, 0.9);
-                color: white;
-                padding: 0.3rem 0.8rem;
-                border-radius: 20px;
-                font-size: 0.7rem;
-                font-weight: 600;
-                pointer-events: none;
-                opacity: 1;
-                transition: opacity 0.3s;
-                z-index: 1000;
-            `;
+                // Remove any existing indicator
+                const existingIndicator = sidebar.querySelector('.mobile-scroll-indicator');
+                if (existingIndicator) {
+                    existingIndicator.remove();
+                }
 
-            // Check if content is scrollable
-            const isScrollable = sidebar.scrollWidth > sidebar.clientWidth;
-            
-            if (isScrollable) {
-                sidebar.style.position = 'relative';
-                sidebar.appendChild(scrollIndicator);
+                // Check if content is scrollable
+                const isScrollable = sidebar.scrollWidth > sidebar.clientWidth;
+                
+                if (isScrollable) {
+                    // Create scroll indicator
+                    const scrollIndicator = document.createElement('div');
+                    scrollIndicator.className = 'mobile-scroll-indicator';
+                    scrollIndicator.innerHTML = '← Swipe for more →';
+                    scrollIndicator.style.cssText = `
+                        position: absolute;
+                        top: 50%;
+                        right: 10px;
+                        transform: translateY(-50%);
+                        background: rgba(247, 147, 26, 0.9);
+                        color: white;
+                        padding: 0.3rem 0.8rem;
+                        border-radius: 20px;
+                        font-size: 0.7rem;
+                        font-weight: 600;
+                        pointer-events: none;
+                        opacity: 1;
+                        transition: opacity 0.3s;
+                        z-index: 1001;
+                    `;
 
-                // Hide indicator after scroll or 3 seconds
-                let hasScrolled = false;
+                    sidebar.style.position = 'fixed';
+                    sidebar.appendChild(scrollIndicator);
 
-                sidebar.addEventListener('scroll', function() {
-                    if (!hasScrolled) {
-                        hasScrolled = true;
-                        scrollIndicator.style.opacity = '0';
-                        setTimeout(() => {
-                            scrollIndicator.remove();
-                        }, 300);
-                    }
+                    // Hide indicator after scroll or 3 seconds
+                    let hasScrolled = false;
+
+                    const hideIndicator = () => {
+                        if (!hasScrolled && scrollIndicator.parentNode) {
+                            hasScrolled = true;
+                            scrollIndicator.style.opacity = '0';
+                            setTimeout(() => {
+                                if (scrollIndicator.parentNode) {
+                                    scrollIndicator.remove();
+                                }
+                            }, 300);
+                        }
+                    };
+
+                    sidebar.addEventListener('scroll', hideIndicator, { once: true });
+
+                    // Auto-hide after 3 seconds
+                    setTimeout(hideIndicator, 3000);
+                }
+
+                // Add smooth scrolling behavior for desktop testing
+                let isDown = false;
+                let startX;
+                let scrollLeft;
+
+                sidebar.addEventListener('mousedown', (e) => {
+                    isDown = true;
+                    sidebar.style.cursor = 'grabbing';
+                    startX = e.pageX - sidebar.offsetLeft;
+                    scrollLeft = sidebar.scrollLeft;
                 });
 
-                // Auto-hide after 3 seconds
-                setTimeout(() => {
-                    if (!hasScrolled && scrollIndicator.parentNode) {
-                        scrollIndicator.style.opacity = '0';
-                        setTimeout(() => {
-                            if (scrollIndicator.parentNode) {
-                                scrollIndicator.remove();
-                            }
-                        }, 300);
-                    }
-                }, 3000);
+                sidebar.addEventListener('mouseleave', () => {
+                    isDown = false;
+                    sidebar.style.cursor = 'default';
+                });
+
+                sidebar.addEventListener('mouseup', () => {
+                    isDown = false;
+                    sidebar.style.cursor = 'default';
+                });
+
+                sidebar.addEventListener('mousemove', (e) => {
+                    if (!isDown) return;
+                    e.preventDefault();
+                    const x = e.pageX - sidebar.offsetLeft;
+                    const walk = (x - startX) * 2;
+                    sidebar.scrollLeft = scrollLeft - walk;
+                });
             }
-
-            // Add smooth scrolling behavior
-            let isDown = false;
-            let startX;
-            let scrollLeft;
-
-            sidebar.addEventListener('mousedown', (e) => {
-                isDown = true;
-                sidebar.style.cursor = 'grabbing';
-                startX = e.pageX - sidebar.offsetLeft;
-                scrollLeft = sidebar.scrollLeft;
-            });
-
-            sidebar.addEventListener('mouseleave', () => {
-                isDown = false;
-                sidebar.style.cursor = 'default';
-            });
-
-            sidebar.addEventListener('mouseup', () => {
-                isDown = false;
-                sidebar.style.cursor = 'default';
-            });
-
-            sidebar.addEventListener('mousemove', (e) => {
-                if (!isDown) return;
-                e.preventDefault();
-                const x = e.pageX - sidebar.offsetLeft;
-                const walk = (x - startX) * 2;
-                sidebar.scrollLeft = scrollLeft - walk;
-            });
         }
 
-        // Re-run on window resize
+        // Initialize on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMobileNav);
+        } else {
+            initMobileNav();
+        }
+
+        // Re-initialize on window resize
+        let resizeTimeout;
         window.addEventListener('resize', function() {
-            if (window.innerWidth <= 968) {
-                location.reload();
-            }
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(initMobileNav, 250);
         });
     })();
     </script>
