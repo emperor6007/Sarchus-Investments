@@ -39,12 +39,15 @@
             padding: 1.5rem;
             border-radius: 8px;
             margin: 1rem 0;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
         .referral-code-text {
             font-size: 2rem;
             font-weight: bold;
             color: #667eea;
             letter-spacing: 2px;
+            word-break: break-all;
         }
         .copy-btn {
             background: #667eea;
@@ -56,6 +59,7 @@
             font-size: 1rem;
             font-weight: 600;
             transition: all 0.3s;
+            white-space: nowrap;
         }
         .copy-btn:hover {
             background: #5568d3;
@@ -72,9 +76,11 @@
             display: flex;
             align-items: center;
             gap: 1rem;
+            flex-wrap: wrap;
         }
         .referral-link-box input {
             flex: 1;
+            min-width: 200px;
             padding: 0.75rem;
             border: 1px solid #ddd;
             border-radius: 6px;
@@ -97,6 +103,10 @@
             justify-content: center;
             gap: 0.5rem;
             transition: all 0.3s;
+        }
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         .share-btn.whatsapp {
             background: #25D366;
@@ -152,6 +162,8 @@
             align-items: center;
             padding: 1rem;
             border-bottom: 1px solid #eee;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
         .referral-item:last-child {
             border-bottom: none;
@@ -209,6 +221,71 @@
             color: #666;
             font-size: 0.9rem;
         }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .referral-hero h1 {
+                font-size: 1.8rem;
+            }
+            .referral-hero p {
+                font-size: 1rem;
+            }
+            .referral-hero {
+                padding: 2rem 1rem;
+            }
+            .referral-code-text {
+                font-size: 1.5rem;
+                letter-spacing: 1px;
+            }
+            .referral-code-display {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .copy-btn {
+                width: 100%;
+            }
+            .referral-link-box {
+                flex-direction: column;
+            }
+            .referral-link-box input {
+                width: 100%;
+                min-width: unset;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .share-buttons {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem;
+            }
+            .share-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+            .steps {
+                grid-template-columns: 1fr;
+            }
+            .referral-code-box,
+            .how-it-works,
+            .referrals-list {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .referral-hero h1 {
+                font-size: 1.5rem;
+            }
+            .referral-code-text {
+                font-size: 1.2rem;
+            }
+            .stat-card-referral .value {
+                font-size: 1.5rem;
+            }
+            .share-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -236,7 +313,7 @@
     </nav>
 
     <div class="dashboard-container">
-        <aside class="dashboard-sidebar">
+        <aside class="dashboard-sidebar" id="referralSidebar">
             <ul class="sidebar-menu">
                 <li><a href="dashboard.html">📊 Dashboard</a></li>
                 <li><a href="deposit.html">💳 Deposit</a></li>
@@ -341,5 +418,119 @@
     <script src="firebase-config.js"></script>
     <script src="main.js"></script>
     <script src="referral.js"></script>
+
+    <!-- Mobile Navigation Scroll Enhancement -->
+    <script>
+    // Mobile Navigation Scroll Enhancement
+    (function() {
+        function initMobileNav() {
+            // Only run on mobile devices
+            if (window.innerWidth <= 968) {
+                const sidebar = document.getElementById('referralSidebar');
+                
+                if (!sidebar) return;
+
+                // Remove any existing indicator
+                const existingIndicator = sidebar.querySelector('.mobile-scroll-indicator');
+                if (existingIndicator) {
+                    existingIndicator.remove();
+                }
+
+                // Check if content is scrollable
+                const isScrollable = sidebar.scrollWidth > sidebar.clientWidth;
+                
+                if (isScrollable) {
+                    // Create scroll indicator
+                    const scrollIndicator = document.createElement('div');
+                    scrollIndicator.className = 'mobile-scroll-indicator';
+                    scrollIndicator.innerHTML = '← Swipe for more →';
+                    scrollIndicator.style.cssText = `
+                        position: absolute;
+                        top: 50%;
+                        right: 10px;
+                        transform: translateY(-50%);
+                        background: rgba(247, 147, 26, 0.9);
+                        color: white;
+                        padding: 0.3rem 0.8rem;
+                        border-radius: 20px;
+                        font-size: 0.7rem;
+                        font-weight: 600;
+                        pointer-events: none;
+                        opacity: 1;
+                        transition: opacity 0.3s;
+                        z-index: 1001;
+                    `;
+
+                    sidebar.style.position = 'fixed';
+                    sidebar.appendChild(scrollIndicator);
+
+                    // Hide indicator after scroll or 3 seconds
+                    let hasScrolled = false;
+
+                    const hideIndicator = () => {
+                        if (!hasScrolled && scrollIndicator.parentNode) {
+                            hasScrolled = true;
+                            scrollIndicator.style.opacity = '0';
+                            setTimeout(() => {
+                                if (scrollIndicator.parentNode) {
+                                    scrollIndicator.remove();
+                                }
+                            }, 300);
+                        }
+                    };
+
+                    sidebar.addEventListener('scroll', hideIndicator, { once: true });
+
+                    // Auto-hide after 3 seconds
+                    setTimeout(hideIndicator, 3000);
+                }
+
+                // Add smooth scrolling behavior for desktop testing
+                let isDown = false;
+                let startX;
+                let scrollLeft;
+
+                sidebar.addEventListener('mousedown', (e) => {
+                    isDown = true;
+                    sidebar.style.cursor = 'grabbing';
+                    startX = e.pageX - sidebar.offsetLeft;
+                    scrollLeft = sidebar.scrollLeft;
+                });
+
+                sidebar.addEventListener('mouseleave', () => {
+                    isDown = false;
+                    sidebar.style.cursor = 'default';
+                });
+
+                sidebar.addEventListener('mouseup', () => {
+                    isDown = false;
+                    sidebar.style.cursor = 'default';
+                });
+
+                sidebar.addEventListener('mousemove', (e) => {
+                    if (!isDown) return;
+                    e.preventDefault();
+                    const x = e.pageX - sidebar.offsetLeft;
+                    const walk = (x - startX) * 2;
+                    sidebar.scrollLeft = scrollLeft - walk;
+                });
+            }
+        }
+
+        // Initialize on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMobileNav);
+        } else {
+            initMobileNav();
+        }
+
+        // Re-initialize on window resize
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(initMobileNav, 250);
+        });
+    })();
+    </script>
 </body>
 </html>
