@@ -682,6 +682,7 @@
 @media (max-width: 968px) {
     .dashboard-container {
         grid-template-columns: 1fr;
+        margin-bottom: 80px; /* Add space for fixed bottom nav */
     }
 
     .dashboard-sidebar {
@@ -689,6 +690,7 @@
         bottom: 0;
         left: 0;
         right: 0;
+        width: 100%;
         padding: 0;
         border-right: none;
         border-top: 1px solid #e0e0e0;
@@ -702,6 +704,8 @@
         /* Hide scrollbar but keep functionality */
         scrollbar-width: none; /* Firefox */
         -ms-overflow-style: none; /* IE and Edge */
+        height: auto;
+        min-height: 70px;
     }
 
     .dashboard-sidebar::-webkit-scrollbar {
@@ -743,7 +747,7 @@
 
     .dashboard-main {
         padding: 1.5rem;
-        padding-bottom: 100px;
+        padding-bottom: 90px; /* Increased to ensure content doesn't hide under bottom nav */
     }
 
     .dashboard-grid {
