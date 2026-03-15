@@ -10,242 +10,176 @@
     <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
-   <nav>
+    <nav>
         <div class="container">
             <a href="dashboard.html" class="logo-link">
                 <img src="SarchusInvestments.png" alt="Sarchus Investments" class="logo-img">
                 <span class="logo-text">Sarchus Investments</span>
             </a>
             <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
             <ul class="nav-menu">
-                <li><a href="dashboard.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="services.html">Services</a></li>
-                <li><a href="portfolio.html">Portfolio</a></li>
-                <li><a href="contact.html">Contact</a></li>
+                <li><a href="dashboard.html"                        data-i18n="nav-dashboard">Dashboard</a></li>
+                <li><a href="deposit.html"                          data-i18n="nav-deposit">Deposit</a></li>
+                <li><a href="withdraw.html"    class="active"       data-i18n="nav-withdraw">Withdraw</a></li>
+                <li><a href="transactions.html"                     data-i18n="nav-transactions">Transactions</a></li>
+                <li><a href="#" onclick="handleDashboardLogout(); return false;" data-i18n="nav-logout">Logout</a></li>
             </ul>
         </div>
     </nav>
 
     <div class="btc-price" id="cryptoPrices">
         <div class="btc-price-wrapper">
-            <!-- First set -->
             <div class="btc-price-content">
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice2">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice2">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice2">Loading...</span>
-                </div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice2">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice2">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice2">Loading...</span></div>
             </div>
-            
-            <!-- Duplicate set for seamless loop -->
             <div class="btc-price-content">
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice4">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice4">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice4">Loading...</span>
-                </div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice4">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice4">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice4">Loading...</span></div>
             </div>
         </div>
     </div>
-    </nav>
 
     <div class="dashboard-container">
         <aside class="dashboard-sidebar">
             <ul class="sidebar-menu">
-                <li><a href="dashboard.html">📊 Dashboard</a></li>
-                <li><a href="deposit.html">💳 Deposit</a></li>
-                <li><a href="withdraw.html" class="active">💰 Withdraw</a></li>
-                <li><a href="transactions.html">📝 Transactions</a></li>
-                <li><a href="#" onclick="handleDashboardLogout(); return false;">⛔ Logout</a></li>
+                <li><a href="dashboard.html"                        data-i18n="sidebar-dashboard">📊 Dashboard</a></li>
+                <li><a href="deposit.html"                          data-i18n="sidebar-deposit">💳 Deposit</a></li>
+                <li><a href="withdraw.html"    class="active"       data-i18n="sidebar-withdraw">💰 Withdraw</a></li>
+                <li><a href="transactions.html"                     data-i18n="sidebar-transactions">📝 Transactions</a></li>
+                <li><a href="#" onclick="handleDashboardLogout(); return false;" data-i18n="sidebar-logout">⛔ Logout</a></li>
             </ul>
         </aside>
 
         <main class="dashboard-main">
             <div class="page-header-small">
-                <h1>Withdraw Cryptocurrency</h1>
-                <p>Request withdrawal to your crypto wallet</p>
+                <h1 data-i18n="withdraw-hero-title">Withdraw Cryptocurrency</h1>
+                <p  data-i18n="withdraw-hero-sub">Request withdrawal to your crypto wallet</p>
             </div>
 
             <div class="withdraw-container">
-                <!-- Available Balance Card -->
                 <div class="dashboard-card balance-overview">
-                    <h3>Available Balance</h3>
+                    <h3 data-i18n="withdraw-balance-h3">Available Balance</h3>
                     <div class="available-amount" id="availableBalance">$0.00</div>
-                    <p class="balance-note">Maximum amount available for withdrawal</p>
+                    <p class="balance-note" data-i18n="withdraw-balance-note">Maximum amount available for withdrawal</p>
                 </div>
 
-                <!-- Withdrawal Request Form -->
                 <div class="dashboard-card">
-                    <h2>Withdrawal Request</h2>
-                    <p class="info-text">All withdrawal requests are processed manually by our team within 24 hours.</p>
+                    <h2 data-i18n="withdraw-form-h2">Withdrawal Request</h2>
+                    <p class="info-text" data-i18n="withdraw-form-info">All withdrawal requests are processed manually by our team within 24 hours.</p>
 
                     <form id="withdrawalForm" onsubmit="handleWithdrawalRequest(event)">
                         <div class="form-group">
-                            <label>Select Cryptocurrency</label>
+                            <label data-i18n="withdraw-crypto-label">Select Cryptocurrency</label>
                             <select id="withdrawCrypto" onchange="updateWithdrawInfo()" required>
                                 <option value="BTC">Bitcoin (BTC)</option>
                                 <option value="ETH">Ethereum (ETH)</option>
                                 <option value="USDT">Tether (USDT - TRC20)</option>
                             </select>
                         </div>
-
                         <div class="form-group">
-                            <label>Withdrawal Amount (USD)</label>
+                            <label data-i18n="withdraw-amount-label">Withdrawal Amount (USD)</label>
                             <input type="number" id="withdrawAmount" min="50" step="0.01" required placeholder="Minimum $50">
                             <small>Maximum: <span id="maxAmount">$0.00</span></small>
                         </div>
-
                         <div class="form-group">
-                            <label>Your Wallet Address</label>
+                            <label data-i18n="withdraw-wallet-label">Your Wallet Address</label>
                             <input type="text" id="walletAddress" required placeholder="Enter your wallet address">
                             <small class="warning">⚠️ Double-check your address. Crypto transactions cannot be reversed!</small>
                         </div>
-
                         <div class="form-group">
-                            <label>Network</label>
+                            <label data-i18n="withdraw-network-label">Network</label>
                             <select id="network" required>
                                 <option value="bitcoin">Bitcoin Mainnet</option>
                             </select>
                         </div>
 
                         <div class="withdraw-summary">
-                            <h3>Withdrawal Summary</h3>
+                            <h3 data-i18n="withdraw-summary-h3">Withdrawal Summary</h3>
                             <div class="summary-row">
-                                <span>Requested Amount:</span>
+                                <span data-i18n="withdraw-requested">Requested Amount:</span>
                                 <span id="summaryAmount">$0.00</span>
                             </div>
                             <div class="summary-row">
-                                <span>Network Fee (estimated):</span>
+                                <span data-i18n="withdraw-fee">Network Fee (estimated):</span>
                                 <span id="summaryFee">$5.00</span>
                             </div>
                             <div class="summary-row total">
-                                <span>You'll Receive (approx):</span>
+                                <span data-i18n="withdraw-receive">You'll Receive (approx):</span>
                                 <span id="summaryTotal">$0.00</span>
                             </div>
                             <div class="summary-row">
-                                <span>In Crypto (approx):</span>
+                                <span data-i18n="withdraw-crypto-approx">In Crypto (approx):</span>
                                 <span id="summaryCrypto">0.00000000 BTC</span>
                             </div>
                         </div>
 
                         <div class="alert warning">
-                            <strong>Important:</strong>
+                            <strong data-i18n="withdraw-alert-title">Important:</strong>
                             <ul>
-                                <li>Minimum withdrawal: $50</li>
-                                <li>Processing time: Up to 24 hours</li>
-                                <li>Network fees will be deducted from your withdrawal</li>
-                                <li>Verify your wallet address carefully</li>
-                                <li>Transactions are irreversible</li>
+                                <li data-i18n="withdraw-min">Minimum withdrawal: $50</li>
+                                <li data-i18n="withdraw-processing">Processing time: Up to 24 hours</li>
+                                <li data-i18n="withdraw-fee-note">Network fees will be deducted from your withdrawal</li>
+                                <li data-i18n="withdraw-verify">Verify your wallet address carefully</li>
+                                <li data-i18n="withdraw-irreversible">Transactions are irreversible</li>
                             </ul>
                         </div>
 
                         <div class="form-group checkbox-group">
                             <label>
                                 <input type="checkbox" id="confirmAddress" required>
-                                <span>I confirm that my wallet address is correct and I understand that crypto transactions cannot be reversed</span>
+                                <span data-i18n="withdraw-confirm-cb">I confirm that my wallet address is correct and I understand that crypto transactions cannot be reversed</span>
                             </label>
                         </div>
-
-                        <button type="submit" class="cta-button full-width">Submit Withdrawal Request</button>
+                        <button type="submit" class="cta-button full-width" data-i18n="withdraw-submit-btn">Submit Withdrawal Request</button>
                     </form>
                 </div>
 
-                <!-- Withdrawal Requests Status -->
                 <div class="dashboard-card">
                     <div class="card-header">
-                        <h3>Withdrawal Requests</h3>
+                        <h3 data-i18n="withdraw-requests-h3">Withdrawal Requests</h3>
                     </div>
                     <div class="transactions-list" id="withdrawalRequests">
                         <div class="empty-state">
-                            <p>No withdrawal requests</p>
+                            <p data-i18n="withdraw-no-requests">No withdrawal requests</p>
                             <small>Your withdrawal requests will appear here</small>
                         </div>
                     </div>
                 </div>
 
-                <!-- Help Section -->
                 <div class="dashboard-card help-card">
-                    <h3>Withdrawal Policy</h3>
+                    <h3 data-i18n="withdraw-policy-h3">Withdrawal Policy</h3>
                     <div class="policy-content">
                         <p><strong>Processing Time:</strong> All withdrawals are processed manually within 24 hours during business days.</p>
                         <p><strong>Verification:</strong> We may require additional verification for large withdrawals or first-time withdrawals.</p>
                         <p><strong>Fees:</strong> Network fees vary based on blockchain congestion and are deducted from your withdrawal amount.</p>
                         <p><strong>Support:</strong> If you have any questions, please contact our support team.</p>
                     </div>
-                    <button class="help-btn" onclick="window.location.href='contact.html'">
-                        📧 Contact Support
-                    </button>
+                    <button class="help-btn" onclick="window.location.href='contact.html'" data-i18n="withdraw-contact-btn">📧 Contact Support</button>
                 </div>
             </div>
         </main>
     </div>
-    
-<!-- ADD BEFORE FIREBASE SCRIPTS -->
-    <script src="translations.js"></script>
-<script src="lang-switcher.js"></script>
-<script src="https://unpkg.com/bitcoinjs-lib@6.1.5/dist/bitcoinjs-lib.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tronweb@5.3.0/dist/TronWeb.js"></script>
-    
+
+    <script src="https://unpkg.com/bitcoinjs-lib@6.1.5/dist/bitcoinjs-lib.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tronweb@5.3.0/dist/TronWeb.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="firebase-config.js"></script>
+    <script src="translations.js"></script>
+    <script src="lang-switcher.js"></script>
     <script src="main.js"></script>
     <script src="dashboard.js"></script>
     <script src="withdraw.js"></script>
