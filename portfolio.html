@@ -15,155 +15,102 @@
                 <span class="logo-text">Sarchus Investments</span>
             </a>
             <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
             <ul class="nav-menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="services.html">Services</a></li>
-                <li><a href="portfolio.html">Portfolio</a></li>
-                <li><a href="contact.html">Contact</a></li>
+                <li><a href="index.html"     data-i18n="nav-home">Home</a></li>
+                <li><a href="about.html"     data-i18n="nav-about">About</a></li>
+                <li><a href="services.html"  data-i18n="nav-services">Services</a></li>
+                <li><a href="portfolio.html" data-i18n="nav-portfolio">Portfolio</a></li>
+                <li><a href="contact.html"   data-i18n="nav-contact">Contact</a></li>
             </ul>
         </div>
     </nav>
 
-   <div class="btc-price" id="cryptoPrices">
+    <div class="btc-price" id="cryptoPrices">
         <div class="btc-price-wrapper">
-            <!-- First set -->
             <div class="btc-price-content">
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice2">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice2">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice2">Loading...</span>
-                </div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice2">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice2">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice2">Loading...</span></div>
             </div>
-            
-            <!-- Duplicate set for seamless loop -->
             <div class="btc-price-content">
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice4">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice4">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice4">Loading...</span>
-                </div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice4">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice4">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice4">Loading...</span></div>
             </div>
         </div>
     </div>
 
     <section class="page-header">
-        <h1>Portfolio Dashboard</h1>
-        <p>Track and manage your Bitcoin investments in real-time</p>
+        <h1 data-i18n="portfolio-hero-title">Portfolio Dashboard</h1>
+        <p  data-i18n="portfolio-hero-sub">Track and manage your Bitcoin investments in real-time</p>
     </section>
 
     <section class="section">
         <div class="portfolio-summary">
             <div class="summary-card">
-                <h3>Total Portfolio Value</h3>
+                <h3 data-i18n="portfolio-total-label">Total Portfolio Value</h3>
                 <p class="portfolio-value" id="totalValue">$0.00</p>
                 <span class="change positive" id="totalChange">+0.00%</span>
             </div>
             <div class="summary-card">
-                <h3>Bitcoin Holdings</h3>
+                <h3 data-i18n="portfolio-btc-label">Bitcoin Holdings</h3>
                 <p class="portfolio-value" id="btcHoldings">0.00000000 BTC</p>
                 <span class="change" id="btcValue">$0.00</span>
             </div>
             <div class="summary-card">
-                <h3>24h Change</h3>
+                <h3 data-i18n="portfolio-24h-label">24h Change</h3>
                 <p class="portfolio-value" id="dayChange">$0.00</p>
                 <span class="change" id="dayChangePercent">0.00%</span>
             </div>
             <div class="summary-card">
-                <h3>All-Time Return</h3>
+                <h3 data-i18n="portfolio-return-label">All-Time Return</h3>
                 <p class="portfolio-value" id="allTimeReturn">$0.00</p>
                 <span class="change positive" id="returnPercent">+0.00%</span>
             </div>
         </div>
 
         <div class="portfolio-calculator">
-            <h2>Investment Calculator</h2>
+            <h2 data-i18n="calc-title">Investment Calculator</h2>
             <div class="calculator-inputs">
                 <div class="input-group">
-                    <label for="investAmount">Investment Amount (USD)</label>
+                    <label for="investAmount" data-i18n="calc-amount">Investment Amount (USD)</label>
                     <input type="number" id="investAmount" placeholder="10000" min="1000">
                 </div>
                 <div class="input-group">
-                    <label for="investPeriod">Investment Period (Months)</label>
+                    <label for="investPeriod" data-i18n="calc-period">Investment Period (Months)</label>
                     <input type="number" id="investPeriod" placeholder="12" min="1" max="120">
                 </div>
                 <div class="input-group">
-                    <label for="returnRate">Expected Annual Return (%)</label>
+                    <label for="returnRate" data-i18n="calc-rate">Expected Annual Return (%)</label>
                     <input type="number" id="returnRate" placeholder="15" min="1" max="100" step="0.1">
                 </div>
-                <button class="cta-button" onclick="calculateInvestment()">Calculate Returns</button>
+                <button class="cta-button" onclick="calculateInvestment()" data-i18n="calc-btn">Calculate Returns</button>
             </div>
             <div class="calculator-result" id="calculatorResult" style="display: none;">
-                <h3>Projected Results</h3>
+                <h3 data-i18n="calc-result-h3">Projected Results</h3>
                 <div class="result-grid">
                     <div class="result-item">
-                        <span class="result-label">Initial Investment:</span>
+                        <span class="result-label" data-i18n="calc-initial">Initial Investment:</span>
                         <span class="result-value" id="resultInitial">$0.00</span>
                     </div>
                     <div class="result-item">
-                        <span class="result-label">Estimated Value:</span>
+                        <span class="result-label" data-i18n="calc-final">Estimated Value:</span>
                         <span class="result-value" id="resultFinal">$0.00</span>
                     </div>
                     <div class="result-item">
-                        <span class="result-label">Total Return:</span>
+                        <span class="result-label" data-i18n="calc-profit">Total Return:</span>
                         <span class="result-value positive" id="resultProfit">$0.00</span>
                     </div>
                     <div class="result-item">
-                        <span class="result-label">Return Percentage:</span>
+                        <span class="result-label" data-i18n="calc-percent">Return Percentage:</span>
                         <span class="result-value positive" id="resultPercent">0.00%</span>
                     </div>
                 </div>
@@ -171,45 +118,42 @@
         </div>
 
         <div class="market-info">
-            <h2>Market Overview</h2>
+            <h2 data-i18n="market-h2">Market Overview</h2>
             <div class="market-stats">
                 <div class="market-stat">
-                    <h4>Current Bitcoin Price</h4>
+                    <h4 data-i18n="market-price">Current Bitcoin Price</h4>
                     <p id="currentPrice">Loading...</p>
                 </div>
                 <div class="market-stat">
-                    <h4>Market Cap</h4>
+                    <h4 data-i18n="market-cap">Market Cap</h4>
                     <p>$850.5B</p>
                 </div>
                 <div class="market-stat">
-                    <h4>24h Volume</h4>
+                    <h4 data-i18n="market-volume">24h Volume</h4>
                     <p>$45.2B</p>
                 </div>
                 <div class="market-stat">
-                    <h4>Circulating Supply</h4>
+                    <h4 data-i18n="market-supply">Circulating Supply</h4>
                     <p>19.8M BTC</p>
                 </div>
             </div>
         </div>
 
         <div class="demo-notice">
-            <h3>📊 Demo Mode</h3>
-            <p>This is a demonstration portfolio dashboard. To access your real portfolio and start investing, please <a href="contact.html">create an account</a>.</p>
-            <button class="cta-button" onclick="window.location.href='contact.html'">Get Started</button>
+            <h3 data-i18n="demo-notice-h3">📊 Demo Mode</h3>
+            <p  data-i18n="demo-notice-p">This is a demonstration portfolio dashboard. To access your real portfolio and start investing, please <a href="contact.html">create an account</a>.</p>
+            <button class="cta-button" onclick="window.location.href='contact.html'" data-i18n="demo-notice-cta">Get Started</button>
         </div>
     </section>
 
     <footer>
-        <p>&copy; 2026 CryptoVest. All rights reserved.</p>
-        <p>Cryptocurrency investments carry risk. Only invest what you can afford to lose.</p>
+        <p data-i18n="footer-copy">&copy; 2026 CryptoVest. All rights reserved.</p>
+        <p data-i18n="footer-risk">Cryptocurrency investments carry risk. Only invest what you can afford to lose.</p>
     </footer>
 
     <script src="translations.js"></script>
-<script src="lang-switcher.js"></script>
+    <script src="lang-switcher.js"></script>
     <script src="main.js"></script>
     <script src="portfolio.js"></script>
 </body>
-
 </html>
-
-
