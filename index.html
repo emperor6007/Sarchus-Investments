@@ -15,227 +15,145 @@
                 <span class="logo-text">Sarchus Investments</span>
             </a>
             <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
             <ul class="nav-menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="services.html">Services</a></li>
-                <li><a href="portfolio.html">Portfolio</a></li>
-                <li><a href="contact.html">Contact</a></li>
-                <li><a href="login.html" class="nav-login">Login</a></li>
-                <li><a href="register.html" class="nav-register">Register</a></li>
+                <li><a href="index.html"     data-i18n="nav-home">Home</a></li>
+                <li><a href="about.html"     data-i18n="nav-about">About</a></li>
+                <li><a href="services.html"  data-i18n="nav-services">Services</a></li>
+                <li><a href="portfolio.html" data-i18n="nav-portfolio">Portfolio</a></li>
+                <li><a href="contact.html"   data-i18n="nav-contact">Contact</a></li>
+                <li><a href="login.html"    class="nav-login"    data-i18n="nav-login">Login</a></li>
+                <li><a href="register.html" class="nav-register" data-i18n="nav-register">Register</a></li>
             </ul>
         </div>
     </nav>
 
-  <!-- Replace your existing btc-price div with this SIMPLER structure -->
-<div class="btc-price" id="cryptoPrices">
-    <div class="btc-price-wrapper">
-        <!-- First set -->
-        <div class="btc-price-content">
-            <div class="crypto-price-item">
-                <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                <span class="crypto-name">BTC:</span>
-                <span class="price-value" id="btcPrice">Loading...</span>
+    <div class="btc-price" id="cryptoPrices">
+        <div class="btc-price-wrapper">
+            <div class="btc-price-content">
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice2">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice2">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice2">Loading...</span></div>
             </div>
-            <div class="crypto-price-item">
-                <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                <span class="crypto-name">ETH:</span>
-                <span class="price-value" id="ethPrice">Loading...</span>
-            </div>
-            <div class="crypto-price-item">
-                <img src="usdt.png" alt="USDT" class="crypto-icon">
-                <span class="crypto-name">USDT:</span>
-                <span class="price-value" id="usdtPrice">Loading...</span>
-            </div>
-            <div class="crypto-price-item">
-                <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                <span class="crypto-name">BTC:</span>
-                <span class="price-value" id="btcPrice2">Loading...</span>
-            </div>
-            <div class="crypto-price-item">
-                <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                <span class="crypto-name">ETH:</span>
-                <span class="price-value" id="ethPrice2">Loading...</span>
-            </div>
-            <div class="crypto-price-item">
-                <img src="usdt.png" alt="USDT" class="crypto-icon">
-                <span class="crypto-name">USDT:</span>
-                <span class="price-value" id="usdtPrice2">Loading...</span>
-            </div>
-        </div>
-        
-        <!-- Duplicate set for seamless loop -->
-        <div class="btc-price-content">
-            <div class="crypto-price-item">
-                <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                <span class="crypto-name">BTC:</span>
-                <span class="price-value" id="btcPrice3">Loading...</span>
-            </div>
-            <div class="crypto-price-item">
-                <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                <span class="crypto-name">ETH:</span>
-                <span class="price-value" id="ethPrice3">Loading...</span>
-            </div>
-            <div class="crypto-price-item">
-                <img src="usdt.png" alt="USDT" class="crypto-icon">
-                <span class="crypto-name">USDT:</span>
-                <span class="price-value" id="usdtPrice3">Loading...</span>
-            </div>
-            <div class="crypto-price-item">
-                <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                <span class="crypto-name">BTC:</span>
-                <span class="price-value" id="btcPrice4">Loading...</span>
-            </div>
-            <div class="crypto-price-item">
-                <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                <span class="crypto-name">ETH:</span>
-                <span class="price-value" id="ethPrice4">Loading...</span>
-            </div>
-            <div class="crypto-price-item">
-                <img src="usdt.png" alt="USDT" class="crypto-icon">
-                <span class="crypto-name">USDT:</span>
-                <span class="price-value" id="usdtPrice4">Loading...</span>
+            <div class="btc-price-content">
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice4">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice4">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice4">Loading...</span></div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- IMPORTANT: Make sure main.js is loaded AFTER this HTML -->
-<script src="assets/js/main.js"></script>
     <section class="hero" id="home">
-        <h1>Invest in Bitcoin with Confidence</h1>
-        <p>Professional cryptocurrency investment platform trusted by thousands of investors worldwide</p>
-        <button class="cta-button" onclick="window.location.href='register.html'">Start Investing Today</button>
+        <h1 data-i18n="index-hero-title">Invest in Bitcoin with Confidence</h1>
+        <p  data-i18n="index-hero-sub">Professional cryptocurrency investment platform trusted by thousands of investors worldwide</p>
+        <button class="cta-button" onclick="window.location.href='register.html'" data-i18n="index-hero-cta">Start Investing Today</button>
     </section>
 
     <div class="stats">
         <div class="stat-card">
-            <h3>$2.5B+</h3>
-            <p>Assets Under Management</p>
+            <h3 data-i18n="stats-aum">$2.5B+</h3>
+            <p  data-i18n="stats-aum-label">Assets Under Management</p>
         </div>
         <div class="stat-card">
-            <h3>50K+</h3>
-            <p>Active Investors</p>
+            <h3 data-i18n="stats-investors">50K+</h3>
+            <p  data-i18n="stats-investors-label">Active Investors</p>
         </div>
         <div class="stat-card">
-            <h3>99.9%</h3>
-            <p>Uptime Guarantee</p>
+            <h3 data-i18n="stats-uptime">99.9%</h3>
+            <p  data-i18n="stats-uptime-label">Uptime Guarantee</p>
         </div>
         <div class="stat-card">
-            <h3>24/7</h3>
-            <p>Customer Support</p>
+            <h3 data-i18n="stats-support">24/7</h3>
+            <p  data-i18n="stats-support-label">Customer Support</p>
         </div>
     </div>
 
     <section class="section" id="features">
-        <h2>Why Choose CryptoVest</h2>
+        <h2 data-i18n="features-title">Why Choose CryptoVest</h2>
         <div class="features">
             <div class="feature-card">
                 <div class="feature-icon">🔒</div>
-                <h3>Bank-Level Security</h3>
-                <p>Your investments are protected with military-grade encryption and cold storage solutions.</p>
+                <h3 data-i18n="feature-security-title">Bank-Level Security</h3>
+                <p  data-i18n="feature-security-desc">Your investments are protected with military-grade encryption and cold storage solutions.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">📊</div>
-                <h3>Real-Time Analytics</h3>
-                <p>Track your portfolio performance with advanced analytics and real-time market data.</p>
+                <h3 data-i18n="feature-analytics-title">Real-Time Analytics</h3>
+                <p  data-i18n="feature-analytics-desc">Track your portfolio performance with advanced analytics and real-time market data.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">💼</div>
-                <h3>Expert Management</h3>
-                <p>Our team of crypto experts actively manages and optimizes your investment strategy.</p>
+                <h3 data-i18n="feature-management-title">Expert Management</h3>
+                <p  data-i18n="feature-management-desc">Our team of crypto experts actively manages and optimizes your investment strategy.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">🌐</div>
-                <h3>Global Access</h3>
-                <p>Invest from anywhere in the world with our mobile and web platforms.</p>
+                <h3 data-i18n="feature-global-title">Global Access</h3>
+                <p  data-i18n="feature-global-desc">Invest from anywhere in the world with our mobile and web platforms.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">⚡</div>
-                <h3>Instant Transactions</h3>
-                <p>Buy and sell Bitcoin instantly with our high-speed trading infrastructure.</p>
+                <h3 data-i18n="feature-instant-title">Instant Transactions</h3>
+                <p  data-i18n="feature-instant-desc">Buy and sell Bitcoin instantly with our high-speed trading infrastructure.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">🎓</div>
-                <h3>Educational Resources</h3>
-                <p>Learn from our comprehensive guides and stay updated with market insights.</p>
+                <h3 data-i18n="feature-edu-title">Educational Resources</h3>
+                <p  data-i18n="feature-edu-desc">Learn from our comprehensive guides and stay updated with market insights.</p>
             </div>
         </div>
     </section>
 
     <section class="section pricing" id="pricing">
-        <h2>Investment Plans</h2>
+        <h2 data-i18n="pricing-title">Investment Plans</h2>
         <div class="pricing-cards">
             <div class="pricing-card">
-                <h3>Silver Plan</h3>
+                <h3 data-i18n="plan-silver">Silver Plan</h3>
                 <div class="price">15<span>% ROI</span></div>
                 <ul class="pricing-features">
-                    <li>Minimum: $100</li>
-                    <li>Maximum: $999</li>
-                    <li>Duration: 7 Days</li>
-                    <li>ROI: 15%</li>
-                    <li>Basic Analytics</li>
-                    <li>Email Support</li>
-                    <li>Mobile App Access</li>
+                    <li>Minimum: $100</li><li>Maximum: $999</li><li>Duration: 7 Days</li>
+                    <li>ROI: 15%</li><li>Basic Analytics</li><li>Email Support</li><li>Mobile App Access</li>
                 </ul>
-                <button class="cta-button" onclick="window.location.href='register.html'">Get Started</button>
+                <button class="cta-button" onclick="window.location.href='register.html'" data-i18n="plan-cta-start">Get Started</button>
             </div>
             <div class="pricing-card featured">
-                <h3>Gold Plan</h3>
+                <h3 data-i18n="plan-gold">Gold Plan</h3>
                 <div class="price">20<span>% ROI</span></div>
                 <ul class="pricing-features">
-                    <li>Minimum: $1,000</li>
-                    <li>Maximum: $4,999</li>
-                    <li>Duration: 15 Days</li>
-                    <li>ROI: 20%</li>
-                    <li>Advanced Analytics</li>
-                    <li>Priority Support</li>
-                    <li>Enhanced Security</li>
-                    <li>Account Manager</li>
-                    <li>Tax Reporting Tools</li>
+                    <li>Minimum: $1,000</li><li>Maximum: $4,999</li><li>Duration: 15 Days</li>
+                    <li>ROI: 20%</li><li>Advanced Analytics</li><li>Priority Support</li>
+                    <li>Enhanced Security</li><li>Account Manager</li><li>Tax Reporting Tools</li>
                 </ul>
-                <button class="cta-button" onclick="window.location.href='register.html'">Most Popular</button>
+                <button class="cta-button" onclick="window.location.href='register.html'" data-i18n="plan-cta-popular">Most Popular</button>
             </div>
             <div class="pricing-card">
-                <h3>Diamond Plan</h3>
+                <h3 data-i18n="plan-diamond">Diamond Plan</h3>
                 <div class="price">25<span>% ROI</span></div>
                 <ul class="pricing-features">
-                    <li>Minimum: $5,000</li>
-                    <li>Maximum: $24,999</li>
-                    <li>Duration: 30 Days</li>
-                    <li>ROI: 25%</li>
-                    <li>Premium Analytics</li>
-                    <li>24/7 VIP Support</li>
-                    <li>Maximum Security</li>
-                    <li>Personal Investment Team</li>
-                    <li>Custom Strategies</li>
-                    <li>API Access</li>
+                    <li>Minimum: $5,000</li><li>Maximum: $24,999</li><li>Duration: 30 Days</li>
+                    <li>ROI: 25%</li><li>Premium Analytics</li><li>24/7 VIP Support</li>
+                    <li>Maximum Security</li><li>Personal Investment Team</li>
+                    <li>Custom Strategies</li><li>API Access</li>
                 </ul>
-                <button class="cta-button" onclick="window.location.href='register.html'">Premium Plan</button>
+                <button class="cta-button" onclick="window.location.href='register.html'" data-i18n="plan-cta-premium">Premium Plan</button>
             </div>
         </div>
     </section>
 
     <footer>
-        <p>&copy; 2026 Sarchus Investments. All rights reserved.</p>
-        <p>Cryptocurrency investments carry risk. Only invest what you can afford to lose.</p>
+        <p data-i18n="footer-copy">&copy; 2026 Sarchus Investments. All rights reserved.</p>
+        <p data-i18n="footer-risk">Cryptocurrency investments carry risk. Only invest what you can afford to lose.</p>
     </footer>
+
     <script src="translations.js"></script>
-<script src="lang-switcher.js"></script>
+    <script src="lang-switcher.js"></script>
     <script src="main.js"></script>
 </body>
-
 </html>
-
-
-
-
-
-
-
-
-
