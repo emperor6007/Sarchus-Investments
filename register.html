@@ -8,23 +8,9 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="auth.css">
     <style>
-        .referral-message {
-            display: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            margin-top: 8px;
-        }
-        .referral-message.valid {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .referral-message.invalid {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
+        .referral-message { display: none; padding: 8px 12px; border-radius: 6px; font-size: 14px; margin-top: 8px; }
+        .referral-message.valid   { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .referral-message.invalid { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
     </style>
 </head>
 <body>
@@ -35,88 +21,35 @@
                 <span class="logo-text">Sarchus Investments</span>
             </a>
             <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
             <ul class="nav-menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="services.html">Services</a></li>
-                <li><a href="portfolio.html">Portfolio</a></li>
-                <li><a href="contact.html">Contact</a></li>
+                <li><a href="index.html"     data-i18n="nav-home">Home</a></li>
+                <li><a href="about.html"     data-i18n="nav-about">About</a></li>
+                <li><a href="services.html"  data-i18n="nav-services">Services</a></li>
+                <li><a href="portfolio.html" data-i18n="nav-portfolio">Portfolio</a></li>
+                <li><a href="contact.html"   data-i18n="nav-contact">Contact</a></li>
             </ul>
         </div>
     </nav>
 
-   <div class="btc-price" id="cryptoPrices">
+    <div class="btc-price" id="cryptoPrices">
         <div class="btc-price-wrapper">
-            <!-- First set -->
             <div class="btc-price-content">
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice2">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice2">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice2">Loading...</span>
-                </div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice2">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice2">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice2">Loading...</span></div>
             </div>
-            
-            <!-- Duplicate set for seamless loop -->
             <div class="btc-price-content">
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice4">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice4">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice4">Loading...</span>
-                </div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice4">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice4">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice4">Loading...</span></div>
             </div>
         </div>
     </div>
@@ -124,45 +57,40 @@
     <div class="auth-container">
         <div class="auth-box register-box">
             <div class="auth-header">
-                <h1>Create Account</h1>
-                <p>Join thousands of investors on Sarchus Investments</p>
+                <h1 data-i18n="register-title">Create Account</h1>
+                <p  data-i18n="register-subtitle">Join thousands of investors on Sarchus Investments</p>
             </div>
 
             <form class="auth-form" id="registerForm">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="firstName">First Name</label>
+                        <label for="firstName" data-i18n="register-firstname">First Name</label>
                         <input type="text" id="firstName" required placeholder="John">
                     </div>
                     <div class="form-group">
-                        <label for="lastName">Last Name</label>
+                        <label for="lastName" data-i18n="register-lastname">Last Name</label>
                         <input type="text" id="lastName" required placeholder="Doe">
                     </div>
                 </div>
-
                 <div class="form-group">
-                    <label for="regEmail">Email Address</label>
+                    <label for="regEmail" data-i18n="register-email">Email Address</label>
                     <input type="email" id="regEmail" required placeholder="john.doe@example.com">
                 </div>
-
                 <div class="form-group">
-                    <label for="phone">Phone Number</label>
+                    <label for="phone" data-i18n="register-phone">Phone Number</label>
                     <input type="tel" id="phone" required placeholder="+1 (555) 123-4567">
                 </div>
-
                 <div class="form-group">
-                    <label for="regPassword">Password</label>
+                    <label for="regPassword" data-i18n="register-password">Password</label>
                     <input type="password" id="regPassword" required placeholder="Minimum 8 characters" minlength="8">
                     <small class="password-hint">Must contain at least 8 characters, one uppercase, one number</small>
                 </div>
-
                 <div class="form-group">
-                    <label for="confirmPassword">Confirm Password</label>
+                    <label for="confirmPassword" data-i18n="register-confirm">Confirm Password</label>
                     <input type="password" id="confirmPassword" required placeholder="Re-enter your password">
                 </div>
-
                 <div class="form-group">
-                    <label for="country">Country</label>
+                    <label for="country" data-i18n="register-country">Country</label>
                     <select id="country" required>
                         <option value="">Select your country</option>
                         <option value="US">United States</option>
@@ -175,118 +103,92 @@
                         <option value="other">Other</option>
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label for="referralCode">Referral Code (Optional)</label>
+                    <label for="referralCode" data-i18n="register-referral">Referral Code (Optional)</label>
                     <input type="text" id="referralCode" placeholder="Enter referral code" style="text-transform: uppercase;">
                     <div id="referralMessage" class="referral-message"></div>
-                    <small class="password-hint">Get $2 bonus by using a friend's referral code!</small>
+                    <small class="password-hint" data-i18n="register-referral-hint">Get $2 bonus by using a friend's referral code!</small>
                 </div>
-
                 <div class="form-group checkbox-group">
                     <label>
                         <input type="checkbox" id="agreeTerms" required>
-                        <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+                        <span data-i18n="register-terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
                     </label>
                 </div>
-
                 <div class="form-group checkbox-group">
                     <label>
                         <input type="checkbox" id="newsletter">
-                        <span>Send me market updates and investment tips</span>
+                        <span data-i18n="register-newsletter">Send me market updates and investment tips</span>
                     </label>
                 </div>
-
-                <button type="submit" class="auth-button">Create Account</button>
-
-                <div class="auth-divider">
-                    <span>OR</span>
-                </div>
-
+                <button type="submit" class="auth-button" data-i18n="register-btn">Create Account</button>
+                <div class="auth-divider"><span data-i18n="login-or">OR</span></div>
                 <button type="button" class="social-button google" onclick="socialLogin('google')">
-                    <span>🔴</span> Sign up with Google
+                    <span>🔴</span> <span data-i18n="register-google">Sign up with Google</span>
                 </button>
-
                 <button type="button" class="social-button facebook" onclick="socialLogin('facebook')">
-                    <span>🔵</span> Sign up with Facebook
+                    <span>🔵</span> <span data-i18n="register-facebook">Sign up with Facebook</span>
                 </button>
             </form>
 
             <div class="auth-footer">
-                <p>Already have an account? <a href="login.html">Login here</a></p>
+                <p>
+                    <span data-i18n="register-have-account">Already have an account?</span>
+                    <a href="login.html" data-i18n="register-login">Login here</a>
+                </p>
             </div>
         </div>
 
         <div class="auth-side">
             <div class="auth-side-content">
-                <h2>Why Choose Sarchus?</h2>
+                <h2 data-i18n="register-side-title">Why Choose Sarchus?</h2>
                 <ul class="benefits-list">
-                    <li>✓ $2.5B+ Assets Under Management</li>
-                    <li>✓ 50,000+ Active Investors</li>
-                    <li>✓ Bank-level Security</li>
-                    <li>✓ Instant Transactions</li>
-                    <li>✓ Expert Investment Management</li>
-                    <li>✓ 24/7 Support Team</li>
-                    <li>✓ Earn $2 per Referral!</li>
+                    <li data-i18n="register-benefit1">✓ $2.5B+ Assets Under Management</li>
+                    <li data-i18n="register-benefit2">✓ 50,000+ Active Investors</li>
+                    <li data-i18n="register-benefit3">✓ Bank-level Security</li>
+                    <li data-i18n="register-benefit4">✓ Instant Transactions</li>
+                    <li data-i18n="register-benefit5">✓ Expert Investment Management</li>
+                    <li data-i18n="register-benefit6">✓ 24/7 Support Team</li>
+                    <li data-i18n="register-benefit7">✓ Earn $2 per Referral!</li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    
-    <!-- Your Scripts -->
     <script src="firebase-config.js"></script>
+    <script src="translations.js"></script>
+    <script src="lang-switcher.js"></script>
     <script src="main.js"></script>
     <script src="auth.js"></script>
     <script src="register.js"></script>
-    
     <script>
-        // Real-time referral code validation
         const referralInput = document.getElementById('referralCode');
         const referralMessage = document.getElementById('referralMessage');
-        
-        // Check for referral code in URL
         const urlParams = new URLSearchParams(window.location.search);
         const urlReferralCode = urlParams.get('ref');
-        
         if (urlReferralCode && referralInput) {
             referralInput.value = urlReferralCode.toUpperCase();
-            // Trigger validation
             validateAndShowReferralBonus(urlReferralCode);
         }
-        
         if (referralInput) {
             let validationTimeout;
-            
             referralInput.addEventListener('input', function() {
                 const code = this.value.trim().toUpperCase();
                 this.value = code;
-                
                 clearTimeout(validationTimeout);
-                
-                if (code.length === 0) {
-                    referralMessage.style.display = 'none';
-                    return;
-                }
-                
+                if (code.length === 0) { referralMessage.style.display = 'none'; return; }
                 if (code.length < 6) {
                     referralMessage.textContent = 'Referral code too short';
                     referralMessage.className = 'referral-message invalid';
                     referralMessage.style.display = 'block';
                     return;
                 }
-                
-                validationTimeout = setTimeout(() => {
-                    validateAndShowReferralBonus(code);
-                }, 500);
+                validationTimeout = setTimeout(() => { validateAndShowReferralBonus(code); }, 500);
             });
         }
-        
-        // Validate referral code and show bonus message
         async function validateAndShowReferralBonus(code) {
             try {
                 const isValid = await validateReferralCode(code);
@@ -298,28 +200,14 @@
                     referralMessage.className = 'referral-message invalid';
                 }
                 referralMessage.style.display = 'block';
-            } catch (error) {
-                console.error('Validation error:', error);
-            }
+            } catch (error) { console.error('Validation error:', error); }
         }
-        
-        // Validate referral code function
         async function validateReferralCode(code) {
             try {
-                const snapshot = await firebase.firestore()
-                    .collection('users')
-                    .where('referralCode', '==', code)
-                    .limit(1)
-                    .get();
-                
+                const snapshot = await firebase.firestore().collection('users').where('referralCode', '==', code).limit(1).get();
                 return !snapshot.empty;
-            } catch (error) {
-                console.error('Error validating referral code:', error);
-                return false;
-            }
+            } catch (error) { console.error('Error validating referral code:', error); return false; }
         }
     </script>
-    <script src="translations.js"></script>
-<script src="lang-switcher.js"></script>
 </body>
 </html>
