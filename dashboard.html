@@ -16,90 +16,37 @@
                 <span class="logo-text">Sarchus Investments</span>
             </a>
             <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
             <ul class="nav-menu">
-                <li><a href="dashboard.html" class="active">Dashboard</a></li>
-                <li><a href="deposit.html">Deposit</a></li>
-                <li><a href="withdraw.html">Withdraw</a></li>
-                <li><a href="transactions.html">Transactions</a></li>
-                <li><a href="referral.html">Referral</a></li>
-                <li><a href="profile.html">Profile</a></li>
-                <li><a href="#" onclick="handleDashboardLogout(); return false;">Logout</a></li>
+                <li><a href="dashboard.html"    class="active"    data-i18n="nav-dashboard">Dashboard</a></li>
+                <li><a href="deposit.html"                        data-i18n="nav-deposit">Deposit</a></li>
+                <li><a href="withdraw.html"                       data-i18n="nav-withdraw">Withdraw</a></li>
+                <li><a href="transactions.html"                   data-i18n="nav-transactions">Transactions</a></li>
+                <li><a href="referral.html"                       data-i18n="nav-referral">Referral</a></li>
+                <li><a href="profile.html"                        data-i18n="nav-profile">Profile</a></li>
+                <li><a href="#" onclick="handleDashboardLogout(); return false;" data-i18n="nav-logout">Logout</a></li>
             </ul>
         </div>
     </nav>
 
     <div class="btc-price" id="cryptoPrices">
         <div class="btc-price-wrapper">
-            <!-- First set -->
             <div class="btc-price-content">
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice2">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice2">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice2">Loading...</span>
-                </div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice2">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice2">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice2">Loading...</span></div>
             </div>
-            
-            <!-- Duplicate set for seamless loop -->
             <div class="btc-price-content">
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice4">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice4">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice4">Loading...</span>
-                </div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice4">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice4">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice4">Loading...</span></div>
             </div>
         </div>
     </div>
@@ -107,121 +54,98 @@
     <div class="dashboard-container">
         <aside class="dashboard-sidebar" id="dashboardSidebar">
             <ul class="sidebar-menu">
-                <li><a href="dashboard.html" class="active">📊 Dashboard</a></li>
-                <li><a href="deposit.html">💳 Deposit</a></li>
-                <li><a href="withdraw.html">💰 Withdraw</a></li>
-                <li><a href="transactions.html">🔄 Transactions</a></li>
-                <li><a href="referral.html">🎁 Referral</a></li>
-                <li><a href="profile.html">👤 Profile</a></li>
-                <li><a href="#" onclick="handleDashboardLogout(); return false;">⛔ Logout</a></li>
+                <li><a href="dashboard.html"    class="active" data-i18n="sidebar-dashboard">📊 Dashboard</a></li>
+                <li><a href="deposit.html"                     data-i18n="sidebar-deposit">💳 Deposit</a></li>
+                <li><a href="withdraw.html"                    data-i18n="sidebar-withdraw">💰 Withdraw</a></li>
+                <li><a href="transactions.html"                data-i18n="sidebar-transactions">🔄 Transactions</a></li>
+                <li><a href="referral.html"                    data-i18n="sidebar-referral">🎁 Referral</a></li>
+                <li><a href="profile.html"                     data-i18n="sidebar-profile">👤 Profile</a></li>
+                <li><a href="#" onclick="handleDashboardLogout(); return false;" data-i18n="sidebar-logout">⛔ Logout</a></li>
             </ul>
         </aside>
 
         <main class="dashboard-main">
             <div class="dashboard-header">
-                <h1>Welcome, <span id="userName">User</span>!</h1>
+                <h1><span data-i18n="dashboard-greeting">Welcome,</span> <span id="userName">User</span>!</h1>
                 <div class="btc-price-mini" id="btcPriceMini">Loading...</div>
             </div>
 
-            <!-- Account Overview -->
             <div class="dashboard-grid">
                 <div class="dashboard-card balance-card">
                     <div class="card-header">
-                        <h3>Total Balance</h3>
+                        <h3 data-i18n="dash-total-balance">Total Balance</h3>
                         <span class="card-icon">💰</span>
                     </div>
                     <div class="balance-amount" id="totalBalance">$0.00</div>
                     <div class="balance-change positive" id="balanceChange">+0.00% (24h)</div>
                 </div>
-
                 <div class="dashboard-card">
                     <div class="card-header">
-                        <h3>Total Investments</h3>
+                        <h3 data-i18n="dash-total-investments">Total Investments</h3>
                         <span class="card-icon">💎</span>
                     </div>
                     <div class="balance-amount" id="totalInvestments">$0.00</div>
-                    <div class="balance-info" id="activeInvestmentsCount">0 active investments</div>
+                    <div class="balance-info" id="activeInvestmentsCount">0 <span data-i18n="dash-active-inv">active investments</span></div>
                 </div>
-
                 <div class="dashboard-card">
                     <div class="card-header">
-                        <h3>Total Profit</h3>
+                        <h3 data-i18n="dash-total-profit">Total Profit</h3>
                         <span class="card-icon">📈</span>
                     </div>
                     <div class="balance-amount positive" id="totalProfit">+$0.00</div>
                     <div class="balance-info" id="profitPercent">+0.00%</div>
                 </div>
-
                 <div class="dashboard-card">
                     <div class="card-header">
-                        <h3>Available Balance</h3>
+                        <h3 data-i18n="dash-available">Available Balance</h3>
                         <span class="card-icon">💵</span>
                     </div>
                     <div class="balance-amount" id="availableBalance">$0.00</div>
-                    <div class="balance-info">Ready to invest</div>
+                    <div class="balance-info" data-i18n="dash-ready">Ready to invest</div>
                 </div>
             </div>
 
-            <!-- Quick Actions -->
             <div class="quick-actions">
-                <h2>Quick Actions</h2>
+                <h2 data-i18n="dash-quick-actions">Quick Actions</h2>
                 <div class="action-buttons">
                     <button class="action-btn deposit-btn" onclick="window.location.href='deposit.html'">
                         <span class="btn-icon">💳</span>
-                        <span class="btn-text">Deposit Funds</span>
+                        <span class="btn-text" data-i18n="dash-btn-deposit">Deposit Funds</span>
                     </button>
                     <button class="action-btn withdraw-btn" onclick="window.location.href='withdraw.html'">
                         <span class="btn-icon">💰</span>
-                        <span class="btn-text">Withdraw</span>
+                        <span class="btn-text" data-i18n="dash-btn-withdraw">Withdraw</span>
                     </button>
                     <button class="action-btn invest-btn" onclick="openInvestModal()">
-                        <span class="btn-icon">📊</span>
-                        <span class="btn-text">Invest Now</span>
-                    </button>
-                    <button class="action-btn referral-btn" onclick="window.location.href='referral.html'" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                        <span class="btn-icon">🎁</span>
-                        <span class="btn-text">Refer & Earn</span>
+                        <span class="btn-icon">📈</span>
+                        <span class="btn-text" data-i18n="dash-btn-invest">Invest Now</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Active Investments -->
             <div class="dashboard-card">
                 <div class="card-header">
-                    <h3>Active Investments</h3>
-                    <span class="card-icon">💎</span>
-                </div>
-                <div id="investmentList">
-                    <p style="text-align: center; color: #999; padding: 2rem;">Loading investments...</p>
-                </div>
-            </div>
-
-            <!-- Recent Transactions -->
-            <div class="dashboard-card transactions-card">
-                <div class="card-header">
-                    <h3>Recent Transactions</h3>
-                    <a href="transactions.html" class="view-all">View All</a>
+                    <h3 data-i18n="dash-recent-tx">Recent Transactions</h3>
                 </div>
                 <div class="transactions-list" id="recentTransactions">
                     <div class="transaction-item">
                         <div class="transaction-info">
-                            <span class="transaction-type">No transactions yet</span>
-                            <span class="transaction-date">Start investing today!</span>
+                            <span class="transaction-type" data-i18n="dash-no-tx">No transactions yet</span>
+                            <span class="transaction-date" data-i18n="dash-start-investing">Start investing today!</span>
                         </div>
                         <div class="transaction-amount">$0.00</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Investment Performance Chart -->
             <div class="dashboard-card">
                 <div class="card-header">
-                    <h3>Portfolio Performance</h3>
+                    <h3 data-i18n="dash-performance">Portfolio Performance</h3>
                     <select class="timeframe-select" id="timeframeSelect">
-                        <option value="7d">7 Days</option>
-                        <option value="30d" selected>30 Days</option>
-                        <option value="90d">90 Days</option>
-                        <option value="1y">1 Year</option>
+                        <option value="7d"  data-i18n="timeframe-7d">7 Days</option>
+                        <option value="30d" selected data-i18n="timeframe-30d">30 Days</option>
+                        <option value="90d" data-i18n="timeframe-90d">90 Days</option>
+                        <option value="1y"  data-i18n="timeframe-1y">1 Year</option>
                     </select>
                 </div>
                 <div class="chart-container">
@@ -237,148 +161,71 @@
     <div id="investModal" class="modal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeInvestModal()">&times;</span>
-            <h2>Invest in Bitcoin</h2>
+            <h2 data-i18n="dash-invest-modal-title">Invest in Bitcoin</h2>
             <form id="investForm" onsubmit="handleInvest(event)">
                 <div class="form-group">
-                    <label>Investment Amount (USD)</label>
+                    <label data-i18n="dash-invest-amount-label">Investment Amount (USD)</label>
                     <input type="number" id="investAmount" min="100" step="0.01" required placeholder="Enter amount (min $100)">
                 </div>
                 <div class="form-group">
-                    <label>Investment Plan</label>
+                    <label data-i18n="dash-invest-plan-label">Investment Plan</label>
                     <select id="investPlan" required>
                         <option value="starter">Silver Plan (15% ROI - 7 Days)</option>
                         <option value="professional">Gold Plan (20% ROI - 14 Days)</option>
                         <option value="enterprise">Diamond Plan (25% ROI - 30 Days)</option>
                     </select>
                 </div>
-                <button type="submit" class="cta-button">Confirm Investment</button>
+                <button type="submit" class="cta-button" data-i18n="dash-invest-confirm">Confirm Investment</button>
             </form>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
     <script src="firebase-config.js"></script>
+    <script src="translations.js"></script>
+    <script src="lang-switcher.js"></script>
     <script src="main.js"></script>
     <script src="dashboard.js"></script>
-
-    <!-- Mobile Navigation Scroll Enhancement -->
     <script>
-    // Mobile Navigation Scroll Enhancement
     (function() {
         function initMobileNav() {
-            // Only run on mobile devices
             if (window.innerWidth <= 968) {
                 const sidebar = document.getElementById('dashboardSidebar');
-                
                 if (!sidebar) return;
-
-                // Remove any existing indicator
                 const existingIndicator = sidebar.querySelector('.mobile-scroll-indicator');
-                if (existingIndicator) {
-                    existingIndicator.remove();
-                }
-
-                // Check if content is scrollable
+                if (existingIndicator) existingIndicator.remove();
                 const isScrollable = sidebar.scrollWidth > sidebar.clientWidth;
-                
                 if (isScrollable) {
-                    // Create scroll indicator
                     const scrollIndicator = document.createElement('div');
                     scrollIndicator.className = 'mobile-scroll-indicator';
                     scrollIndicator.innerHTML = '← Swipe for more →';
-                    scrollIndicator.style.cssText = `
-                        position: absolute;
-                        top: 50%;
-                        right: 10px;
-                        transform: translateY(-50%);
-                        background: rgba(247, 147, 26, 0.9);
-                        color: white;
-                        padding: 0.3rem 0.8rem;
-                        border-radius: 20px;
-                        font-size: 0.7rem;
-                        font-weight: 600;
-                        pointer-events: none;
-                        opacity: 1;
-                        transition: opacity 0.3s;
-                        z-index: 1001;
-                    `;
-
+                    scrollIndicator.style.cssText = 'position:absolute;top:50%;right:10px;transform:translateY(-50%);background:rgba(247,147,26,0.9);color:white;padding:0.3rem 0.8rem;border-radius:20px;font-size:0.7rem;font-weight:600;pointer-events:none;opacity:1;transition:opacity 0.3s;z-index:1001;';
                     sidebar.style.position = 'fixed';
                     sidebar.appendChild(scrollIndicator);
-
-                    // Hide indicator after scroll or 3 seconds
                     let hasScrolled = false;
-
                     const hideIndicator = () => {
                         if (!hasScrolled && scrollIndicator.parentNode) {
                             hasScrolled = true;
                             scrollIndicator.style.opacity = '0';
-                            setTimeout(() => {
-                                if (scrollIndicator.parentNode) {
-                                    scrollIndicator.remove();
-                                }
-                            }, 300);
+                            setTimeout(() => { if (scrollIndicator.parentNode) scrollIndicator.remove(); }, 300);
                         }
                     };
-
                     sidebar.addEventListener('scroll', hideIndicator, { once: true });
-
-                    // Auto-hide after 3 seconds
                     setTimeout(hideIndicator, 3000);
                 }
-
-                // Add smooth scrolling behavior for desktop testing
-                let isDown = false;
-                let startX;
-                let scrollLeft;
-
-                sidebar.addEventListener('mousedown', (e) => {
-                    isDown = true;
-                    sidebar.style.cursor = 'grabbing';
-                    startX = e.pageX - sidebar.offsetLeft;
-                    scrollLeft = sidebar.scrollLeft;
-                });
-
-                sidebar.addEventListener('mouseleave', () => {
-                    isDown = false;
-                    sidebar.style.cursor = 'default';
-                });
-
-                sidebar.addEventListener('mouseup', () => {
-                    isDown = false;
-                    sidebar.style.cursor = 'default';
-                });
-
-                sidebar.addEventListener('mousemove', (e) => {
-                    if (!isDown) return;
-                    e.preventDefault();
-                    const x = e.pageX - sidebar.offsetLeft;
-                    const walk = (x - startX) * 2;
-                    sidebar.scrollLeft = scrollLeft - walk;
-                });
+                let isDown = false, startX, scrollLeft;
+                sidebar.addEventListener('mousedown', (e) => { isDown = true; sidebar.style.cursor = 'grabbing'; startX = e.pageX - sidebar.offsetLeft; scrollLeft = sidebar.scrollLeft; });
+                sidebar.addEventListener('mouseleave', () => { isDown = false; sidebar.style.cursor = 'default'; });
+                sidebar.addEventListener('mouseup', () => { isDown = false; sidebar.style.cursor = 'default'; });
+                sidebar.addEventListener('mousemove', (e) => { if (!isDown) return; e.preventDefault(); sidebar.scrollLeft = scrollLeft - (e.pageX - sidebar.offsetLeft - startX) * 2; });
             }
         }
-
-        // Initialize on load
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initMobileNav);
-        } else {
-            initMobileNav();
-        }
-
-        // Re-initialize on window resize
+        if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileNav); } else { initMobileNav(); }
         let resizeTimeout;
-        window.addEventListener('resize', function() {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(initMobileNav, 250);
-        });
+        window.addEventListener('resize', function() { clearTimeout(resizeTimeout); resizeTimeout = setTimeout(initMobileNav, 250); });
     })();
     </script>
-    <script src="translations.js"></script>
-<script src="lang-switcher.js"></script>
 </body>
 </html>
