@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - Sarchus Investments</title>
-   <link rel="icon" type="png" href="SarchusInvestments.png">
+    <link rel="icon" type="png" href="SarchusInvestments.png">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -15,171 +15,110 @@
                 <span class="logo-text">Sarchus Investments</span>
             </a>
             <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
             <ul class="nav-menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="services.html">Services</a></li>
-                <li><a href="portfolio.html">Portfolio</a></li>
-                <li><a href="contact.html">Contact</a></li>
+                <li><a href="index.html"     data-i18n="nav-home">Home</a></li>
+                <li><a href="about.html"     data-i18n="nav-about">About</a></li>
+                <li><a href="services.html"  data-i18n="nav-services">Services</a></li>
+                <li><a href="portfolio.html" data-i18n="nav-portfolio">Portfolio</a></li>
+                <li><a href="contact.html"   data-i18n="nav-contact">Contact</a></li>
             </ul>
         </div>
     </nav>
 
     <div class="btc-price" id="cryptoPrices">
         <div class="btc-price-wrapper">
-            <!-- First set -->
             <div class="btc-price-content">
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice2">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice2">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice2">Loading...</span>
-                </div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice2">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice2">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice2">Loading...</span></div>
             </div>
-            
-            <!-- Duplicate set for seamless loop -->
             <div class="btc-price-content">
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice4">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice4">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice4">Loading...</span>
-                </div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice4">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice4">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice4">Loading...</span></div>
             </div>
         </div>
     </div>
+
     <section class="page-header">
-        <h1>About Sarchus Investments</h1>
-        <p>Leading the future of digital asset investment</p>
+        <h1 data-i18n="about-hero-title">About Sarchus Investments</h1>
+        <p  data-i18n="about-hero-sub">Leading the future of digital asset investment</p>
     </section>
 
     <section class="section">
         <div class="about-content">
-            <h2>Our Story</h2>
-            <p>Founded in 2018, Sarchus Investments has grown to become one of the most trusted names in cryptocurrency investment management. Our journey began with a simple mission: to make Bitcoin investment accessible, secure, and profitable for everyone.</p>
-            
-            <p>Today, we manage over $2.5 billion in assets for more than 50,000 investors worldwide. Our team of cryptocurrency experts, financial analysts, and technology specialists work around the clock to ensure your investments are optimized and protected.</p>
+            <h2 data-i18n="about-story-h2">Our Story</h2>
+            <p data-i18n="about-story-p1">Founded in 2018, Sarchus Investments has grown to become one of the most trusted names in cryptocurrency investment management. Our journey began with a simple mission: to make Bitcoin investment accessible, secure, and profitable for everyone.</p>
+            <p data-i18n="about-story-p2">Today, we manage over $2.5 billion in assets for more than 50,000 investors worldwide. Our team of cryptocurrency experts, financial analysts, and technology specialists work around the clock to ensure your investments are optimized and protected.</p>
 
-            <h2 style="margin-top: 3rem;">Our Mission</h2>
-            <p>To democratize access to cryptocurrency investments by providing institutional-grade investment solutions with retail accessibility. We believe that everyone should have the opportunity to participate in the digital financial revolution.</p>
+            <h2 style="margin-top: 3rem;" data-i18n="about-mission-h2">Our Mission</h2>
+            <p data-i18n="about-mission-p">To democratize access to cryptocurrency investments by providing institutional-grade investment solutions with retail accessibility. We believe that everyone should have the opportunity to participate in the digital financial revolution.</p>
 
-            <h2 style="margin-top: 3rem;">Our Values</h2>
+            <h2 style="margin-top: 3rem;" data-i18n="about-values-h2">Our Values</h2>
             <div class="values-grid">
                 <div class="value-card">
-                    <h3>🎯 Transparency</h3>
-                    <p>We maintain complete transparency in our operations, fees, and investment strategies.</p>
+                    <h3 data-i18n="value-transparency-title">🎯 Transparency</h3>
+                    <p  data-i18n="value-transparency-desc">We maintain complete transparency in our operations, fees, and investment strategies.</p>
                 </div>
                 <div class="value-card">
-                    <h3>🔒 Security</h3>
-                    <p>Your assets' security is our top priority, with industry-leading protection measures.</p>
+                    <h3 data-i18n="value-security-title">🔒 Security</h3>
+                    <p  data-i18n="value-security-desc">Your assets' security is our top priority, with industry-leading protection measures.</p>
                 </div>
                 <div class="value-card">
-                    <h3>🤝 Trust</h3>
-                    <p>We build lasting relationships based on trust, reliability, and exceptional service.</p>
+                    <h3 data-i18n="value-trust-title">🤝 Trust</h3>
+                    <p  data-i18n="value-trust-desc">We build lasting relationships based on trust, reliability, and exceptional service.</p>
                 </div>
                 <div class="value-card">
-                    <h3>💡 Innovation</h3>
-                    <p>We constantly innovate to provide cutting-edge investment solutions and technologies.</p>
+                    <h3 data-i18n="value-innovation-title">💡 Innovation</h3>
+                    <p  data-i18n="value-innovation-desc">We constantly innovate to provide cutting-edge investment solutions and technologies.</p>
                 </div>
             </div>
 
-            <h2 style="margin-top: 3rem;">Our Team</h2>
+            <h2 style="margin-top: 3rem;" data-i18n="about-team-h2">Our Team</h2>
             <div class="team-grid">
                 <div class="team-member">
-                    <div class="team-avatar">
-                        <img src="JohnAnderson.png" alt="John Anderson">
-                    </div>
+                    <div class="team-avatar"><img src="JohnAnderson.png" alt="John Anderson"></div>
                     <h3>John Anderson</h3>
-                    <p class="team-role">CEO & Founder</p>
-                    <p>15+ years in financial services and blockchain technology</p>
+                    <p class="team-role" data-i18n="team-ceo-role">CEO &amp; Founder</p>
+                    <p data-i18n="team-ceo-desc">15+ years in financial services and blockchain technology</p>
                 </div>
                 <div class="team-member">
-                    <div class="team-avatar">
-                        <img src="SarahChen.png" alt="Sarah Chen">
-                    </div>
+                    <div class="team-avatar"><img src="SarahChen.png" alt="Sarah Chen"></div>
                     <h3>Sarah Chen</h3>
-                    <p class="team-role">Chief Investment Officer</p>
-                    <p>Former Goldman Sachs portfolio manager with crypto expertise</p>
+                    <p class="team-role" data-i18n="team-cio-role">Chief Investment Officer</p>
+                    <p data-i18n="team-cio-desc">Former Goldman Sachs portfolio manager with crypto expertise</p>
                 </div>
                 <div class="team-member">
-                    <div class="team-avatar">
-                        <img src="MichaelRoberts.png" alt="Michael Roberts">
-                    </div>
+                    <div class="team-avatar"><img src="MichaelRoberts.png" alt="Michael Roberts"></div>
                     <h3>Michael Roberts</h3>
-                    <p class="team-role">Chief Technology Officer</p>
-                    <p>Blockchain architect with 10+ years in fintech</p>
+                    <p class="team-role" data-i18n="team-cto-role">Chief Technology Officer</p>
+                    <p data-i18n="team-cto-desc">Blockchain architect with 10+ years in fintech</p>
                 </div>
                 <div class="team-member">
-                    <div class="team-avatar">
-                        <img src="EmilyThompson.png" alt="Emily Thompson">
-                    </div>
+                    <div class="team-avatar"><img src="EmilyThompson.png" alt="Emily Thompson"></div>
                     <h3>Emily Thompson</h3>
-                    <p class="team-role">Head of Compliance</p>
-                    <p>Regulatory expert ensuring full legal compliance</p>
+                    <p class="team-role" data-i18n="team-compliance-role">Head of Compliance</p>
+                    <p data-i18n="team-compliance-desc">Regulatory expert ensuring full legal compliance</p>
                 </div>
             </div>
         </div>
     </section>
 
     <footer>
-        <p>&copy; 2026 Sarchus Investments. All rights reserved.</p>
-        <p>Cryptocurrency investments carry risk. Only invest what you can afford to lose.</p>
+        <p data-i18n="footer-copy">&copy; 2026 Sarchus Investments. All rights reserved.</p>
+        <p data-i18n="footer-risk">Cryptocurrency investments carry risk. Only invest what you can afford to lose.</p>
     </footer>
+
     <script src="translations.js"></script>
-<script src="lang-switcher.js"></script>
+    <script src="lang-switcher.js"></script>
     <script src="main.js"></script>
 </body>
-
 </html>
