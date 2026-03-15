@@ -16,88 +16,35 @@
                 <span class="logo-text">Sarchus Investments</span>
             </a>
             <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
             <ul class="nav-menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="services.html">Services</a></li>
-                <li><a href="portfolio.html">Portfolio</a></li>
-                <li><a href="contact.html">Contact</a></li>
+                <li><a href="index.html"     data-i18n="nav-home">Home</a></li>
+                <li><a href="about.html"     data-i18n="nav-about">About</a></li>
+                <li><a href="services.html"  data-i18n="nav-services">Services</a></li>
+                <li><a href="portfolio.html" data-i18n="nav-portfolio">Portfolio</a></li>
+                <li><a href="contact.html"   data-i18n="nav-contact">Contact</a></li>
             </ul>
         </div>
     </nav>
 
-   <div class="btc-price" id="cryptoPrices">
+    <div class="btc-price" id="cryptoPrices">
         <div class="btc-price-wrapper">
-            <!-- First set -->
             <div class="btc-price-content">
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice2">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice2">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice2">Loading...</span>
-                </div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice">Loading...</span></div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice2">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice2">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice2">Loading...</span></div>
             </div>
-            
-            <!-- Duplicate set for seamless loop -->
             <div class="btc-price-content">
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice3">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="btc.png" alt="Bitcoin" class="crypto-icon">
-                    <span class="crypto-name">BTC:</span>
-                    <span class="price-value" id="btcPrice4">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="eth.png" alt="Ethereum" class="crypto-icon">
-                    <span class="crypto-name">ETH:</span>
-                    <span class="price-value" id="ethPrice4">Loading...</span>
-                </div>
-                <div class="crypto-price-item">
-                    <img src="usdt.png" alt="USDT" class="crypto-icon">
-                    <span class="crypto-name">USDT:</span>
-                    <span class="price-value" id="usdtPrice4">Loading...</span>
-                </div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice3">Loading...</span></div>
+                <div class="crypto-price-item"><img src="btc.png"  alt="Bitcoin"  class="crypto-icon"><span class="crypto-name">BTC:</span><span class="price-value" id="btcPrice4">Loading...</span></div>
+                <div class="crypto-price-item"><img src="eth.png"  alt="Ethereum" class="crypto-icon"><span class="crypto-name">ETH:</span><span class="price-value" id="ethPrice4">Loading...</span></div>
+                <div class="crypto-price-item"><img src="usdt.png" alt="USDT"     class="crypto-icon"><span class="crypto-name">USDT:</span><span class="price-value" id="usdtPrice4">Loading...</span></div>
             </div>
         </div>
     </div>
@@ -105,76 +52,68 @@
     <div class="auth-container">
         <div class="auth-box">
             <div class="auth-header">
-                <h1>Welcome Back</h1>
-                <p>Login to access your investment portfolio</p>
+                <h1 data-i18n="login-title">Welcome Back</h1>
+                <p  data-i18n="login-subtitle">Login to access your investment portfolio</p>
             </div>
 
             <form class="auth-form" id="loginForm">
                 <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" required placeholder="Enter your email">
+                    <label for="email" data-i18n="login-email">Email Address</label>
+                    <input type="email" id="email" required data-i18n-placeholder="login-email" placeholder="Enter your email">
                 </div>
-
                 <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" required placeholder="Enter your password">
+                    <label for="password" data-i18n="login-password">Password</label>
+                    <input type="password" id="password" required data-i18n-placeholder="login-password" placeholder="Enter your password">
                 </div>
-
                 <div class="form-options">
                     <label class="remember-me">
                         <input type="checkbox" id="rememberMe">
-                        <span>Remember me</span>
+                        <span data-i18n="login-remember">Remember me</span>
                     </label>
-                    <a href="#" class="forgot-password" onclick="resetPassword(); return false;">Forgot Password?</a>
+                    <a href="#" class="forgot-password" onclick="resetPassword(); return false;" data-i18n="login-forgot">Forgot Password?</a>
                 </div>
-
-                <button type="submit" class="auth-button">Login</button>
-
+                <button type="submit" class="auth-button" data-i18n="login-btn">Login</button>
                 <div class="auth-divider">
-                    <span>OR</span>
+                    <span data-i18n="login-or">OR</span>
                 </div>
-
                 <button type="button" class="social-button google" onclick="socialLogin('google')">
-                    <span>🔴</span> Continue with Google
+                    <span>🔴</span> <span data-i18n="login-google">Continue with Google</span>
                 </button>
-
                 <button type="button" class="social-button facebook" onclick="socialLogin('facebook')">
-                    <span>🔵</span> Continue with Facebook
+                    <span>🔵</span> <span data-i18n="login-facebook">Continue with Facebook</span>
                 </button>
             </form>
 
             <div class="auth-footer">
-                <p>Don't have an account? <a href="register.html">Create one now</a></p>
+                <p>
+                    <span data-i18n="login-no-account">Don't have an account?</span>
+                    <a href="register.html" data-i18n="login-create">Create one now</a>
+                </p>
             </div>
         </div>
 
         <div class="auth-side">
             <div class="auth-side-content">
-                <h2>Trusted by Thousands</h2>
+                <h2 data-i18n="login-side-title">Trusted by Thousands</h2>
                 <ul class="benefits-list">
-                    <li>✓ Secure & Encrypted</li>
-                    <li>✓ Real-time Portfolio Tracking</li>
-                    <li>✓ Professional Investment Tools</li>
-                    <li>✓ 24/7 Customer Support</li>
-                    <li>✓ Multiple Cryptocurrency Support</li>
-                    <li>✓ Instant Withdrawals</li>
+                    <li data-i18n="benefit-secure">✓ Secure &amp; Encrypted</li>
+                    <li data-i18n="benefit-tracking">✓ Real-time Portfolio Tracking</li>
+                    <li data-i18n="benefit-tools">✓ Professional Investment Tools</li>
+                    <li data-i18n="benefit-support">✓ 24/7 Customer Support</li>
+                    <li data-i18n="benefit-crypto">✓ Multiple Cryptocurrency Support</li>
+                    <li data-i18n="benefit-withdraw">✓ Instant Withdrawals</li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    
-    <!-- Your Scripts -->
-    <script src="translations.js"></script>
-<script src="lang-switcher.js"></script>
     <script src="firebase-config.js"></script>
+    <script src="translations.js"></script>
+    <script src="lang-switcher.js"></script>
     <script src="main.js"></script>
     <script src="auth.js"></script>
 </body>
 </html>
-
-
