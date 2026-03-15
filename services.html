@@ -8,38 +8,36 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-     <nav>
+    <nav>
         <div class="container">
             <a href="index.html" class="logo-link">
                 <img src="SarchusInvestments.png" alt="Sarchus Investments" class="logo-img">
                 <span class="logo-text">Sarchus Investments</span>
             </a>
             <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
             <ul class="nav-menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="services.html">Services</a></li>
-                <li><a href="portfolio.html">Portfolio</a></li>
-                <li><a href="contact.html">Contact</a></li>
+                <li><a href="index.html"     data-i18n="nav-home">Home</a></li>
+                <li><a href="about.html"     data-i18n="nav-about">About</a></li>
+                <li><a href="services.html"  data-i18n="nav-services">Services</a></li>
+                <li><a href="portfolio.html" data-i18n="nav-portfolio">Portfolio</a></li>
+                <li><a href="contact.html"   data-i18n="nav-contact">Contact</a></li>
             </ul>
         </div>
     </nav>
 
     <section class="page-header">
-        <h1>Our Investment Services</h1>
-        <p>Comprehensive cryptocurrency investment solutions tailored to your needs</p>
+        <h1 data-i18n="services-hero-title">Our Investment Services</h1>
+        <p  data-i18n="services-hero-sub">Comprehensive cryptocurrency investment solutions tailored to your needs</p>
     </section>
 
     <section class="section">
         <div class="services-grid">
             <div class="service-detail">
                 <div class="service-icon">📈</div>
-                <h2>Managed Investment Accounts</h2>
-                <p>Our flagship service where our expert team actively manages your Bitcoin investments. We handle everything from market analysis to trade execution, ensuring your portfolio is optimized for maximum returns while managing risk.</p>
+                <h2 data-i18n="service-managed-title">Managed Investment Accounts</h2>
+                <p  data-i18n="service-managed-desc">Our flagship service where our expert team actively manages your Bitcoin investments. We handle everything from market analysis to trade execution, ensuring your portfolio is optimized for maximum returns while managing risk.</p>
                 <ul class="service-list">
                     <li>Professional portfolio management</li>
                     <li>Daily market monitoring</li>
@@ -47,13 +45,13 @@
                     <li>Risk management strategies</li>
                     <li>Monthly performance reports</li>
                 </ul>
-                <button class="cta-button" onclick="window.location.href='contact.html'">Learn More</button>
+                <button class="cta-button" onclick="window.location.href='contact.html'" data-i18n="service-learn-more">Learn More</button>
             </div>
 
             <div class="service-detail">
                 <div class="service-icon">🤖</div>
-                <h2>Automated Trading</h2>
-                <p>Leverage our advanced AI-powered trading algorithms that execute trades 24/7 based on real-time market conditions. Our algorithms are constantly refined using machine learning to adapt to changing market dynamics.</p>
+                <h2 data-i18n="service-trading-title">Automated Trading</h2>
+                <p  data-i18n="service-trading-desc">Leverage our advanced AI-powered trading algorithms that execute trades 24/7 based on real-time market conditions. Our algorithms are constantly refined using machine learning to adapt to changing market dynamics.</p>
                 <ul class="service-list">
                     <li>AI-driven trading strategies</li>
                     <li>24/7 automated execution</li>
@@ -61,13 +59,13 @@
                     <li>Customizable risk parameters</li>
                     <li>Real-time performance tracking</li>
                 </ul>
-                <button class="cta-button" onclick="window.location.href='contact.html'">Learn More</button>
+                <button class="cta-button" onclick="window.location.href='contact.html'" data-i18n="service-learn-more">Learn More</button>
             </div>
 
             <div class="service-detail">
                 <div class="service-icon">💰</div>
-                <h2>Staking & Yield Generation</h2>
-                <p>Maximize your returns through our staking programs. Earn passive income on your Bitcoin holdings through various yield-generating strategies including lending, staking, and liquidity provision.</p>
+                <h2 data-i18n="service-staking-title">Staking &amp; Yield Generation</h2>
+                <p  data-i18n="service-staking-desc">Maximize your returns through our staking programs. Earn passive income on your Bitcoin holdings through various yield-generating strategies including lending, staking, and liquidity provision.</p>
                 <ul class="service-list">
                     <li>Competitive staking rewards</li>
                     <li>Multiple yield strategies</li>
@@ -75,13 +73,13 @@
                     <li>Secure custody solutions</li>
                     <li>Compound interest options</li>
                 </ul>
-                <button class="cta-button" onclick="window.location.href='contact.html'">Learn More</button>
+                <button class="cta-button" onclick="window.location.href='contact.html'" data-i18n="service-learn-more">Learn More</button>
             </div>
 
             <div class="service-detail">
                 <div class="service-icon">🎓</div>
-                <h2>Investment Advisory</h2>
-                <p>Get personalized investment advice from our certified cryptocurrency advisors. Whether you're a beginner or experienced investor, we provide guidance tailored to your financial goals and risk tolerance.</p>
+                <h2 data-i18n="service-advisory-title">Investment Advisory</h2>
+                <p  data-i18n="service-advisory-desc">Get personalized investment advice from our certified cryptocurrency advisors. Whether you're a beginner or experienced investor, we provide guidance tailored to your financial goals and risk tolerance.</p>
                 <ul class="service-list">
                     <li>One-on-one consultations</li>
                     <li>Personalized investment strategies</li>
@@ -89,13 +87,13 @@
                     <li>Tax optimization guidance</li>
                     <li>Portfolio diversification advice</li>
                 </ul>
-                <button class="cta-button" onclick="window.location.href='contact.html'">Learn More</button>
+                <button class="cta-button" onclick="window.location.href='contact.html'" data-i18n="service-learn-more">Learn More</button>
             </div>
 
             <div class="service-detail">
                 <div class="service-icon">🔒</div>
-                <h2>Custodial Services</h2>
-                <p>Store your Bitcoin with complete peace of mind using our institutional-grade custody solutions. We provide secure storage with insurance coverage, multi-signature wallets, and cold storage options.</p>
+                <h2 data-i18n="service-custody-title">Custodial Services</h2>
+                <p  data-i18n="service-custody-desc">Store your Bitcoin with complete peace of mind using our institutional-grade custody solutions. We provide secure storage with insurance coverage, multi-signature wallets, and cold storage options.</p>
                 <ul class="service-list">
                     <li>Cold storage solutions</li>
                     <li>Multi-signature security</li>
@@ -103,13 +101,13 @@
                     <li>Regulatory compliance</li>
                     <li>24/7 security monitoring</li>
                 </ul>
-                <button class="cta-button" onclick="window.location.href='contact.html'">Learn More</button>
+                <button class="cta-button" onclick="window.location.href='contact.html'" data-i18n="service-learn-more">Learn More</button>
             </div>
 
             <div class="service-detail">
                 <div class="service-icon">📊</div>
-                <h2>Analytics & Reporting</h2>
-                <p>Access comprehensive analytics and reporting tools to track your investment performance. Get detailed insights into your portfolio, market trends, and investment metrics through our advanced dashboard.</p>
+                <h2 data-i18n="service-analytics-title">Analytics &amp; Reporting</h2>
+                <p  data-i18n="service-analytics-desc">Access comprehensive analytics and reporting tools to track your investment performance. Get detailed insights into your portfolio, market trends, and investment metrics through our advanced dashboard.</p>
                 <ul class="service-list">
                     <li>Real-time portfolio tracking</li>
                     <li>Advanced charting tools</li>
@@ -117,46 +115,44 @@
                     <li>Tax reporting assistance</li>
                     <li>Performance benchmarking</li>
                 </ul>
-                <button class="cta-button" onclick="window.location.href='contact.html'">Learn More</button>
+                <button class="cta-button" onclick="window.location.href='contact.html'" data-i18n="service-learn-more">Learn More</button>
             </div>
         </div>
     </section>
 
     <section class="section" style="background: var(--light);">
-        <h2>How It Works</h2>
+        <h2 data-i18n="how-it-works-h2">How It Works</h2>
         <div class="process-steps">
             <div class="step">
                 <div class="step-number">1</div>
-                <h3>Create Account</h3>
-                <p>Sign up and complete our simple verification process</p>
+                <h3 data-i18n="step1-title">Create Account</h3>
+                <p  data-i18n="step1-desc">Sign up and complete our simple verification process</p>
             </div>
             <div class="step">
                 <div class="step-number">2</div>
-                <h3>Choose Plan</h3>
-                <p>Select the investment plan that matches your goals</p>
+                <h3 data-i18n="step2-title">Choose Plan</h3>
+                <p  data-i18n="step2-desc">Select the investment plan that matches your goals</p>
             </div>
             <div class="step">
                 <div class="step-number">3</div>
-                <h3>Fund Account</h3>
-                <p>Deposit funds securely using your preferred method</p>
+                <h3 data-i18n="step3-title">Fund Account</h3>
+                <p  data-i18n="step3-desc">Deposit funds securely using your preferred method</p>
             </div>
             <div class="step">
                 <div class="step-number">4</div>
-                <h3>Start Investing</h3>
-                <p>Watch your portfolio grow with our expert management</p>
+                <h3 data-i18n="step4-title">Start Investing</h3>
+                <p  data-i18n="step4-desc">Watch your portfolio grow with our expert management</p>
             </div>
         </div>
     </section>
 
     <footer>
-        <p>&copy; 2026 CryptoVest. All rights reserved.</p>
-        <p>Cryptocurrency investments carry risk. Only invest what you can afford to lose.</p>
+        <p data-i18n="footer-copy">&copy; 2026 CryptoVest. All rights reserved.</p>
+        <p data-i18n="footer-risk">Cryptocurrency investments carry risk. Only invest what you can afford to lose.</p>
     </footer>
-<script src="translations.js"></script>
-<script src="lang-switcher.js"></script>
+
+    <script src="translations.js"></script>
+    <script src="lang-switcher.js"></script>
     <script src="main.js"></script>
 </body>
-
 </html>
-
-
