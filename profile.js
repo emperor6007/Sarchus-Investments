@@ -24,7 +24,17 @@ function initializeProfile() {
             console.log('User authenticated:', user.uid);
             
             try {
-                const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                // Add retry mechanism for newly created users
+                let userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                let retries = 0;
+                
+                // If document doesn't exist, retry up to 3 times with 500ms delays
+                while (!userDoc.exists && retries < 3) {
+                    console.log(`User document not found, retrying... (${retries + 1}/3)`);
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                    retries++;
+                }
                 
                 if (userDoc.exists) {
                     const userData = userDoc.data();
@@ -44,7 +54,7 @@ function initializeProfile() {
                     // Check email verification status
                     updateEmailVerificationStatus(user);
                 } else {
-                    console.error('User document not found');
+                    console.error('User document not found after retries');
                     alert('User data not found. Please contact support.');
                     window.location.href = 'login.html';
                 }
@@ -221,36 +231,50 @@ async function handleProfileUpdate(event) {
         country: document.getElementById('country').value
     };
     
-    // Update full name
-    updatedData.fullName = `${updatedData.firstName} ${updatedData.lastName}`.trim();
+    // Validation
+    if (!updatedData.firstName || !updatedData.lastName) {
+        alert('First name and last name are required.');
+        return;
+    }
     
-    // Show loading state
     const submitBtn = event.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
     submitBtn.textContent = 'Saving...';
     submitBtn.disabled = true;
     
     try {
-        console.log('Updating profile...');
+        // Update user document in Firestore
+        await firebase.firestore().collection('users').doc(user.uid).update({
+            firstName: updatedData.firstName,
+            lastName: updatedData.lastName,
+            fullName: `${updatedData.firstName} ${updatedData.lastName}`,
+            username: updatedData.username,
+            phone: updatedData.phone,
+            gender: updatedData.gender,
+            dateOfBirth: updatedData.dateOfBirth,
+            address: updatedData.address,
+            city: updatedData.city,
+            state: updatedData.state,
+            zipCode: updatedData.zipCode,
+            country: updatedData.country,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
         
-        // Update Firestore
-        await firebase.firestore().collection('users').doc(user.uid).update(updatedData);
-        
-        console.log('Profile updated successfully');
-        
-        // Update current user object
+        // Update window.currentUser
         window.currentUser = {
-            ...user,
-            ...updatedData
+            ...window.currentUser,
+            ...updatedData,
+            fullName: `${updatedData.firstName} ${updatedData.lastName}`
         };
         
-        // Reload profile data
-        loadProfileData(window.currentUser);
+        console.log('Profile updated successfully');
+        alert('Profile updated successfully! ✅');
         
         // Exit edit mode
         toggleEditMode();
         
-        alert('Profile updated successfully! ✅');
+        // Reload profile data to reflect changes
+        loadProfileData(window.currentUser);
         
     } catch (error) {
         console.error('Error updating profile:', error);
@@ -258,32 +282,27 @@ async function handleProfileUpdate(event) {
         let errorMessage = 'Failed to update profile. ';
         
         if (error.code === 'permission-denied') {
-            errorMessage += 'Permission denied. Please contact support.';
-        } else if (error.code === 'network-request-failed') {
-            errorMessage += 'Network error. Please check your internet connection.';
+            errorMessage += 'You do not have permission to update this profile.';
         } else {
-            errorMessage += error.message || 'Please try again.';
+            errorMessage += 'Please try again.';
         }
         
         alert(errorMessage);
         
     } finally {
-        // Reset button state
-        if (submitBtn) {
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-        }
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
     }
 }
 
 // Load Account Activity
-async function loadAccountActivity(uid) {
+async function loadAccountActivity(userId) {
     try {
         console.log('Loading account activity...');
         
         const transactionsSnapshot = await firebase.firestore()
             .collection('users')
-            .doc(uid)
+            .doc(userId)
             .collection('transactions')
             .get();
         
@@ -474,6 +493,22 @@ async function handleChangePassword(event) {
     }
 }
 
+// Handle Dashboard Logout
+async function handleDashboardLogout() {
+    if (confirm('Are you sure you want to logout?')) {
+        try {
+            await firebase.auth().signOut();
+            window.currentUser = null;
+            console.log('User logged out successfully');
+            alert('You have been logged out successfully!');
+            window.location.href = 'login.html';
+        } catch (error) {
+            console.error('Logout error:', error);
+            alert('Error logging out. Please try again.');
+        }
+    }
+}
+
 // Format Currency
 function formatCurrency(amount) {
     return '$' + parseFloat(amount).toLocaleString('en-US', {
@@ -503,5 +538,6 @@ window.sendVerificationEmail = sendVerificationEmail;
 window.openChangePasswordModal = openChangePasswordModal;
 window.closeChangePasswordModal = closeChangePasswordModal;
 window.handleChangePassword = handleChangePassword;
+window.handleDashboardLogout = handleDashboardLogout;
 
 console.log('Profile.js loaded successfully');
