@@ -21,7 +21,7 @@ function generateReferralCode(userId) {
 async function validateReferralCode(referralCode) {
     try {
         const usersRef = firebase.firestore().collection('users');
-        const snapshot = await usersRef.where('referralCode', '==', referralCode).get();
+        const snapshot = await usersRef.where('referralCode', '==', referralCode).limit(1).get();
         return !snapshot.empty;
     } catch (error) {
         console.error('Validation error:', error);
@@ -36,7 +36,7 @@ async function processReferral(referralCode, newUserId) {
         
         // Find the referrer
         const usersRef = firebase.firestore().collection('users');
-        const snapshot = await usersRef.where('referralCode', '==', referralCode).get();
+        const snapshot = await usersRef.where('referralCode', '==', referralCode).limit(1).get();
         
         if (snapshot.empty) {
             console.log('Invalid referral code');
@@ -144,7 +144,17 @@ function initializeAuth() {
             console.log('User authenticated:', user.uid);
             
             try {
-                const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                // Add a small retry mechanism for newly created users
+                let userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                let retries = 0;
+                
+                // If document doesn't exist, retry up to 3 times with 500ms delays
+                while (!userDoc.exists && retries < 3) {
+                    console.log(`User document not found, retrying... (${retries + 1}/3)`);
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                    retries++;
+                }
                 
                 if (userDoc.exists) {
                     window.currentUser = {
@@ -158,6 +168,9 @@ function initializeAuth() {
                         console.log('Redirecting to dashboard...');
                         window.location.href = 'dashboard.html';
                     }
+                } else {
+                    console.error('User document still not found after retries');
+                    // Don't redirect away - allow user to try again
                 }
             } catch (error) {
                 console.error('Error loading user data:', error);
@@ -308,15 +321,24 @@ async function handleRegister(event) {
             status: 'active'
         };
         
+        // Wait for user document to be created with retry mechanism
         await firebase.firestore().collection('users').doc(user.uid).set(userData);
         console.log('User data saved to Firestore');
+        
+        // Small delay to ensure Firestore write is complete
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         // Process referral if code was provided
         let referralResult = null;
         if (referralCode) {
-            referralResult = await processReferral(referralCode, user.uid);
-            if (referralResult.success) {
-                console.log('Referral processed:', referralResult);
+            try {
+                referralResult = await processReferral(referralCode, user.uid);
+                if (referralResult.success) {
+                    console.log('Referral processed:', referralResult);
+                }
+            } catch (refError) {
+                console.warn('Referral processing failed but registration succeeded:', refError);
+                referralResult = null;
             }
         }
         
@@ -339,7 +361,9 @@ async function handleRegister(event) {
         alert(welcomeMessage);
         
         // Redirect to dashboard
-        window.location.href = 'dashboard.html';
+        setTimeout(() => {
+            window.location.href = 'dashboard.html';
+        }, 1000);
         
     } catch (error) {
         console.error('Registration error:', error);
@@ -348,16 +372,18 @@ async function handleRegister(event) {
         
         // Handle specific error codes
         if (error.code === 'auth/email-already-in-use') {
-            errorMessage = 'This email is already registered. Please login instead.';
-        } else if (error.code === 'auth/invalid-email') {
-            errorMessage = 'Invalid email address format.';
+            errorMessage = 'This email is already registered. Please login or use a different email.';
         } else if (error.code === 'auth/weak-password') {
             errorMessage = 'Password is too weak. Please use a stronger password.';
-        } else if (error.code === 'auth/network-request-failed') {
-            errorMessage = 'Network error. Please check your internet connection.';
+        } else if (error.code === 'auth/invalid-email') {
+            errorMessage = 'Please enter a valid email address.';
         } else if (error.code === 'auth/operation-not-allowed') {
-            errorMessage = 'Email/password authentication is not enabled. Please contact support.';
-        } else {
+            errorMessage = 'Account creation is currently disabled. Please try again later.';
+        } else if (error.code === 'auth/network-request-failed') {
+            errorMessage = 'Network error. Please check your internet connection and try again.';
+        } else if (error.code === 'auth/too-many-requests') {
+            errorMessage = 'Too many registration attempts. Please try again later.';
+        } else if (error.message) {
             errorMessage = `Registration failed: ${error.message}`;
         }
         
@@ -376,10 +402,11 @@ async function handleLogin(event) {
     // Get form values
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
+    const rememberMe = document.getElementById('rememberMe').checked;
     
     // Basic validation
     if (!email || !password) {
-        alert('Please enter both email and password!');
+        alert('Please enter both email and password.');
         return;
     }
     
@@ -390,7 +417,7 @@ async function handleLogin(event) {
     submitBtn.disabled = true;
     
     try {
-        console.log('Attempting to login...');
+        console.log('Attempting login...');
         
         // Sign in with Firebase
         const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
@@ -398,8 +425,17 @@ async function handleLogin(event) {
         
         console.log('Login successful:', user.uid);
         
-        // Load user data from Firestore
-        const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+        // Load user data from Firestore with retry mechanism
+        let userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+        let retries = 0;
+        
+        // If document doesn't exist, retry up to 3 times with 500ms delays
+        while (!userDoc.exists && retries < 3) {
+            console.log(`User document not found on login, retrying... (${retries + 1}/3)`);
+            await new Promise(resolve => setTimeout(resolve, 500));
+            userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+            retries++;
+        }
         
         if (userDoc.exists) {
             const userData = userDoc.data();
@@ -419,6 +455,13 @@ async function handleLogin(event) {
                 ...userData
             };
             
+            // Store remember me preference
+            if (rememberMe) {
+                localStorage.setItem('rememberEmail', email);
+            } else {
+                localStorage.removeItem('rememberEmail');
+            }
+            
             console.log('User data loaded');
             
             // Welcome message
@@ -428,8 +471,12 @@ async function handleLogin(event) {
             window.location.href = 'dashboard.html';
             
         } else {
-            console.error('User document not found');
-            alert('User data not found. Please contact support.');
+            console.error('User document not found after retries');
+            
+            // Sign out the user since their data doesn't exist
+            await firebase.auth().signOut();
+            
+            alert('User account data is missing. Please contact support or try registering again.');
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
         }
@@ -526,10 +573,17 @@ async function socialLogin(provider) {
                 
                 await firebase.firestore().collection('users').doc(user.uid).set(userData);
                 
+                // Small delay before processing referral
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
                 // Process referral if code exists
                 if (referralCode) {
-                    await processReferral(referralCode, user.uid);
-                    localStorage.removeItem('pendingReferralCode');
+                    try {
+                        await processReferral(referralCode, user.uid);
+                        localStorage.removeItem('pendingReferralCode');
+                    } catch (refError) {
+                        console.warn('Referral processing failed but signup succeeded:', refError);
+                    }
                 }
                 
                 window.currentUser = { uid: user.uid, ...userData };
@@ -540,7 +594,9 @@ async function socialLogin(provider) {
             }
             
             alert(`Welcome, ${window.currentUser.firstName}!`);
-            window.location.href = 'dashboard.html';
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1000);
             
         } catch (error) {
             console.error('Google sign-in error:', error);
