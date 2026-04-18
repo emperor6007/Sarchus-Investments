@@ -5,10 +5,12 @@ let originalFormData = {};
 
 // Initialize Profile Page
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Profile page DOM loaded');
     if (window.location.pathname.includes('profile.html')) {
         const checkAuth = setInterval(() => {
             if (typeof firebase !== 'undefined' && firebase.auth) {
                 clearInterval(checkAuth);
+                console.log('Firebase ready, initializing profile');
                 initializeProfile();
             }
         }, 100);
@@ -38,12 +40,14 @@ function initializeProfile() {
                 
                 if (userDoc.exists) {
                     const userData = userDoc.data();
+                    console.log('Raw user data:', userData);
+                    
                     window.currentUser = {
                         uid: user.uid,
                         ...userData
                     };
                     
-                    console.log('User data loaded:', window.currentUser);
+                    console.log('User data loaded successfully:', window.currentUser);
                     
                     // Load profile data
                     loadProfileData(window.currentUser);
@@ -53,19 +57,27 @@ function initializeProfile() {
                     
                     // Check email verification status
                     updateEmailVerificationStatus(user);
+                    
+                    console.log('Profile initialization complete');
                 } else {
                     console.error('User document not found after retries');
                     alert('User data not found. Please contact support.');
-                    window.location.href = 'login.html';
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1000);
                 }
             } catch (error) {
                 console.error('Error loading user data:', error);
-                alert('Error loading profile. Please try again.');
-                window.location.href = 'dashboard.html';
+                console.error('Error code:', error.code);
+                console.error('Error message:', error.message);
+                alert('Error loading profile. Please try again.\n\nError: ' + error.message);
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
             }
         } else {
             console.log('No user authenticated');
-            alert('Please login to access your profile.');
+            // Don't show alert - let user navigate naturally
             window.location.href = 'login.html';
         }
     });
@@ -75,110 +87,156 @@ function initializeProfile() {
 function loadProfileData(user) {
     console.log('Loading profile data...');
     
-    // Update avatar initials
-    const avatarInitials = document.getElementById('avatarInitials');
-    if (avatarInitials) {
-        const firstName = user.firstName || '';
-        const lastName = user.lastName || '';
-        const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() || 'U';
-        avatarInitials.textContent = initials;
+    try {
+        // Update avatar initials
+        const avatarInitials = document.getElementById('avatarInitials');
+        if (avatarInitials) {
+            const firstName = user.firstName || '';
+            const lastName = user.lastName || '';
+            const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase() || 'U';
+            avatarInitials.textContent = initials;
+            console.log('Avatar initials set:', initials);
+        }
+        
+        // Update header info
+        const profileFullName = document.getElementById('profileFullName');
+        if (profileFullName) {
+            const fullName = user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User';
+            profileFullName.textContent = fullName;
+            console.log('Full name set:', fullName);
+        }
+        
+        const profileEmail = document.getElementById('profileEmail');
+        if (profileEmail) {
+            profileEmail.textContent = user.email || 'user@example.com';
+            console.log('Email set:', user.email);
+        }
+        
+        const accountStatus = document.getElementById('accountStatus');
+        if (accountStatus) {
+            const statusText = user.status === 'active' ? 'Active Account' : 
+                              user.status === 'suspended' ? 'Suspended Account' : 'Account';
+            accountStatus.textContent = statusText;
+            accountStatus.style.background = user.status === 'active' ? 
+                'rgba(255, 255, 255, 0.2)' : 'rgba(231, 76, 60, 0.3)';
+            console.log('Account status set:', statusText);
+        }
+        
+        // Update member since
+        const memberSince = document.getElementById('memberSince');
+        if (memberSince && user.registeredDate) {
+            try {
+                const date = user.registeredDate.toDate ? user.registeredDate.toDate() : new Date(user.registeredDate);
+                memberSince.textContent = formatDate(date);
+                console.log('Member since set:', formatDate(date));
+            } catch (dateError) {
+                console.warn('Could not parse date:', dateError);
+                memberSince.textContent = 'Recently';
+            }
+        }
+        
+        // Update profile balance
+        const profileBalance = document.getElementById('profileBalance');
+        if (profileBalance) {
+            profileBalance.textContent = formatCurrency(user.balance || 0);
+            console.log('Balance set:', formatCurrency(user.balance || 0));
+        }
+        
+        // Load form fields - use optional chaining to avoid errors
+        const fieldsToLoad = [
+            'firstName', 'lastName', 'email', 'phone', 'country'
+        ];
+        
+        const optionalFields = [
+            'username', 'gender', 'dateOfBirth', 'address', 'city', 'state', 'zipCode'
+        ];
+        
+        // Load required fields
+        fieldsToLoad.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                if (fieldId === 'email') {
+                    field.value = user.email || '';
+                } else {
+                    field.value = user[fieldId] || '';
+                }
+            }
+        });
+        
+        // Load optional fields
+        optionalFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.value = user[fieldId] || '';
+            }
+        });
+        
+        console.log('Form fields populated');
+        
+        // Save original form data
+        saveOriginalFormData();
+        
+        console.log('Profile data loaded successfully');
+    } catch (error) {
+        console.error('Error in loadProfileData:', error);
+        throw error;
     }
-    
-    // Update header info
-    const profileFullName = document.getElementById('profileFullName');
-    if (profileFullName) {
-        profileFullName.textContent = user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User';
-    }
-    
-    const profileEmail = document.getElementById('profileEmail');
-    if (profileEmail) {
-        profileEmail.textContent = user.email || 'user@example.com';
-    }
-    
-    const accountStatus = document.getElementById('accountStatus');
-    if (accountStatus) {
-        const statusText = user.status === 'active' ? 'Active Account' : 
-                          user.status === 'suspended' ? 'Suspended Account' : 'Account';
-        accountStatus.textContent = statusText;
-        accountStatus.style.background = user.status === 'active' ? 
-            'rgba(255, 255, 255, 0.2)' : 'rgba(231, 76, 60, 0.3)';
-    }
-    
-    // Update member since
-    const memberSince = document.getElementById('memberSince');
-    if (memberSince && user.registeredDate) {
-        const date = user.registeredDate.toDate ? user.registeredDate.toDate() : new Date(user.registeredDate);
-        memberSince.textContent = formatDate(date);
-    }
-    
-    // Update profile balance
-    const profileBalance = document.getElementById('profileBalance');
-    if (profileBalance) {
-        profileBalance.textContent = formatCurrency(user.balance || 0);
-    }
-    
-    // Load form fields
-    document.getElementById('firstName').value = user.firstName || '';
-    document.getElementById('lastName').value = user.lastName || '';
-    document.getElementById('username').value = user.username || user.email?.split('@')[0] || '';
-    document.getElementById('email').value = user.email || '';
-    document.getElementById('phone').value = user.phone || '';
-    document.getElementById('gender').value = user.gender || '';
-    document.getElementById('dateOfBirth').value = user.dateOfBirth || '';
-    document.getElementById('address').value = user.address || '';
-    document.getElementById('city').value = user.city || '';
-    document.getElementById('state').value = user.state || '';
-    document.getElementById('zipCode').value = user.zipCode || '';
-    document.getElementById('country').value = user.country || '';
-    
-    // Save original form data
-    saveOriginalFormData();
-    
-    console.log('Profile data loaded successfully');
 }
 
 // Save Original Form Data
 function saveOriginalFormData() {
-    originalFormData = {
-        firstName: document.getElementById('firstName').value,
-        lastName: document.getElementById('lastName').value,
-        username: document.getElementById('username').value,
-        phone: document.getElementById('phone').value,
-        gender: document.getElementById('gender').value,
-        dateOfBirth: document.getElementById('dateOfBirth').value,
-        address: document.getElementById('address').value,
-        city: document.getElementById('city').value,
-        state: document.getElementById('state').value,
-        zipCode: document.getElementById('zipCode').value,
-        country: document.getElementById('country').value
-    };
+    try {
+        const fieldsToSave = [
+            'firstName', 'lastName', 'username', 'phone', 'gender', 
+            'dateOfBirth', 'address', 'city', 'state', 'zipCode', 'country'
+        ];
+        
+        originalFormData = {};
+        
+        fieldsToSave.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                originalFormData[fieldId] = field.value;
+            }
+        });
+        
+        console.log('Original form data saved:', originalFormData);
+    } catch (error) {
+        console.error('Error saving original form data:', error);
+    }
 }
 
 // Toggle Edit Mode
 function toggleEditMode() {
-    isEditMode = !isEditMode;
-    
-    const fields = ['firstName', 'lastName', 'username', 'phone', 'gender', 'dateOfBirth', 
-                   'address', 'city', 'state', 'zipCode', 'country'];
-    
-    fields.forEach(fieldId => {
-        const field = document.getElementById(fieldId);
-        if (field) {
-            field.disabled = !isEditMode;
+    try {
+        isEditMode = !isEditMode;
+        
+        const fields = ['firstName', 'lastName', 'username', 'phone', 'gender', 'dateOfBirth', 
+                       'address', 'city', 'state', 'zipCode', 'country'];
+        
+        fields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.disabled = !isEditMode;
+            }
+        });
+        
+        const editBtnText = document.getElementById('editBtnText');
+        const formActions = document.getElementById('formActions');
+        
+        if (isEditMode) {
+            if (editBtnText) editBtnText.textContent = '❌ Cancel';
+            if (formActions) formActions.style.display = 'flex';
+            console.log('Edit mode enabled');
+        } else {
+            if (editBtnText) editBtnText.textContent = '✏️ Edit';
+            if (formActions) formActions.style.display = 'none';
+            // Restore original values
+            restoreOriginalFormData();
+            console.log('Edit mode disabled');
         }
-    });
-    
-    const editBtnText = document.getElementById('editBtnText');
-    const formActions = document.getElementById('formActions');
-    
-    if (isEditMode) {
-        if (editBtnText) editBtnText.textContent = '❌ Cancel';
-        if (formActions) formActions.style.display = 'flex';
-    } else {
-        if (editBtnText) editBtnText.textContent = '✏️ Edit';
-        if (formActions) formActions.style.display = 'none';
-        // Restore original values
-        restoreOriginalFormData();
+    } catch (error) {
+        console.error('Error toggling edit mode:', error);
     }
 }
 
@@ -189,12 +247,17 @@ function cancelEdit() {
 
 // Restore Original Form Data
 function restoreOriginalFormData() {
-    Object.keys(originalFormData).forEach(key => {
-        const field = document.getElementById(key);
-        if (field) {
-            field.value = originalFormData[key];
-        }
-    });
+    try {
+        Object.keys(originalFormData).forEach(key => {
+            const field = document.getElementById(key);
+            if (field) {
+                field.value = originalFormData[key];
+            }
+        });
+        console.log('Form data restored');
+    } catch (error) {
+        console.error('Error restoring form data:', error);
+    }
 }
 
 // Handle Profile Form Submit
@@ -202,6 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const profileForm = document.getElementById('profileForm');
     if (profileForm) {
         profileForm.addEventListener('submit', handleProfileUpdate);
+        console.log('Profile form listener attached');
     }
 });
 
@@ -209,102 +273,109 @@ document.addEventListener('DOMContentLoaded', function() {
 async function handleProfileUpdate(event) {
     event.preventDefault();
     
-    const user = window.currentUser;
-    if (!user) {
-        alert('Please login first.');
-        window.location.href = 'login.html';
-        return;
-    }
-    
-    // Get form values
-    const updatedData = {
-        firstName: document.getElementById('firstName').value.trim(),
-        lastName: document.getElementById('lastName').value.trim(),
-        username: document.getElementById('username').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-        gender: document.getElementById('gender').value,
-        dateOfBirth: document.getElementById('dateOfBirth').value,
-        address: document.getElementById('address').value.trim(),
-        city: document.getElementById('city').value.trim(),
-        state: document.getElementById('state').value.trim(),
-        zipCode: document.getElementById('zipCode').value.trim(),
-        country: document.getElementById('country').value
-    };
-    
-    // Validation
-    if (!updatedData.firstName || !updatedData.lastName) {
-        alert('First name and last name are required.');
-        return;
-    }
-    
-    const submitBtn = event.target.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Saving...';
-    submitBtn.disabled = true;
-    
     try {
-        // Update user document in Firestore
-        await firebase.firestore().collection('users').doc(user.uid).update({
-            firstName: updatedData.firstName,
-            lastName: updatedData.lastName,
-            fullName: `${updatedData.firstName} ${updatedData.lastName}`,
-            username: updatedData.username,
-            phone: updatedData.phone,
-            gender: updatedData.gender,
-            dateOfBirth: updatedData.dateOfBirth,
-            address: updatedData.address,
-            city: updatedData.city,
-            state: updatedData.state,
-            zipCode: updatedData.zipCode,
-            country: updatedData.country,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        
-        // Update window.currentUser
-        window.currentUser = {
-            ...window.currentUser,
-            ...updatedData,
-            fullName: `${updatedData.firstName} ${updatedData.lastName}`
-        };
-        
-        console.log('Profile updated successfully');
-        alert('Profile updated successfully! ✅');
-        
-        // Exit edit mode
-        toggleEditMode();
-        
-        // Reload profile data to reflect changes
-        loadProfileData(window.currentUser);
-        
-    } catch (error) {
-        console.error('Error updating profile:', error);
-        
-        let errorMessage = 'Failed to update profile. ';
-        
-        if (error.code === 'permission-denied') {
-            errorMessage += 'You do not have permission to update this profile.';
-        } else {
-            errorMessage += 'Please try again.';
+        const user = window.currentUser;
+        if (!user) {
+            alert('Please login first.');
+            window.location.href = 'login.html';
+            return;
         }
         
-        alert(errorMessage);
+        // Get form values
+        const updatedData = {
+            firstName: document.getElementById('firstName').value.trim(),
+            lastName: document.getElementById('lastName').value.trim(),
+            username: document.getElementById('username').value.trim(),
+            phone: document.getElementById('phone').value.trim(),
+            gender: document.getElementById('gender').value,
+            dateOfBirth: document.getElementById('dateOfBirth').value,
+            address: document.getElementById('address').value.trim(),
+            city: document.getElementById('city').value.trim(),
+            state: document.getElementById('state').value.trim(),
+            zipCode: document.getElementById('zipCode').value.trim(),
+            country: document.getElementById('country').value
+        };
         
-    } finally {
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
+        // Validation
+        if (!updatedData.firstName || !updatedData.lastName) {
+            alert('First name and last name are required.');
+            return;
+        }
+        
+        const submitBtn = event.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Saving...';
+        submitBtn.disabled = true;
+        
+        try {
+            // Update user document in Firestore
+            await firebase.firestore().collection('users').doc(user.uid).update({
+                firstName: updatedData.firstName,
+                lastName: updatedData.lastName,
+                fullName: `${updatedData.firstName} ${updatedData.lastName}`,
+                username: updatedData.username,
+                phone: updatedData.phone,
+                gender: updatedData.gender,
+                dateOfBirth: updatedData.dateOfBirth,
+                address: updatedData.address,
+                city: updatedData.city,
+                state: updatedData.state,
+                zipCode: updatedData.zipCode,
+                country: updatedData.country,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            // Update window.currentUser
+            window.currentUser = {
+                ...window.currentUser,
+                ...updatedData,
+                fullName: `${updatedData.firstName} ${updatedData.lastName}`
+            };
+            
+            console.log('Profile updated successfully');
+            alert('Profile updated successfully! ✅');
+            
+            // Exit edit mode
+            toggleEditMode();
+            
+            // Reload profile data to reflect changes
+            loadProfileData(window.currentUser);
+            
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            
+            let errorMessage = 'Failed to update profile. ';
+            
+            if (error.code === 'permission-denied') {
+                errorMessage += 'You do not have permission to update this profile.';
+            } else {
+                errorMessage += 'Please try again.';
+            }
+            
+            alert(errorMessage);
+            
+        } finally {
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        }
+    } catch (error) {
+        console.error('Outer error in handleProfileUpdate:', error);
+        alert('An unexpected error occurred. Please try again.');
     }
 }
 
 // Load Account Activity
 async function loadAccountActivity(userId) {
     try {
-        console.log('Loading account activity...');
+        console.log('Loading account activity for user:', userId);
         
         const transactionsSnapshot = await firebase.firestore()
             .collection('users')
             .doc(userId)
             .collection('transactions')
             .get();
+        
+        console.log('Transactions snapshot received, count:', transactionsSnapshot.size);
         
         let totalDeposits = 0;
         let totalWithdrawals = 0;
@@ -324,6 +395,13 @@ async function loadAccountActivity(userId) {
             } else if (transaction.type === 'profit' || transaction.type === 'investment_maturity') {
                 totalProfit += (transaction.profit || 0);
             }
+        });
+        
+        console.log('Activity stats calculated:', {
+            totalDeposits,
+            totalWithdrawals,
+            totalInvestments,
+            totalProfit
         });
         
         // Update UI
@@ -348,42 +426,48 @@ async function loadAccountActivity(userId) {
 
 // Update Email Verification Status
 function updateEmailVerificationStatus(user) {
-    const emailVerificationStatus = document.getElementById('emailVerificationStatus');
-    const verifyEmailBtn = document.getElementById('verifyEmailBtn');
-    
-    if (user.emailVerified) {
-        if (emailVerificationStatus) {
-            emailVerificationStatus.textContent = '✅ Email verified';
-            emailVerificationStatus.style.color = '#27ae60';
+    try {
+        const emailVerificationStatus = document.getElementById('emailVerificationStatus');
+        const verifyEmailBtn = document.getElementById('verifyEmailBtn');
+        
+        if (user.emailVerified) {
+            if (emailVerificationStatus) {
+                emailVerificationStatus.textContent = '✅ Email verified';
+                emailVerificationStatus.style.color = '#27ae60';
+            }
+            if (verifyEmailBtn) {
+                verifyEmailBtn.disabled = true;
+                verifyEmailBtn.textContent = 'Verified';
+                verifyEmailBtn.style.opacity = '0.6';
+            }
+            console.log('Email is verified');
+        } else {
+            if (emailVerificationStatus) {
+                emailVerificationStatus.textContent = '⚠️ Email not verified';
+                emailVerificationStatus.style.color = '#e74c3c';
+            }
+            console.log('Email is not verified');
         }
-        if (verifyEmailBtn) {
-            verifyEmailBtn.disabled = true;
-            verifyEmailBtn.textContent = 'Verified';
-            verifyEmailBtn.style.opacity = '0.6';
-        }
-    } else {
-        if (emailVerificationStatus) {
-            emailVerificationStatus.textContent = '⚠️ Email not verified';
-            emailVerificationStatus.style.color = '#e74c3c';
-        }
+    } catch (error) {
+        console.error('Error updating email verification status:', error);
     }
 }
 
 // Send Verification Email
 async function sendVerificationEmail() {
-    const user = firebase.auth().currentUser;
-    
-    if (!user) {
-        alert('Please login first.');
-        return;
-    }
-    
-    if (user.emailVerified) {
-        alert('Your email is already verified! ✅');
-        return;
-    }
-    
     try {
+        const user = firebase.auth().currentUser;
+        
+        if (!user) {
+            alert('Please login first.');
+            return;
+        }
+        
+        if (user.emailVerified) {
+            alert('Your email is already verified! ✅');
+            return;
+        }
+        
         await user.sendEmailVerification();
         alert('Verification email sent! 📧\n\nPlease check your inbox and spam folder.');
     } catch (error) {
@@ -399,19 +483,29 @@ async function sendVerificationEmail() {
 
 // Open Change Password Modal
 function openChangePasswordModal() {
-    const modal = document.getElementById('changePasswordModal');
-    if (modal) {
-        modal.style.display = 'block';
+    try {
+        const modal = document.getElementById('changePasswordModal');
+        if (modal) {
+            modal.style.display = 'block';
+            console.log('Change password modal opened');
+        }
+    } catch (error) {
+        console.error('Error opening change password modal:', error);
     }
 }
 
 // Close Change Password Modal
 function closeChangePasswordModal() {
-    const modal = document.getElementById('changePasswordModal');
-    if (modal) {
-        modal.style.display = 'none';
-        const form = document.getElementById('changePasswordForm');
-        if (form) form.reset();
+    try {
+        const modal = document.getElementById('changePasswordModal');
+        if (modal) {
+            modal.style.display = 'none';
+            const form = document.getElementById('changePasswordForm');
+            if (form) form.reset();
+            console.log('Change password modal closed');
+        }
+    } catch (error) {
+        console.error('Error closing change password modal:', error);
     }
 }
 
@@ -419,77 +513,82 @@ function closeChangePasswordModal() {
 async function handleChangePassword(event) {
     event.preventDefault();
     
-    const currentPassword = document.getElementById('currentPassword').value;
-    const newPassword = document.getElementById('newPassword').value;
-    const confirmNewPassword = document.getElementById('confirmNewPassword').value;
-    
-    // Validate passwords match
-    if (newPassword !== confirmNewPassword) {
-        alert('New passwords do not match!');
-        return;
-    }
-    
-    // Validate password strength
-    if (newPassword.length < 8) {
-        alert('Password must be at least 8 characters long!');
-        return;
-    }
-    
-    const hasUpperCase = /[A-Z]/.test(newPassword);
-    const hasNumber = /[0-9]/.test(newPassword);
-    
-    if (!hasUpperCase || !hasNumber) {
-        alert('Password must contain at least one uppercase letter and one number!');
-        return;
-    }
-    
-    const submitBtn = event.target.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Updating...';
-    submitBtn.disabled = true;
-    
     try {
-        const user = firebase.auth().currentUser;
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmNewPassword = document.getElementById('confirmNewPassword').value;
         
-        // Re-authenticate user
-        const credential = firebase.auth.EmailAuthProvider.credential(
-            user.email,
-            currentPassword
-        );
+        // Validate passwords match
+        if (newPassword !== confirmNewPassword) {
+            alert('New passwords do not match!');
+            return;
+        }
         
-        await user.reauthenticateWithCredential(credential);
+        // Validate password strength
+        if (newPassword.length < 8) {
+            alert('Password must be at least 8 characters long!');
+            return;
+        }
         
-        // Update password
-        await user.updatePassword(newPassword);
+        const hasUpperCase = /[A-Z]/.test(newPassword);
+        const hasNumber = /[0-9]/.test(newPassword);
         
-        console.log('Password updated successfully');
+        if (!hasUpperCase || !hasNumber) {
+            alert('Password must contain at least one uppercase letter and one number!');
+            return;
+        }
         
-        alert('Password updated successfully! ✅');
+        const submitBtn = event.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Updating...';
+        submitBtn.disabled = true;
         
-        closeChangePasswordModal();
-        
+        try {
+            const user = firebase.auth().currentUser;
+            
+            // Re-authenticate user
+            const credential = firebase.auth.EmailAuthProvider.credential(
+                user.email,
+                currentPassword
+            );
+            
+            await user.reauthenticateWithCredential(credential);
+            
+            // Update password
+            await user.updatePassword(newPassword);
+            
+            console.log('Password updated successfully');
+            
+            alert('Password updated successfully! ✅');
+            
+            closeChangePasswordModal();
+            
+        } catch (error) {
+            console.error('Error changing password:', error);
+            
+            let errorMessage = 'Failed to change password. ';
+            
+            if (error.code === 'auth/wrong-password') {
+                errorMessage += 'Current password is incorrect.';
+            } else if (error.code === 'auth/weak-password') {
+                errorMessage += 'New password is too weak.';
+            } else if (error.code === 'auth/requires-recent-login') {
+                errorMessage += 'Please logout and login again before changing password.';
+            } else {
+                errorMessage += error.message || 'Please try again.';
+            }
+            
+            alert(errorMessage);
+            
+        } finally {
+            if (submitBtn) {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        }
     } catch (error) {
-        console.error('Error changing password:', error);
-        
-        let errorMessage = 'Failed to change password. ';
-        
-        if (error.code === 'auth/wrong-password') {
-            errorMessage += 'Current password is incorrect.';
-        } else if (error.code === 'auth/weak-password') {
-            errorMessage += 'New password is too weak.';
-        } else if (error.code === 'auth/requires-recent-login') {
-            errorMessage += 'Please logout and login again before changing password.';
-        } else {
-            errorMessage += error.message || 'Please try again.';
-        }
-        
-        alert(errorMessage);
-        
-    } finally {
-        if (submitBtn) {
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-        }
+        console.error('Outer error in handleChangePassword:', error);
+        alert('An unexpected error occurred. Please try again.');
     }
 }
 
@@ -497,6 +596,7 @@ async function handleChangePassword(event) {
 async function handleDashboardLogout() {
     if (confirm('Are you sure you want to logout?')) {
         try {
+            console.log('Logging out user...');
             await firebase.auth().signOut();
             window.currentUser = null;
             console.log('User logged out successfully');
