@@ -1,4 +1,4 @@
-// Crypto-Only Withdrawal System with Firebase - UPDATED MINIMUM $50
+// Crypto-Only Withdrawal System with Firebase - UPDATED MINIMUM $1500
 
 // Network fees
 const NETWORK_FEES = {
@@ -8,7 +8,7 @@ const NETWORK_FEES = {
 };
 
 // UPDATED MINIMUM WITHDRAWAL
-const MINIMUM_WITHDRAWAL = 50; // Changed from $20 to $50
+const MINIMUM_WITHDRAWAL = 1500; // Changed from $50 to $1500
 
 // Network options
 const NETWORKS = {
@@ -130,7 +130,7 @@ async function handleWithdrawalRequest(event) {
     const network = document.getElementById('network').value;
     const confirmAddress = document.getElementById('confirmAddress').checked;
     
-    // Validation - UPDATED MINIMUM
+    // Validation - UPDATED MINIMUM TO $1500
     if (amount < MINIMUM_WITHDRAWAL) {
         alert(`Minimum withdrawal amount is $${MINIMUM_WITHDRAWAL}`);
         return;
@@ -212,22 +212,22 @@ async function handleWithdrawalRequest(event) {
         await withdrawalRef.set(withdrawalData);
         console.log('Withdrawal request created successfully');
         
-        // Step 2: Deduct balance from user
-        const userRef = db.collection('users').doc(user.uid);
+        // Step 2: Deduct amount from user's balance
         const newBalance = userBalance - amount;
-        
-        await userRef.update({
+        await db.collection('users').doc(user.uid).update({
             balance: newBalance
         });
-        console.log('Balance updated successfully');
+        console.log('User balance updated successfully');
         
-        // Step 3: Add to transaction history
-        await userRef.collection('transactions').add({
+        // Step 3: Add transaction record
+        await db.collection('users').doc(user.uid).collection('transactions').add({
             type: 'withdrawal',
             cryptocurrency: crypto,
             amount: amount,
+            usdAmount: amount,
             networkFee: fee,
             netAmount: netAmount,
+            description: `${crypto} Withdrawal Request - Pending Admin Approval`,
             status: 'pending',
             walletAddress: walletAddress,
             withdrawalId: withdrawalRef.id,
@@ -442,4 +442,4 @@ if (typeof module !== 'undefined' && module.exports) {
     };
 }
 
-console.log('withdraw.js loaded with $50 minimum withdrawal');
+console.log('withdraw.js loaded with $1500 minimum withdrawal');
