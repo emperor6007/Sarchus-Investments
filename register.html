@@ -203,10 +203,27 @@
             } catch (error) { console.error('Validation error:', error); }
         }
         async function validateReferralCode(code) {
+            if (!code) return false;
+            const upperCode = code.toUpperCase().trim();
             try {
-                const snapshot = await firebase.firestore().collection('users').where('referralCode', '==', code).limit(1).get();
+                // Check public referralCodes collection first (works without auth)
+                const refDoc = await firebase.firestore()
+                    .collection('referralCodes')
+                    .doc(upperCode)
+                    .get();
+                if (refDoc.exists) return true;
+
+                // Fallback: query users collection
+                const snapshot = await firebase.firestore()
+                    .collection('users')
+                    .where('referralCode', '==', upperCode)
+                    .limit(1)
+                    .get();
                 return !snapshot.empty;
-            } catch (error) { console.error('Error validating referral code:', error); return false; }
+            } catch (error) {
+                console.error('Error validating referral code:', error);
+                return false;
+            }
         }
     </script>
 </body>
