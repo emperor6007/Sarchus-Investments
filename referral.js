@@ -51,6 +51,17 @@ function initializeReferralDashboard() {
                                 referralEarnings: userData.referralEarnings || 0,
                                 referredBy: userData.referredBy || null
                             });
+
+                            // Also register in the public referralCodes collection
+                            // so unauthenticated visitors can validate it on the register page
+                            try {
+                                await firebase.firestore().collection('referralCodes').doc(newReferralCode).set({
+                                    userId: user.uid,
+                                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                            } catch (rcErr) {
+                                console.warn('Could not write to referralCodes collection:', rcErr);
+                            }
                             
                             userData.referralCode = newReferralCode;
                             userData.referralCount = userData.referralCount || 0;
