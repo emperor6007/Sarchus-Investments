@@ -80,6 +80,20 @@ function initializeReferralDashboard() {
                     };
                     
                     console.log('User data loaded:', window.currentUser);
+
+                    // Lazy backfill: ensure this user's referral code exists in the
+                    // public referralCodes collection (covers users created before
+                    // this collection was introduced). Uses merge so it's safe to
+                    // run every time — it won't overwrite anything.
+                    if (userData.referralCode && userData.referralCode !== 'N/A') {
+                        firebase.firestore()
+                            .collection('referralCodes')
+                            .doc(userData.referralCode)
+                            .set({ userId: user.uid,
+                                   createdAt: firebase.firestore.FieldValue.serverTimestamp() },
+                                 { merge: true })
+                            .catch(err => console.warn('referralCodes backfill skipped:', err));
+                    }
                     
                     // Load referral data
                     await loadReferralData(user.uid, userData);
