@@ -18,10 +18,25 @@ function generateReferralCode(userId) {
 }
 
 // Validate referral code
+// Checks the public 'referralCodes' collection (no auth required) so this works
+// on the registration page before the user has signed in.
 async function validateReferralCode(referralCode) {
+    if (!referralCode) return false;
+    const code = referralCode.toUpperCase().trim();
     try {
-        const usersRef = firebase.firestore().collection('users');
-        const snapshot = await usersRef.where('referralCode', '==', referralCode).limit(1).get();
+        // Primary check: public referralCodes collection (document ID = the code itself)
+        const refDoc = await firebase.firestore()
+            .collection('referralCodes')
+            .doc(code)
+            .get();
+        if (refDoc.exists) return true;
+
+        // Fallback: query users collection (works if Firestore rules allow it)
+        const snapshot = await firebase.firestore()
+            .collection('users')
+            .where('referralCode', '==', code)
+            .limit(1)
+            .get();
         return !snapshot.empty;
     } catch (error) {
         console.error('Validation error:', error);
@@ -324,6 +339,18 @@ async function handleRegister(event) {
         // Wait for user document to be created with retry mechanism
         await firebase.firestore().collection('users').doc(user.uid).set(userData);
         console.log('User data saved to Firestore');
+
+        // Register the new user's referral code in the public referralCodes collection
+        // so that unauthenticated visitors can validate codes during registration
+        try {
+            await firebase.firestore().collection('referralCodes').doc(userReferralCode).set({
+                userId: user.uid,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            console.log('Referral code registered in public collection:', userReferralCode);
+        } catch (rcErr) {
+            console.warn('Could not write to referralCodes collection:', rcErr);
+        }
         
         // Small delay to ensure Firestore write is complete
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -572,6 +599,17 @@ async function socialLogin(provider) {
                 };
                 
                 await firebase.firestore().collection('users').doc(user.uid).set(userData);
+
+                // Register the new user's referral code in the public referralCodes collection
+                try {
+                    await firebase.firestore().collection('referralCodes').doc(userReferralCode).set({
+                        userId: user.uid,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    console.log('Google signup: referral code registered:', userReferralCode);
+                } catch (rcErr) {
+                    console.warn('Could not write to referralCodes collection:', rcErr);
+                }
                 
                 // Small delay before processing referral
                 await new Promise(resolve => setTimeout(resolve, 500));
